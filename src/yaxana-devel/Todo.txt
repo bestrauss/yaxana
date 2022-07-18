@@ -1,0 +1,18 @@
+
+Txxxx Diverses
+ - 
+ - PDC pow/root testen
+ - Simplifier
+ - RandomTest aufräumen: zwei Zufallswerte in allen Varianten ungleich machen und dann vergleichen
+ - RootBoundBenchmark aufräumen
+ - BigFloat 1x TODO
+ - BigFloatTest TODO (BUG)
+ - OpenBug
+ - Tests für Beispielausdrücke, in denen bereits Unterausdrücke verschwinden.
+ - Alle Tests die in der Literatur aus der Literaturliste zu finden sind
+
+T0001 Bei root/pow beliebige Exponenten unterstützen
+      PDC kann bisher nur Exponent 2
+T0000 Statistics: 
+      Relative Häufigkeit von Algebraic-use
+      Was ist im Cache los?

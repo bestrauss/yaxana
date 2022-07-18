@@ -1,0 +1,24 @@
+\contentsline {definition}{{Definition}{2.{1}}{Abstrakter Syntaxbaum, Terminal}}{3}{definition.2.1}%
+\contentsline {note}{{Hinweis:}{1}{}}{3}{note.1}%
+\contentsline {definition}{{Definition}{2.{2}}{Ausdruck}}{4}{definition.2.2}%
+\contentsline {note}{{Hinweis:}{2}{}}{4}{note.2}%
+\contentsline {definition}{{Definition}{2.{3}}{Wert eines Ausdrucks}}{4}{definition.2.3}%
+\contentsline {definition}{{Definition}{2.{4}}{Strukturpolynom}}{5}{definition.2.4}%
+\contentsline {note}{{Hinweis:}{3}{}}{6}{note.3}%
+\contentsline {remark}{{Erörterung}{2.{1}}{Struktur- vs. Minimalpolynom}}{6}{remark.2.1}%
+\contentsline {definition}{{Definition}{2.{5}}{Konjugierter Ausdruck}}{6}{definition.2.5}%
+\contentsline {note}{{Hinweis:}{4}{}}{6}{note.4}%
+\contentsline {remark}{{Erörterung}{3.{1}}{Aufgabenstellung}}{7}{remark.3.1}%
+\contentsline {definition}{{Definition}{3.{1}}{Wohlgeratener Ausdruck}}{8}{definition.3.1}%
+\contentsline {theorem}{{Satz}{3.{1}}{Hauptsatz}}{8}{theorem.3.1}%
+\contentsline {proof}{{Beweis}{3.{1}}{}}{8}{proof.3.1}%
+\contentsline {definition}{{Definition}{3.{2}}{Testausdruck}}{9}{definition.3.2}%
+\contentsline {definition}{{Definition}{3.{3}}{Wohlgeratener Testausdruck}}{9}{definition.3.3}%
+\contentsline {theorem}{{Satz}{3.{2}}{Ein wohlgeratener Testausdruck}}{9}{theorem.3.2}%
+\contentsline {proof}{{Beweis}{3.{2}}{}}{9}{proof.3.2}%
+\contentsline {algorithm}{{Algorithmus}{3.{1}}{Vorzeichentest}}{10}{algorithm.3.1}%
+\contentsline {remark}{{Erörterung}{3.{2}}{Bericht aus der Praxis}}{10}{remark.3.2}%
+\contentsline {theorem}{{Satz}{A.{1}}{Strukturpolynom von Multiplikation und Addition}}{11}{theorem.A.1}%
+\contentsline {proof}{{Beweis}{A.{1}}{}}{11}{proof.A.1}%
+\contentsline {theorem}{{Satz}{A.{2}}{Strukturpolynom des Kehrwerts}}{11}{theorem.A.2}%
+\contentsline {proof}{{Beweis}{A.{2}}{}}{12}{proof.A.2}%

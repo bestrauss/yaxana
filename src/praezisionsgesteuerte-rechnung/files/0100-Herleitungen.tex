@@ -1,0 +1,516 @@
+%
+% LaTeX
+%
+\pagebreak
+\section{Addition}
+
+\begin{equation*}
+\begin{split}
+  |\hat{z}-z| & =  |\hat{z}-(x+y)| \\
+              & =  |\hat{z}-(\hat{x}+(x-\hat{x}))-(\hat{y}+(y-\hat{y}))| \\
+              & =  |\hat{z}-(\hat{x}+\hat{y})-(x-\hat{x})-(y-\hat{y})| \\
+              & =  |\hat{z}-(\hat{x}+\hat{y})+(\hat{x}-x)+(\hat{y}-y)| \\
+              &\le |\hat{z}-(\hat{x}+\hat{y})|+|\hat{x}-x|+|\hat{y}-y| \\
+              &\le 2^{-p_z}
+\end{split}
+\end{equation*}
+
+\begin{equation*}
+\begin{split}
+  |\hat{z}-(\hat{x}+\hat{y})| & \le & \frac{2^{-p_z}}{2}
+  & \Leftrightarrow &
+  2^{-p_+}|\hat{z}| & \le & 2^{-(p_z+1)}
+  & \Leftrightarrow &
+  2^{-p_+} \le 2^{-(p_z+2+\ld|\hat{z}|)}
+  \\
+  |\hat{x}-x| & \le & \frac{2^{-p_z}}{4}
+  & \Leftrightarrow &
+  2^{-p_x} & \le & 2^{-(p_z+2)}
+  &  &
+  \\
+  |\hat{y}-y| & \le & \frac{2^{-p_z}}{4}
+  & \Leftrightarrow &
+  2^{-p_y} & \le & 2^{-(p_z+2)}
+  &  &
+  \\
+\end{split}
+\end{equation*}
+
+\begin{equation*}
+  \ld|\hat{z}| \le \max(\ld|\hat{x}|,\ld|\hat{y}|)+1
+\end{equation*}
+
+\begin{algorithm}
+\phantom{}
+\begin{center}
+\renewcommand*{\arraystretch}{1.3}
+\begin{tabular}{lcl}
+  \hline
+  \multicolumn{3}{c}{Addition} \\
+  \hline
+   $p_x$ & $\defeq$ & $p_z+2$ \\
+   $p_y$ & $\defeq$ & $p_z+2$ \\
+   $p_+$ & $\defeq$ & $p_z+3+\max(\ld|\hat{x}|,\ld|\hat{y}|)$ \\
+  \hline
+\end{tabular}
+\end{center}
+\end{algorithm}
+
+
+\section{Subtraktion}
+
+{\em ---Herleitung analog zur Addition---}
+
+\begin{algorithm}
+\phantom{}
+\begin{center}
+\renewcommand*{\arraystretch}{1.3}
+\begin{tabular}{lcl}
+  \hline
+  \multicolumn{3}{c}{Subtraktion} \\
+  \hline
+   $p_x$ & $\defeq$ & $p_z+2$ \\
+   $p_y$ & $\defeq$ & $p_z+2$ \\
+   $p_-$ & $\defeq$ & $p_z+3+\max(\ld|\hat{x}|,\ld|\hat{y}|)$ \\
+  \hline
+\end{tabular}
+\end{center}
+\end{algorithm}
+
+
+
+\pagebreak
+\section{Multiplikation}
+
+\begin{equation*}
+\begin{split}
+  |\hat{z}-z| & =  |\hat{z}-xy| \\
+              & =  |\hat{z}-(\hat{x}+(x-\hat{x}))(\hat{y}+(y-\hat{y}))| \\
+              & =  |\hat{z}-\hat{x}\hat{y}-\hat{x}(y-\hat{y})-\hat{y}(x-\hat{x})-(x-\hat{x})(y-\hat{y})| \\
+              & =  |\hat{z}-\hat{x}\hat{y}+\hat{x}(\hat{y}-y)+\hat{y}(\hat{x}-x)-(\hat{x}-x)(\hat{y}-y)| \\
+              &\le |\hat{z}-\hat{x}\hat{y}|+|\hat{x}(\hat{y}-y)|+|\hat{y}(\hat{x}-x)|+|(\hat{x}-x)(\hat{y}-y)| \\
+              &\le 2^{-p_z}
+\end{split}
+\end{equation*}
+
+\begin{equation*}
+\begin{split}
+  |\hat{z}-\hat{x}\hat{y}| & \le & \frac{2^{-p_z}}{4}
+  & \Leftrightarrow & 
+  2^{-{p_\times}}|\hat{z}| & \le & 2^{-(p_z+2)}
+  & \Leftrightarrow & 
+  \cdots
+  \\
+  |\hat{x}(\hat{y}-y)| & \le & \frac{2^{-p_z}}{4}
+  & \Leftrightarrow & 
+  2^{-p_y}|\hat{x}|  & \le & 2^{-(p_z+2)}
+  & \Leftrightarrow & 
+  \cdots
+  \\
+  |\hat{y}(\hat{x}-x)| & \le & \frac{2^{-p_z}}{4}
+  & \Leftrightarrow & 
+  2^{-p_x}|\hat{y}|  & \le & 2^{-(p_z+2)}
+  & \Leftrightarrow & 
+  \cdots
+  \\
+  |(\hat{x}-x)(\hat{y}-y)| & \le & \frac{2^{-p_z}}{4}
+  & \Leftrightarrow & 
+  2^{-(p_x+p_y)}|  & \le & 2^{-(p_z+2)}
+  &  & 
+  \\
+\end{split}
+\end{equation*}
+
+\begin{equation*}
+\begin{split}
+  \cdots
+  & \Leftrightarrow & 
+  2^{-{p_\times}} & \le & 2^{-(p_z+2+\ld|\hat{z}|)}
+  \\
+  \cdots
+  & \Leftrightarrow & 
+  2^{-p_y}  & \le & 2^{-(p_z+2+\ld|\hat{x}|)}
+  \\
+  \cdots
+  & \Leftrightarrow & 
+  2^{-p_x} & \le & 2^{-(p_z+2+\ld|\hat{y}|)}
+  \\
+\end{split}
+\end{equation*}
+
+\begin{equation*}
+  \ld|\hat{z}| \le \ld|\hat{x}|+\ld|\hat{y}|+1
+\end{equation*}
+
+\begin{algorithm}
+\phantom{}
+\begin{center}
+\renewcommand*{\arraystretch}{1.3}
+\begin{tabular}{lcl}
+  \hline
+  \multicolumn{3}{c}{Multiplikation} \\
+  \hline
+   $p_x$      & $\defeq$ & $p_z+2+\ld|\hat{y}|$ \\
+   $p_y$      & $\defeq$ & $p_z+2+\ld|\hat{x}|$ \\
+   $p_\times$ & $\defeq$ & $p_z+3+\ld|\hat{x}|+\ld|\hat{y}|$ \\
+  \hline
+\end{tabular}
+\end{center}
+\end{algorithm}
+
+
+
+
+\pagebreak
+\section{Division}
+
+\begin{equation*}
+\begin{split}
+  |\hat{z}-z| & =  |\hat{z}-\frac{x}{y}| 
+                =  \left|\hat{z}-\frac{\hat{x}}{\hat{y}}
+			    +  \frac{\hat{x}}{\hat{y}}-\frac{x}{y}\right| \\
+              &\le \left|\hat{z}-\frac{\hat{x}}{\hat{y}}\right|
+			    +  \left|\frac{\hat{x}}{\hat{y}}-\frac{x}{y}\right| \\
+              & =  \left|\hat{z}-\frac{\hat{x}}{\hat{y}}\right|
+			    +  \left|\frac{x\hat{y}-\hat{x}y}{y\hat{y}}\right| \\
+              & =  \left|\hat{z}-\frac{\hat{x}}{\hat{y}}\right|
+			    +  \frac{|x\hat{y}-\hat{x}\hat{y}-\hat{x}y+\hat{x}\hat{y}|}{|y\hat{y}|} \\
+              & =  \left|\hat{z}-\frac{\hat{x}}{\hat{y}}\right|
+			    +  \frac{|(x-\hat{x})\hat{y}-(y-\hat{y})\hat{x}|}{|y\hat{y}|} \\
+              & =  \left|\hat{z}-\frac{\hat{x}}{\hat{y}}\right|
+			    +  \frac{|(x-\hat{x})\hat{y}|}{|y\hat{y}|}
+			    +  \frac{|(\hat{y}-y)\hat{x}|}{|y\hat{y}|} \\
+              & =  \left|\hat{z}-\frac{\hat{x}}{\hat{y}}\right|
+			    +  \frac{|x-\hat{x}|}{|y|}
+			    +  \frac{|(y-\hat{y})\hat{x}|}{|y\hat{y}|} \\
+              &\le 2^{-p_z}
+\end{split}
+\end{equation*}
+
+\begin{equation*}
+\begin{split}
+ & \left|\hat{z}-\frac{\hat{x}}{\hat{y}}\right|&&\le\frac{2^{-p_z}}{2}
+   \Leftrightarrow &
+   2^{-p_\div}|\hat{z}|&\le 2^{-(p_z+1)}
+   \Leftrightarrow &
+   \cdots
+   \\
+ & \frac{|x-\hat{x}|}{|y|}&&\le\frac{2^{-p_z}}{4}
+   \Leftrightarrow &
+   2^{-(p_x+\ld|y|)}&\le 2^{-(p_z+2)}
+   \Leftrightarrow &
+   \cdots
+   \\
+ & \frac{|(y-\hat{y})\hat{x}|}{|y\hat{y}|}&&\le\frac{2^{-p_z}}{4}
+   \Leftrightarrow &
+   2^{-(p_y-\ld|x|+\ld|y\hat{y}|)}&\le 2^{-(p_z+2)}
+   \Leftrightarrow &
+   \cdots
+   \\
+\end{split}
+\end{equation*}
+
+\begin{equation*}
+\begin{split}
+   &
+   \cdots
+   \Leftrightarrow &
+   p_\div  &\ge p_z+1+\ld|\hat{z}|
+   \\
+   &
+   \cdots
+   \Leftrightarrow &
+   p_x  &\ge p_z+2-\ld|y|
+   \\
+   &
+   \cdots
+   \Leftrightarrow &
+   p_y  &\ge p_z+2+\ld|x|-\ld|y\hat{y}|
+   \\
+\end{split}
+\end{equation*}
+
+\begin{equation*}
+  \ld|\hat{z}| \le \ld|\hat{x}|-\ld|\hat{y}|+1
+\end{equation*}
+
+\begin{algorithm}
+\phantom{}
+\begin{center}
+\renewcommand*{\arraystretch}{1.3}
+\begin{tabular}{lcl}
+  \hline
+  \multicolumn{3}{c}{Division} \\
+  \hline
+   $p_x$    & $\defeq$ & $p_z+2-\ld|y|$ \\
+   $p_y$    & $\defeq$ & $p_z+2+\ld|x|-\ld|y\hat{y}|$ \\
+   $p_\div$ & $\defeq$ & $p_z+2+\ld|\hat{x}|-\ld|\hat{y}|$ \\
+  \hline
+\end{tabular}
+\end{center}
+\end{algorithm}
+
+
+
+
+%\pagebreak
+\section{$n$-te Potenz}
+
+\begin{equation*}
+\begin{split}
+  |\hat{z}-z| & =  |\hat{z}-x^n| \\
+              & =  |\hat{z}-(\hat{x}+(x-\hat{x}))^n| \\
+              & =  \left|\hat{z}-\sum_{k=0}^n\binom{n}{k}\hat{x}^{n-k}(x-\hat{x})^k\right| \\
+              & =  \left|\hat{z}-\hat{x}^n-\sum_{k=1}^n\binom{n}{k}\hat{x}^{n-k}(x-\hat{x})^k\right| \\
+              & =  \left|\hat{z}-\hat{x}^n+\sum_{k=1}^n\binom{n}{k}\hat{x}^{n-k}(\hat{x}-x)^k\right| \\
+              &\le |\hat{z}-\hat{x}^n|+\sum_{k=1}^n\binom{n}{k}\left|\hat{x}^{n-k}(\hat{x}-x)^k\right| \\
+              & =  |\hat{z}-\hat{x}^n|+\sum_{k=1}^n\binom{n}{k}|\hat{x}|^{n-k}|\hat{x}-x|^k \\
+              &\le 2^{-p_z}
+\end{split}
+\end{equation*}
+
+\begin{scriptsize}
+\begin{equation*}
+\begin{split}
+  |\hat{z}-\hat{x}^n| & \le & \frac{2^{-p_z}}{n}
+  & \Leftrightarrow & 
+  2^{-{p_{(\phantom{\cdot})^n}}}|\hat{z}| & \le & 2^{-(p_z+\ld n)}
+  & \Leftrightarrow & 
+  \cdots
+  \\
+  \binom{n}{k}|\hat{x}|^{n-k}|\hat{x}-x|^k & \le & \frac{2^{-p_z}}{n}
+  &  & &  & &  & 
+  \cdots
+  \\
+  |\hat{x}|^{n-1}|\hat{x}-x| & \le & \frac{2^{-p_z}}{n}
+  & \Leftrightarrow & 
+  2^{-p_x}|\hat{x}|^{n-1}  & \le & 2^{-(p_z+\ld n)}
+  & \Leftrightarrow & 
+  \cdots
+  \\
+  \binom{n}{2}|\hat{x}|^{n-2}|\hat{x}-x|^2 & \le & \frac{2^{-p_z}}{n}
+  & \Leftrightarrow & 
+  \binom{n}{2} 2^{-2p_x}|\hat{x}|^{n-2}  & \le & 2^{-(p_z+\ld n)}
+  & \Leftrightarrow & 
+  \cdots
+  \\
+  \cdots
+  \\
+  \binom{n}{n-1}|\hat{x}||\hat{x}-x|^{n-1} & \le & \frac{2^{-p_z}}{n}
+  & \Leftrightarrow & 
+  \binom{n}{n-1}2^{-(n-1)p_x}|\hat{x}|  & \le & 2^{-(p_z+\ld n)}
+  & \Leftrightarrow & 
+  \cdots
+  \\
+  |\hat{x}-x|^n & \le & \frac{2^{-p_z}}{n}
+  & \Leftrightarrow & 
+  2^{-n p_x} & \le & 2^{-(p_z+\ld n)}
+  & \Leftrightarrow & 
+  \cdots
+  \\
+\end{split}
+\end{equation*}
+\end{scriptsize}
+
+\begin{equation*}
+\begin{split}
+  \cdots
+  & \Leftrightarrow & 
+  2^{-p_{(\phantom{\cdot})^n}} & \le & 2^{-(p_z+\ld n+\ld|\hat{z}|)}
+  \\
+  \cdots
+  & \Leftrightarrow & 
+  2^{-p_x}  & \le & 2^{-(p_z+\ld n+(n-1)\ld|\hat{x}|)}
+  \\
+  \cdots
+  & \Leftrightarrow & 
+  2^{-2p_x}  & \le & 2^{-(p_z+\ld n+\ld\binom{n}{2}+(n-2)\ld|\hat{x}|)}
+  \\
+  & \cdots
+  \\
+  \cdots
+  & \Leftrightarrow & 
+  2^{-(n-1)p_x}  & \le & 2^{-(p_z+\ld n+\ld\binom{n}{n-1}+\ld|\hat{x}|)}
+  \\
+  \cdots
+  & \Leftrightarrow & 
+  2^{-n p_x}  & \le & 2^{-(p_z+\ld n)}
+  \\
+\end{split}
+\end{equation*}
+
+\begin{equation*}
+\begin{split}
+  \cdots
+  & \Leftrightarrow & 
+  p_{(\phantom{\cdot})^n} & \ge p_z+\ld n+\ld|\hat{z}|
+  \\
+  \cdots
+  & \Leftrightarrow & 
+  p_x  & \ge p_z+\ld n+(n-1)\ld|\hat{x}|
+  \\
+  \cdots
+  & \Leftrightarrow & 
+  p_x  & \ge \frac{1}{2}\left(p_z+\ld n+\ld\binom{n}{2}+(n-2)\ld|\hat{x}|\right)
+  \\
+  & \cdots
+  \\
+  \cdots
+  & \Leftrightarrow & 
+  p_x  & \ge \frac{1}{n-1}\left(p_z+\ld n+\ld\binom{n}{n-1}+\ld|\hat{x}|\right)
+  \\
+  \cdots
+  & \Leftrightarrow & 
+  p_x  & \ge \frac{1}{n}\left(p_z+\ld n\right)
+  \\
+\end{split}
+\end{equation*}
+
+\begin{equation*}
+  \ld|\hat{z}| \le \ld|\hat{x}|+\ld|\hat{y}|+1 % TODO, auch Tabelle
+\end{equation*}
+
+\begin{algorithm}
+\phantom{}
+\begin{center}
+\renewcommand*{\arraystretch}{1.3}
+\begin{tabular}{lcl}
+  \hline
+  \multicolumn{3}{c}{$n$-te Potenz} \\
+  \hline
+   $p_x$      & $\defeq$ & $p_z+\ld n+\ld\binom{n}{n\div2}+(n-1)\ld|\hat{x}|$ \\
+   $p_{(\phantom{\cdot})^n}$ & $\defeq$ & $p_z+\ld n+\ld|\hat{z}|$ \\
+  \hline
+\end{tabular}
+\end{center}
+\end{algorithm}
+
+
+
+
+
+
+\pagebreak
+\section{Quadratwurzel}
+
+\newcommand{\op}{{\sqrt[2]{\phantom{\cdot}}}}
+
+\begin{equation*}
+\begin{split}
+  |\hat{z}-z| & =  |\hat{z}-\sqrt{x}| \\
+              & =  |\hat{z}-\sqrt{\hat{x}}+\sqrt{\hat{x}}-\sqrt{x}| \\
+              &\le |\hat{z}-\sqrt{\hat{x}}|+|\sqrt{\hat{x}}-\sqrt{x}| \\
+              & =  |\hat{z}-\sqrt{\hat{x}}|
+			       +\left|\left(\sqrt{\hat{x}}-\sqrt{x}\right)
+				    \frac{\sqrt{\hat{x}}+\sqrt{x}}{\sqrt{\hat{x}}+\sqrt{x}}\right| \\
+              & =  |\hat{z}-\sqrt{\hat{x}}|+\frac{|\hat{x}-x|}{\sqrt{\hat{x}}+\sqrt{x}} \\
+              &\le |\hat{z}-\sqrt{\hat{x}}|+\frac{|\hat{x}-x|}{\sqrt{\hat{x}}} \\
+              &\le \frac{2^{-p_z}}{2}+\frac{2^{-p_z}}{2}=2^{-p_z}
+\end{split}
+\end{equation*}
+
+\begin{equation*}
+  |\hat{z}-\sqrt{\hat{x}}|           \le \frac{2^{-p_z}}{2}
+  \quad,\quad
+  \frac{|\hat{x}-x|}{\sqrt{\hat{x}}} \le \frac{2^{-p_z}}{2}
+\end{equation*}
+
+\begin{equation*}
+\begin{split}
+  |\hat{z}-\sqrt{\hat{x}}| & = 2^{-p_\op}|\hat{z}| \le \frac{2^{-p_z}}{2} \\
+& \Leftrightarrow
+  2^{-p_\op} \le \frac{2^{-p_z}}{2|\hat{z}|} \\
+& \Leftrightarrow
+  2^{-p_\op}\le 2^{-(p_z+2+\ld|\hat{z}|)} \\
+& \Leftrightarrow
+  2^{-p_\op}\le 2^{-\left(p_z+2+\frac{\ld|\hat{x}|}{2}\right)}
+\end{split} 
+\end{equation*}
+
+\begin{equation*}
+\begin{split}
+  \frac{|\hat{x}-x|}{\sqrt{\hat{x}}} & \le \frac{2^{-p_z}}{2} \\
+& \Leftrightarrow
+  |\hat{x}-x| \le 2^{-\left(p_z+2+\ld\sqrt{\hat{x}}\right)}
+               =  2^{-\left(p_z+2+\frac{\ld\hat{x}}{2}\right)} \\
+& \Leftrightarrow
+   2^{-p_x}  \le  2^{-\left(p_z+2+\frac{\ld\hat{x}}{2}\right)}
+\end{split} 
+\end{equation*}
+
+\begin{algorithm}
+\phantom{}
+\begin{center}
+\renewcommand*{\arraystretch}{1.3}
+\begin{tabular}{lcl}
+  \hline
+  \multicolumn{3}{c}{Quadratwurzel} \\
+  \hline
+   $p_x$   & $\defeq$ & $p_z+2+\frac{\ld\hat{x}+1}{2}$ \\
+   $p_\op$ & $\defeq$ & $p_z+2+\frac{\ld\hat{x}+1}{2}$ \\
+  \hline
+\end{tabular}
+\end{center}
+\end{algorithm}
+
+
+
+
+
+
+
+\pagebreak
+\section{$n$-te Wurzel}
+
+\renewcommand{\op}{{\sqrt[n]{\phantom{\cdot}}}}
+
+Berechnung einer Näherung $\hat{z}$ von $z=\sqrt[n]{x}$ mit $p_z$ exakten Stellen.
+
+\begin{equation*}
+\begin{split}
+  |\hat{z}-z| & =  |\hat{z}-\sqrt[n]{x}| \\
+              & =  |\hat{z}-\sqrt[n]{\hat{x}}+\sqrt[n]{\hat{x}}-\sqrt[n]{x}| \\
+              &\le |\hat{z}-\sqrt[n]{\hat{x}}|+|\sqrt[n]{\hat{x}}-\sqrt[n]{x}| \\
+              &\le |\hat{z}-\sqrt[n]{\hat{x}}|+|\hat{x}-x| \\
+              &\le \frac{2^{-p_z}}{2} + \frac{2^{-p_z}}{2} \\
+              & =  2^{-p_z}
+\end{split}
+\end{equation*}
+
+\begin{equation*}
+\begin{split}
+  |\hat{z}-\sqrt[n]{\hat{x}}| \le \frac{2^{-p_z}}{2}
+  & \Leftrightarrow
+  \hat{z}\cdot 2^{-p_\op} \le 2^{-(p_z+2)}  \\
+  & \Leftrightarrow
+  2^{-p_\op}\le 2^{-(p_z+2+\ld\hat{z})} 
+  = 2^{-\left(p_z+2+\frac{\ld\hat{x}}{n}\right)}
+\end{split}
+\end{equation*}
+
+\begin{equation*}
+  |\hat{x}-x| \le \frac{2^{-p_z}}{2} 
+  \quad\Leftrightarrow\quad
+  \hat{x}\cdot 2^{-p_x} \le 2^{-(p_z+2)}
+  \quad\Leftrightarrow\quad
+  2^{-p_x} \le 2^{-(p_z+2+\ld\hat{x})}
+\end{equation*}
+
+\begin{algorithm}
+\phantom{}
+\begin{center}
+\renewcommand*{\arraystretch}{1.3}
+\begin{tabular}{lcl}
+  \hline
+  \multicolumn{3}{c}{$n$-te Wurzel} \\
+  \hline
+   $p_x$   & $\defeq$ & $p_z+2+\ld\hat{x}$ \\
+   $p_\op$ & $\defeq$ & $p_z+2+\frac{\ld\hat{x}+n-1}{n}$ \\
+  \hline
+\end{tabular}
+\end{center}
+\end{algorithm}
+
+%
+% EOF
+%

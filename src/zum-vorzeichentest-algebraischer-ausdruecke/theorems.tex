@@ -1,0 +1,87 @@
+%
+% LaTeX
+%
+
+% Theoreme
+% https://tools.ietf.org/doc/texlive-doc/latex/ntheorem/ntheorem.pdf
+\usepackage[amsmath,thmmarks,framed]{ntheorem}
+\usepackage{framed} 
+%\usepackage{amsthm}
+
+%
+% Definitionen, Theoreme, etc.
+%
+\makeatletter
+\def\newColoredTheorem#1#2{%
+\theoremprework{\vskip\theoremframepreskipamount
+\renewcommand*\FrameCommand{%
+  {\color{#2}\vrule width 3pt \hspace{15pt}}}
+  \framed}%
+\theorempostwork{\endframed\vskip\theoremframepostskipamount}%
+\newtheorem@i{#1}%
+}
+\makeatother
+
+\makeatletter
+\def\newColoredFSTheorem#1#2{%
+\theoremprework{\vskip\theoremframepreskipamount
+\renewcommand*\FrameCommand{%
+  {\color{#2}\vrule width 3pt \hspace{15pt}}}
+  \framed\begin{samepage}\footnotesize}%
+\theorempostwork{\end{samepage}\endframed\vskip\theoremframepostskipamount}%
+\newtheorem@i{#1}%
+}
+\makeatother
+
+\definecolor{defiColor}{rgb}{0.3,0.5,1.0}
+\definecolor{examColor}{rgb}{0.0,0.0,0.0}
+\definecolor{theoColor}{rgb}{1.0,0.3,0.5}
+\definecolor{lemmColor}{rgb}{0.0,0.6,0.0}
+\definecolor{corrColor}{rgb}{0.3,1.0,0.5}
+\definecolor{remaColor}{rgb}{1.0,0.7,0.0}
+\definecolor{algoColor}{rgb}{0.0,1.0,0.7}
+\definecolor{conjColor}{rgb}{1.0,0.0,0.0}
+\definecolor{noteColor}{rgb}{1.0,0.9,0.3}
+\definecolor{figuColor}{rgb}{0.9,0.9,0.9}
+
+\theoremstyle{plain}
+\newColoredTheorem{theorem}{theoColor}{Satz}[section]
+\newColoredTheorem{lemma}{lemmColor}{Lemma}[section]
+\newColoredTheorem{corollary}{corrColor}{Korollar}[section]
+\newColoredTheorem{conjecture}{conjColor}{Vermutung}[section]
+\newColoredTheorem{Figure}{figuColor}{Abbildung}[section]
+
+\theorembodyfont{\normalfont}
+\theoremsymbol{$\square$}
+\newtheorem{proof}{Beweis}[section]
+\theoremsymbol{}
+\newColoredTheorem{remark}{remaColor}{Erörterung}[section]
+\newColoredTheorem{definition}{defiColor}{Definition}[section]
+\newColoredTheorem{example}{examColor}{Beispiel}[section]
+\newColoredTheorem{algorithm}{algoColor}{Algorithmus}[section]
+
+\theoremstyle{nonumberplain}
+\theorembodyfont{\normalfont}
+\newColoredFSTheorem{note}{noteColor}{Hinweis:}
+
+\theoremstyle{nonumberplain}
+\newtheorem{dummy}{}
+\newcommand{\pagebreakhint}{\begin{dummy}\end{dummy}}
+
+\newcommand{\refchapter}[1]{Kapitel~\ref{#1}       auf Seite~\pageref{#1}}
+\newcommand{\refsection}[1]{Abschnitt~\ref{#1}     auf Seite~\pageref{#1}}
+\newcommand{\refequation}[1]{Gleichung~\ref{#1}    auf Seite~\pageref{#1}}
+\newcommand{\refappendix}[1]{Anhang~\ref{#1}       auf Seite~\pageref{#1}}
+\newcommand{\reffigure}[1]{Bild~\ref{#1}           auf Seite~\pageref{#1}}
+\newcommand{\reftable}[1]{Tabelle~\ref{#1}         auf Seite~\pageref{#1}}
+\newcommand{\refdefinition}[1]{Definition~\ref{#1} auf Seite~\pageref{#1}}
+\newcommand{\reftheorem}[1]{Satz~\ref{#1}          auf Seite~\pageref{#1}}
+\newcommand{\reflemma}[1]{Lemma~\ref{#1}           auf Seite~\pageref{#1}}
+\newcommand{\refremark}[1]{Erörterung~\ref{#1}     auf Seite~\pageref{#1}}
+\newcommand{\refalgorithm}[1]{Algorithmus~\ref{#1} auf Seite~\pageref{#1}}
+\newcommand{\refexample}[1]{Beispiel~\ref{#1}      auf Seite~\pageref{#1}}
+\newcommand{\refconjecture}[1]{Vermutung~\ref{#1}  auf Seite~\pageref{#1}}
+\newcommand{\refcorollary}[1]{Korollar~\ref{#1}    auf Seite~\pageref{#1}}
+%
+% EOF
+%

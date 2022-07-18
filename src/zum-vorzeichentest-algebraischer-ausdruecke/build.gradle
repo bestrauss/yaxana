@@ -1,0 +1,16 @@
+//
+// gradle subproject build
+//
+// @author Burkhard Strauss
+// @since 05/2022
+//
+
+task latex(type: Exec)
+{
+  workingDir '.'
+  commandLine 'pdflatex', '--aux-directory=build', '--output-directory=build', 'main.tex'
+}
+
+//
+// EOF
+//

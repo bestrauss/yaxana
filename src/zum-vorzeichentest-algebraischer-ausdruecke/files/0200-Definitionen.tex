@@ -1,0 +1,165 @@
+%
+% LaTeX
+%
+\pagebreak
+\section{Definitionen}
+
+\begin{definition}[Abstrakter Syntaxbaum, Terminal]
+Ein Ausdruck $E$ ist ein Baum 
+im Sinne der Graphentheorie.
+Die Blätter des Baums sind Operanden, 
+die restlichen Knoten unäre oder binäre Operatoren.
+Im Sinne der Automatentheorie und der Linguistik
+handelt es sich um einen abstrakten Syntaxbaum,
+dessen Blätter terminale Symbole bzw. Terminale 
+genannt werden.
+
+\begin{note}
+Ein Ausdruck kann auch als ein 
+(gegenüber dem Baum allgemeinerer)
+gerichteter, azyklischer Graph dargestellt werden,
+indem identische Unterausdrücke im Baum 
+durch nur ein Exemplar ersetzt werden,
+auf das dann mehr als eine der gerichteten Kanten zeigt.
+Dies wird in Implementationen genutzt,
+ist aber im Rahmen dieser Ausführungen nicht weiter von Bedeutung.
+\end{note}
+\end{definition}
+
+
+\pagebreak
+\begin{definition}[Ausdruck]\label{de:Ausdruck}
+Ein Ausdruck $E$ mit dem Wert $\xi_E$ ist:
+\begin{itemize}
+\item ein Terminal mit dem Wert $c\in\Q, c>0$,
+\item die Summe $E_0+E_1$ zweier Ausdrücke,
+\item das Produkt $E_0\times E_1$ zweier Ausdrücke,
+\item die Negation $-E$ eines Ausdrucks,
+\item der Kehrwert $1\div E$ eines Ausdrucks,
+\item die $n$-te Wurzel $\sqrt[n]{E}$ eines Ausdrucks,
+\item der Absolutwert $|E|$ eines Ausdrucks,
+\end{itemize}
+sofern
+\begin{itemize}
+\item beim Kehrwert $\xi_E\ne 0$,
+\item bei der $n$-ten Wurzel $n\in\N\backslash\{1\}$ 
+	        und, bei geradem $n$, $\xi_E\ge 0$.
+\end{itemize}
+Unterausdrücke mit verschwindenden Werten
+werden detektiert und wegoptimiert.
+Alle Radikanden werden positiv gemacht,
+$\sqrt[n]{-E}=-\sqrt[n]{E}$, falls $\xi_E$ ungerade.
+\begin{note}
+Die Auswahl der Operatoren dient der Übersichtlichkeit
+der folgenden Darstellungen und der Beweise.
+Subtraktion, Division 
+und Potenz mit beliebigen rationalen Exponenten können
+auf diese Auswahl zurückgeführt werden.
+Eine andere gebräuchliche Auswahl an Operatoren
+ist $\in\{+, -, \times, \div, \sqrt[n]{\phantom{x}}\}$.
+\end{note}
+\end{definition}
+
+
+\begin{definition}[Wert eines Ausdrucks]
+Der Zahlenwert oder auch einfach 
+Wert $\xi_E=\val{E}\in\A$ eines Ausdrucks $E$ ist
+\begin{itemize}
+\item $\xi_{c            } = c$
+\item $\xi_{E_0+      E_1} = \xi_{E_0} + \xi_{E_1}$
+\item $\xi_{E_0\times E_1} = \xi_{E_0} \times \xi_{E_1}$
+\item $\xi_{1  \div   E  } = 1 \div \xi_E$
+\item $\xi_{-E           } = -\xi_{E}$
+\item $\xi_{\sqrt[n]{E}  } = \sqrt[n]{\xi_E}$
+\item $\xi_{|E|          } = |\xi_E|$
+\end{itemize}
+\end{definition}
+
+
+\pagebreak
+\begin{definition}[Strukturpolynom]\label{de:Strukturpolynom}
+Das Strukturpolynom $p_E(z)$ eines Ausdrucks $E$
+mit dem Wert $\xi_E$
+ist ein Polynom mit rationalen Koeffzienten,
+das eine Nullstelle bei $z=|\xi_E|$ hat
+und das anhand des abstrakten Syntaxbaums von $E$
+nach folgenden Bildungsregeln konstruiert wird:
+\begin{equation*}
+\begin{split}
+p_{c            }(z) & = z-c \\
+p_{E_0+      E_1}(z) & = z^{-K}\prod_{k_0=0}^{N_0}\prod_{k_1=0}^{N_1} (z-(z_{k_0}+z_{k_1})) \\
+p_{E_0\times E_1}(z) & = \prod_{k_0=0}^{N_0}\prod_{k_1=0}^{N_1} (z-(z_{k_0}\times z_{k_1}))\\
+p_{1  \div   E  }(z) & = \prod_{k=1}^N (z-(1\div z_k)) \quad,\quad
+p_{\sqrt[n]{E}  }(z) & = \prod_{k=1}^N (z^n-z_k) \\
+p_{-E}(z) & = p_{|E|}(z)  = p_E(z) = \prod_{k=1}^N (z-z_k)\\
+\end{split}
+\end{equation*}
+Dabei
+\begin{itemize}
+\item sind $c, z_k, z_{k_0}$ bzw. $z_{k_1}$ auf der rechten Seite 
+      jeweils die Nullstellen 
+      von $p_c(z), p_E(z), p_{E_0}(z)$ bzw. $p_{E_1}(z)$,
+      die nicht verschwinden, denn die Bildungsregeln 
+	  gewährleisten dies.
+\item haben die gebildeten Polynome rationale Koeffizienten,
+      wie bereits angegeben. Dies wird 
+      abgesehen von den trivialen Fällen, 
+	  in \refappendix{se:Anhang} gezeigt.
+\item ist $K$ im Term $z^{-K}$ bei der Addition 
+      die Anzahl an Nullstellen,
+      die das Polynom ohne den Term $z^{-K}$ hätte.
+      $z^{-K}$ befreit das Polynom von Nullstellen bei $z=0$.
+\item verändert der Term $z^{-K}$ die Koeffizienten nicht,
+      sondern tauscht sie nur aus (verschiebt sie), 
+	  weshalb sie gleich und damit weiterhin rational bleiben.
+\item liegen vor Einsetzen des Terms $z^{-K}$ 
+      niemals sämtliche Nullstellen bei $z=0$,
+      da per \refdefinition{de:Ausdruck} 
+      die Werte von Unterausdrücken nicht verschwinden,
+      außer möglicherweise an der Baumwurzel 
+	  des abstrakten Syntaxbaums,
+      wo ein solches Ereignis dann $\xi_E=0$ anzeigt.
+\end{itemize}
+\begin{note}
+Es heißt oben, das (monströse) Strukturpolynom werde konstruiert.
+Tatsächlich dient das Strukturpolynom nur theoretischen Betrachtungen
+und kommt in der Praxis, im Algorithmus, nicht vor.
+\end{note}
+\end{definition}
+
+
+\begin{remark}[Struktur- vs. Minimalpolynom]
+Im Gegensatz zum Minimalpolynom einer algebraischen Zahl
+kodiert das Strukturpolynom eines Ausdrucks
+wesentliche Aspekte der Struktur des Ausdrucks
+inklusive der Werte seiner Terminale
+und der Wurzelexponenten.
+Bildet man aus zwei Ausdrücken mit Werten,
+deren Minimalpolynome hochgradig sind,
+einen neuen Ausdruck, 
+dessen Wert rational ist,
+dann findet ein Kollaps statt und
+das Minimalpolynom des Wertes des neuen Ausdrucks
+hat nur noch den Grad $1$.
+Das ist bei Strukturpolynomen nicht der Fall.
+Unabhängig vom Wert des Ausdrucks reflektiert
+der Grad des Strukturpolynoms 
+die Komplexität des Ausdrucks.
+Aus diesem Grund sind Minimalpolynome hier zuwider,
+von Interesse ist nicht der Begriff
+,,konjugierte algebraische Zahl``
+sondern der Begriff ,,konjugierter Ausdruck``.
+\end{remark}
+
+
+\begin{definition}[Konjugierter Ausdruck]\label{de:Konjugierter Ausdruck}
+Zwei Ausdrücke $E_0$ und $E_1$ heißen {\em konjugiert},
+wenn sie ein und dasselbe Strukturpolynom 
+$p_{E_0}(z)=p_{E_1}(z)$ haben.
+\begin{note}
+Zwei Ausdrücke $E_0$ und $E_1$,
+die \underline{nicht} konjugiert sind, 
+können denselben Wert $\xi_{E_0}=\xi_{E_1}$
+mit demselben Minimalpolynom haben.
+\end{note}
+\end{definition}

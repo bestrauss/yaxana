@@ -1,0 +1,12 @@
+Sylvain Pion, Chee Yap: "Constructive root bound for k-ary rational input numbers"
+https://www.sciencedirect.com/science/article/pii/S030439750600613X
+
+BFMSS: "A Separation Bound for Real Algebraic Expressions"
+https://www.researchgate.net/publication/225630737_A_Separation_Bound_for_Real_Algebraic_Expressions
+
+Mehlhorn et al.: "The LEDA class real number"
+https://www.researchgate.net/publication/2521513_The_LEDA_class_real_number
+
+Diverse Dokumente. Ist wohl von Yap.
+http://cs.nyu.edu/exact/doc/
+

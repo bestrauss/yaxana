@@ -1,0 +1,20 @@
+//
+// gradle subproject build
+//
+// @author Burkhard Strauss
+//
+
+jar 
+{
+  manifest 
+  { 
+    attributes(
+      "Main-Class": "br.eng.strauss.yaxana.calculator.Calculator", 
+      "Class-Path": "jasmin.jar"
+    ) 
+  }
+}
+
+//
+// EOF
+//

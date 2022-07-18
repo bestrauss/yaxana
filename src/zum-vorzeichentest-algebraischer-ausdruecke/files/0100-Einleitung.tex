@@ -1,0 +1,71 @@
+%
+% LaTeX
+%
+\pagebreak
+\section{Einleitung}\label{se:Einleitung}
+
+
+\begin{flushright}
+\begin{minipage}{6.85cm}
+{\em ,,Omnia in mensura, et numero et pondere disposuisti.``} \hfill
+\scriptsize{Vulgata, Liber Sapientiæ 11:21}
+\end{minipage}
+\end{flushright}
+
+
+\noindent
+Gegeben sei ein Ausdruck $E$,
+dessen Wert eine reelle algebraische Zahl $\xi_E=\val_E\in\A$ ist.
+$E$ verknüpft positive rationale Zahlen
+mittels der Operatoren $\in\{+, -, \times, \div, \sqrt[n]{\phantom{x}}\}$
+Beispiel:
+\begin{equation}\label{eq:ausdruck}
+  \xi_E = \sqrt{2} + \sqrt{3} - \sqrt{5 + 2\times\sqrt{6}}.
+\end{equation}
+Eine exakte Darstellung des Zahlenwerts $\xi_E = \textrm{val}(E)$ von $E$ 
+im Binär- oder Dezimalsystem oder dergleichen ist 
+aufgrund endloser Ziffernfolgen i.A. nicht möglich.
+
+Andererseits ist es möglich, fehlerfreie exakte Werte 
+für das Vorzeichen $\sgn{\xi_E}$ von $\xi_E$ zu bestimmen. 
+Der exakte Vergleich algebraischer Zahlen kann sicherstellen,
+daß etwa geometrische Algorithmen
+frei von Rundungsfehlern exakte Entscheidungen treffen
+und der Programmfluß nicht vom Chaos beherrscht wird.
+
+Mittels der
+in \cite{Mignotte, BFMS, BFMSS, PIYAP} beschriebenen Verfahren
+läßt sich eine Nulltrennungsschranke $\sep E>0$ berechnen, 
+so daß entweder $\xi_E=0$ oder $|\xi_E|\ge\sep E$ gilt.  %\veebar
+Die Nulltrennungsschranke $\sep E$ garantiert dann, 
+daß der Wert von $\sgn{\xi_E}$
+an einer entsprechend genauen Näherung $\hat{\xi}_E$ für $\xi_E$
+abgelesen werden kann.
+Die Verfahren sind robust, 
+berechnen aber im Fall $\xi_E=0$ 
+bei Ausdrücken mit mehr als ein paar Wurzeloperationen
+unfaßbar viele Nachkommastellen,
+deren Anzahl mit dem Produkt der Wurzelexponenten
+der Wurzeloperationen in $E$ wächst.
+
+Zwecks Verbesserung der Situation wird vorgeschlagen,
+den Vorzeichentest für $E$ 
+anhand eines mit $E$ verwandten Testausdrucks $E'$ 
+mit $\sgn\xi_E=\sgn\xi_{E'}$ durchzuführen,
+so daß gewisse Eigenschaften der Nullstellenverteilung 
+des Strukturpolynoms von $E'$ die Verwendung
+vergleichsweise traumhafter Nulltrennungsschranken erlaubt.
+Der Rechenaufwand im kritischen Fall $\xi_E=0$
+wird für Ausdrücke mit vielen Wurzeloperationen 
+drastisch reduziert bzw. der Test solcher Ausdrücke
+überhaupt erst praktikabel gemacht.
+
+Es folgen Abschnitte mit Definitionen
+und mit einer Vorzeichentesttheorie.
+Danach Fazit und Ausblick
+sowie im Anhang Beweise zum Strukturpolynom
+und Literaturverzeichnis.
+
+%
+% EOF
+%

@@ -1,0 +1,50 @@
+//
+// gradle subproject build
+//
+// @author Burkhard Strauss
+//
+
+task customJavadoc(type: Exec)
+{
+  doFirst
+  {
+    new File("build/tmp", "javadoc.options.txt").text = """
+      -doctitle 'Yaxana $version API'
+      -windowtitle 'Yaxana $version API'
+      -d build/docs/javadoc
+      -sourcepath src/main/java
+      --show-members public
+      --show-module-contents api
+      --show-packages exported
+      --show-types 'public'
+      -notimestamp 
+      -quiet 
+      br.eng.strauss.yaxana
+    """
+  }
+  workingDir '.'
+  commandLine 'javadoc', '@build/tmp/javadoc.options.txt'
+}
+
+tasks.javadoc.configure 
+{
+  dependsOn customJavadoc
+  onlyIf { false }
+}
+
+jar 
+{
+  manifest 
+  { 
+    attributes(
+      "Name":    "Yaxana",
+      "Version": "V" + version,
+      "Author":  "Burkhard E. Strauss",
+      "URL":     "https://github.com/bestrauss/yaxana",
+    ) 
+  }
+}
+
+//
+// EOF
+//

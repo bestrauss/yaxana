@@ -1,0 +1,24 @@
+//
+// Gradle settings.
+//
+// @author Burkhard E. Strauss
+//
+
+//
+// the subprojects
+//
+include "yaxana"
+include "yaxana-devel"
+
+//
+// calculate subproject directories from project names
+//
+settings.rootProject.children.each { subproject ->
+    File projectDir = new File('src/' + subproject.name.replace('-', '-'))
+    // println "  subproject ${projectDir}"
+    subproject.projectDir = projectDir 
+}
+
+//
+// EOF
+//

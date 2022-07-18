@@ -1,0 +1,84 @@
+%
+% Zum Vorzeichentest Algebraischer Ausdrücke
+%
+\documentclass[11pt,fleqn,german]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[OT2,T1]{fontenc}
+\usepackage[german]{babel}
+\usepackage{cite}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{curves}
+\usepackage{tkz-graph}
+\usepackage{color}
+%\usepackage[table]{xcolor}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{esdiff}          % Ableitungen
+\usepackage{hyperref}
+\usepackage{enumitem}
+  \setlist{topsep=0.4em,parsep=0em,itemsep=0.2em}
+\usepackage{changepage} % adjustwidth
+
+% https://math.uoregon.edu/wp-content/uploads/2014/12/compsymb-1qyb3zd.pdf
+
+\newcommand{\Author}{Burkhard E. Strauß}
+\newcommand{\Date}{A.D. 2022}
+\newcommand{\Rev}{Rev 1.0, 18/07/2022}
+\newcommand{\thetitle}{Zum Vorzeichentest Algebraischer Ausdrücke}
+\title{\thetitle}
+
+
+% http://de.wikibooks.org/wiki/LaTeX-W%C3%B6rterbuch:_fancyhdr
+\pagestyle{fancy}
+\fancyhf{} %alle Kopf- und Fußzeilenfelder bereinigen
+\fancyhead[EL]{\thepage}
+\fancyhead[EC]{}
+\fancyhead[ER]{\thetitle}
+\fancyhead[OL]{\thetitle}
+\fancyhead[OC]{}
+\fancyhead[OR]{\thepage}
+%\fancyfoot[ER]{{\small\Site}}
+%\fancyfoot[OL]{{\small\Site}}
+%\fancyfoot[EC]{{\small\Revision}}
+%\fancyfoot[OC]{{\small\Revision}}
+%\fancyfoot[EL]{{\small\Copyright}}
+%\fancyfoot[OR]{{\small\Copyright}}
+\renewcommand{\headrulewidth}{0.5pt}
+%\renewcommand{\footrulewidth}{0.5pt}
+\setlength{\headheight}{15pt}
+
+\hyphenation{
+  hin-rei-chend hin-rei-chen-de 
+  Dar-stel-lung-en 
+  Null-tren-nungs-schran-ke
+  Eins-tren-nungs-schran-ke
+  Ter-mi-nal-funk-tion
+  In-ter-vall-arith-metik
+  Qua-drat-wur-zel-ope-ra-tio-nen
+  weg-op-ti-miert
+  Sys-tem-en
+}
+
+%
+% Andere Dateien
+%
+\input{symbols}
+\input{theorems}
+\begin{document}
+\input{files/0000-Zusammenfassung}
+\input{files/0100-Einleitung}
+\input{files/0200-Definitionen}
+\input{files/0300-Vorzeichentesttheorie}
+%\input{files/0350-NochEineVorzeichentesttheorie}
+\input{files/0400-Fazit}
+\vfill\appendix
+\input{files/0A00-Anhang}
+\vfill
+\input{files/0B00-Literaturverzeichnis}
+\end{document}
+
+%
+% EOF
+%

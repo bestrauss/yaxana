@@ -1,0 +1,66 @@
+%
+% LaTeX
+%
+%\author{\Author}
+\author{\Author\footnote{Dipl.-Ing. der Elektrotechnik, RWTH Aachen.}}
+\date{\Date\footnote{\Rev}}
+\maketitle
+\vfill
+
+\begin{center}
+\bf Zusammenfassung
+\end{center}
+
+\noindent Der exakte Vergleich algebraischer Zahlen kann verhindern,
+daß geometrische Algorithmen
+aufgrund von Rundungsfehlern Fehlentscheidungen 
+mit chaotischen Folgen treffen.
+Um das Vorzeichen $\sgn\xi_E$
+des exakten Wertes $\xi_E\in\A$
+eines algebraischen Ausdrucks $E$
+mit Operatoren $\in\{+, -, \times, \div, \sqrt[n]{\phantom{x}}\}$
+und Operanden $\in\Q$ zu bestimmen,
+berechnen einschlägige Algorithmen
+eine Nulltrennungsschranke $\sep E$, die es erlaubt,
+das Vorzeichen an einer hinreichend genauen
+Näherung $\hat{\xi}_E$ abzulesen.
+Wir schlagen vor, den Vorzeichentest für $E$ 
+anhand eines Testausdrucks 
+$E'$ mit $\sgn E=\sgn E'$ durchzuführen,
+der zu einer speziellen Klasse wohlgeratener Ausdrücke gehört,
+für deren Tests nicht unfaßbar viele Nachkommastellen
+berechnet werden müssen,
+so daß auch die Verarbeitung von Ausdrücken
+mit vielen Wurzeloperationen praktikabel wird.
+Eine Implementation in Java findet sich auf
+github\footnote{\href{https://github.com/bestrauss/yaxana}{github.com/bestrauss/yaxana}}.
+
+
+\begin{center}
+\bf Abstract
+\end{center}
+
+\noindent The exact comparison of algebraic numbers can prevent
+geometric algorithms from taking wrong decisions
+due to rounding errors leading to chaotic program flow.
+To compute the sign of the exact value $\xi_E\in\A$
+of an algebraic expression $E$
+with operators $\in\{+, -, \times, \div, \sqrt[n]{\phantom{x}}\}$
+and operands $\in\Q$
+pertinent algorithms calculate a root separation bound $\sep E$
+which permits to read the sign 
+from a sufficiently precise approximation $\hat{\xi}_E$.
+We propose to perform the sign test of $E$
+using a test expression $E'$ with $\sgn\xi_E=\sgn\xi_{E'}$
+which belongs to a special class of well worked expressions
+whose tests do not require the computation of inconceivably 
+many $k$-ary places.
+Thus, the processing of expressions with many root operations
+becomes feasible.
+An implementation in Java is available on github\footnotemark[1].
+
+\vfill
+
+%
+% EOF
+%

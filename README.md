@@ -11,7 +11,7 @@ Yet another exact algebraic numbers API, a Java 17 module.
    with `sgn` E = `sgn` E', where needed.
  * For usage see javadoc (in `./jars`) of `class br.eng.strauss.yaxana.Robust`.
  * For examples see `src/yaxana/src/test/java/br.eng.strauss.yaxana.examples`
- * For theory see: Burkhard E. Strauss: [Zum-Vorzeichentest-Algebraischer-Ausdrücke](https://github.com/bestrauss/yaxana/docs/Zum-Vorzeichentest-Algebraischer-Ausdruecke.pdf)
+ * For theory see: Burkhard E. Strauss: [Zum-Vorzeichentest-Algebraischer-Ausdrücke](https://github.com/bestrauss/yaxana/blob/main/docs/Zum-Vorzeichentest-Algebraischer-Ausdruecke.pdf)
  * Stable versions (binary, sources, and javadoc) will be available in `./jars`
    as soon as the first beta test version is published.
 

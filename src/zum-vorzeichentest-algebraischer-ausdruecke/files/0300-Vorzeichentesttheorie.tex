@@ -135,7 +135,7 @@ mit $\frac{z_{k}}{z_{m}}\frac{z_{m}}{z_{k}}=1$.
 Sei $\xi_E$ der Wert eines Ausdrucks $E$.
 Wir bezeichnen den Ausdruck $E'$ mit dem Wert $\xi_{E'}$
 als einen {\em Testausdruck für $E$},
-wenn $\sgn\xi_E = \sgn\xi_E'$.
+wenn $\sgn\xi_E = \sgn\xi_{E'}$.
 \end{definition}
 
 
@@ -147,14 +147,15 @@ dann nennen wir $E'$ einen wohlgeratenen Testausdruck für $E$.
 
 
 \begin{theorem}[Ein wohlgeratener Testausdruck]\label{th:Ein wohlgeratener Testausdruck}
-Sei $E=E_0-E_1$ und weiterhin $\xi_{E_0}\ne 0$ und $\xi_{E_1}\ne 0$,
+Seien Ausdrücke $E_0$, $E_1$ und $E=E_0-E_1$
+und gelte für die Werte $\xi_{E_0}\ne 0$ und $\xi_{E_1}\ne 0$,
 dann ist 
 \begin{equation*}
   E' = \frac{E_0-E_1}{|E_0|+|E_1|}.
 \end{equation*}
 ein wohlgeratener Testausdruck für $E$.
 \begin{proof}
-Da der Wert des Ausdrucks im Nenner 
+Da der Wert des Nenners
 aufgrund der Voraussetzungen inklusive der Absolutwertbildungen
 positiv ist, gilt $\sgn E'=\sgn E$ 
 weshalb $E'$ nach \refdefinition{de:Testausdruck}
@@ -177,7 +178,7 @@ ist damit der Ausdruck $E'$ wohlgeraten.
 \end{theorem}
 
 \pagebreak
-\begin{algorithm}[Vorzeichentest]\label{al:Vorzeichentest}
+\begin{algorithm}[ZVAA Vorzeichentest]\label{al:Vorzeichentest}
 Bestimmung des Vorzeichens des Wertes $\xi_E$ 
 eines Ausdrucks $E=E_0-E_1$.
 \begin{enumerate}
@@ -185,7 +186,7 @@ eines Ausdrucks $E=E_0-E_1$.
       nach \reftheorem{th:Ein wohlgeratener Testausdruck}.
 \item Berechne $\sgn\xi_{E'}$
       per {\tt BFMSS[2]} wie in \cite{BFMSS, PIYAP} beschrieben,
-	  wobei allerdings in dem Ausdruck für die Nulltrennungsschranke
+	  wobei allerdings in dem Term für die Nulltrennungsschranke
 	  der Exponent $N_{E'}-1$ (der dort $D(E')-1$ genannt wird)
 	  durch $1$ ersetzt wird.
 \item {\tt return $\sgn\xi_{E'}$}.
@@ -193,13 +194,15 @@ eines Ausdrucks $E=E_0-E_1$.
 \end{algorithm}
 
 
-\begin{remark}[Bericht aus der Praxis]
-Bei sehr einfachen Ausdrücken 
-mit wenigen bzw. wenig schweren Wurzeloperationen 
-benötigt die hiesige {\tt ZVAA}-Methode 
+\begin{remark}
+Im Fall von Ausdrücken
+mit wenigen Wurzeloperationen 
+berechnet der {\tt ZVAA}-Vorzeichentest
 nach \refalgorithm{al:Vorzeichentest}
-bis zu grob 30\% mehr Zeit als {\tt BFMSS[2]}.
-Ansonsten ist {\tt ZVAA} für $\xi_E\ne0$ 
-im wesentlichen gleichschnell
-und für $\xi_E=0$ vergleichsweise blitzschnell.
+zwei nennenswerte zusätzliche Operationen
+und ist deshalb etwas langsamer als {\tt BFMSS[2]}.
+Bei wachsender Anzahl an unterschiedlichen Wurzeloperationen 
+nähern sich beide im Fall $\xi_E\ne 0$ aneinander an,
+und im Fall $\xi_E=0$ wird {\tt ZVAA} drastisch schneller.
+Es empfielt sich, unter entsprechenden Umständen {\tt ZVAA} einzusetzen.
 \end{remark}

@@ -8,8 +8,9 @@ package br.eng.strauss.yaxana;
  * @author Burkhard Strauss
  * @since 05-2022
  */
-public abstract sealed interface Comparison<C extends Comparison<C>>
-      extends Comparable<C> /**/ permits Expression<?>
+public abstract /* sealed */ interface Comparison<C extends Comparison<C>>
+      extends Comparable<C> /* permits Expression<?> */
+
 {
 
    /**

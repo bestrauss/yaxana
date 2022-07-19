@@ -1,0 +1,17 @@
+### Gradle
+.gradle
+build
+_site
+
+### Eclipse
+bin/
+local.properties
+.classpath
+.metadata
+*.launch
+
+### other
+TASKS.md
+.log
+images/
+main.pdf

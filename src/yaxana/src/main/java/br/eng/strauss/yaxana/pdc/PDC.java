@@ -15,8 +15,10 @@ import static java.math.RoundingMode.FLOOR;
 
 import java.math.RoundingMode;
 
+import br.eng.strauss.yaxana.Robust;
 import br.eng.strauss.yaxana.big.BigFloat;
 import br.eng.strauss.yaxana.big.Rounder;
+import br.eng.strauss.yaxana.epu.Algebraic;
 
 /**
  * Precision driven computation of approximations.
@@ -214,18 +216,21 @@ final class PDC
    {
 
       final int n = a.index();
-      if (n < 2)
+      if (2 <= n && n <= Robust.MAX_EXPONENT)
       {
-         throw new UnsupportedOperationException("n < 2");
+         final Approximable<?> left = a.left();
+         final int ldLeft = max(0, msbOfApprox(left));
+         final int opPrec = precision + 2 + (ldLeft + n - 1) / n;
+         final int ltPrec = n == 2 ? opPrec : precision + 3 + ldLeft;
+         ensurePrecision(left, ltPrec);
+         final BigFloat approx = left.approximation().root(n, new Rounder(opPrec, CEILING));
+         final boolean exact = rootIsExact(left.approximation(), n, approx);
+         setApproximation(a, approx, precision, exact);
       }
-      final Approximable<?> left = a.left();
-      final int ldLeft = max(0, msbOfApprox(left));
-      final int opPrec = precision + 2 + (ldLeft + n - 1) / n;
-      final int ltPrec = n == 2 ? opPrec : precision + 3 + ldLeft;
-      ensurePrecision(left, ltPrec);
-      final BigFloat approx = left.approximation().root(n, new Rounder(opPrec, CEILING));
-      final boolean exact = rootIsExact(left.approximation(), n, approx);
-      setApproximation(a, approx, precision, exact);
+      else
+      {
+         throw new UnsupportedOperationException("illegal exponent n=" + n);
+      }
    }
 
    /**
@@ -235,19 +240,24 @@ final class PDC
    {
 
       final int n = a.index();
-      if (n != 2)
+      if (2 <= n && n <= Robust.MAX_EXPONENT)
       {
-         throw new UnsupportedOperationException("n != 2");
+         final Approximable<?> left = a.left();
+         final int ldN = Algebraic.ceilOfLog2OfAbsOf(n);
+         final int ltPrec = precision + LdNOverHalfN.valueOf(n)
+               + (n - 1) * (max(0, msbOfApprox(left)) + 1);
+         ensurePrecision(left, ltPrec);
+         final int oom = 2 * msbOfApprox(left);
+         final int opPrec = precision + ldN + max(0, oom) + 1;
+         final Rounder rounder = new Rounder(opPrec, ROUNDING_MODE);
+         final BigFloat approx = left.approximation().pow(n, rounder);
+         final boolean exact = powIsExact(left.approximation(), n, approx);
+         setApproximation(a, approx, precision, exact);
       }
-      final Approximable<?> left = a.left();
-      final int ltPrec = precision + 2 + max(0, msbOfApprox(left)) + 1;
-      ensurePrecision(left, ltPrec);
-      final int oom = 2 * msbOfApprox(left);
-      final int opPrec = precision + 2 + max(0, oom) + 1;
-      final Rounder rounder = new Rounder(opPrec, ROUNDING_MODE);
-      final BigFloat approx = left.approximation().pow(n, rounder);
-      final boolean exact = powIsExact(left.approximation(), n, approx);
-      setApproximation(a, approx, precision, exact);
+      else
+      {
+         throw new UnsupportedOperationException("illegal exponent n=" + n);
+      }
    }
 
    /**

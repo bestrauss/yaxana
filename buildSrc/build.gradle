@@ -1,6 +1,10 @@
 apply plugin: 'eclipse'
 apply plugin: 'java'
 
-dependencies {
-    implementation gradleApi()
+dependencies 
+{
+  implementation gradleApi()
 }
+
+// System.out.format("buildSrc Java Version: %s\n", JavaVersion.current());
+

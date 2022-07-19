@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import br.eng.strauss.yaxana.Robust;
 import br.eng.strauss.yaxana.YaxanaTest;
 import br.eng.strauss.yaxana.epu.Algebraic;
 
@@ -53,6 +54,22 @@ public final class StringifierTest extends YaxanaTest
          assertEquals("2-(3-5)", value.toString());
          assertIO(value);
          assertEquals("4", value.approximation(1).toString());
+      }
+   }
+
+   @Test
+   public void testExample()
+   {
+
+      final String input = "-1*(1/\\3)*1";
+      final String desired = "-1*1/\\3*1";
+      {
+         final Algebraic value = new Algebraic(input);
+         assertEquals(desired, value.toString());
+      }
+      {
+         final Robust value = Robust.valueOf(input);
+         assertEquals(desired, value.toString());
       }
    }
 

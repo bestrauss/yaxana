@@ -110,5 +110,15 @@ public final class RobustSimplificationTest extends YaxanaTest
       assertEquals(ONE, ONE.pow(0));
    }
 
+   @Test
+   public void testExample()
+   {
+
+      final String input = "-1*1/\\3*1";
+      final String desired = "-1/\\3*1";
+      final String actual = Robust.valueOf(input).toString();
+      assertEquals(desired, actual);
+   }
+
    private final Robust value = Robust.valueOf("\\2+\\3");
 }

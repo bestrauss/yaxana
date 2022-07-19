@@ -72,7 +72,7 @@ Nun gilt für dasselbe Polynom auch
   = 
   z^N \prod_{k=1}^N (z^{-1}-z_k)
   =
-  \frac{(-1)^N}{c_0} \prod_{k=1}^N (z-z_k^{-1}),
+  c_0\,(-1)^N \prod_{k=1}^N (z-z_k^{-1}),
 \end{equation*}
 weshalb die Koeffizienten $c_{\div,k}$ des Polynoms
 \begin{equation*}
@@ -83,6 +83,31 @@ ebenfalls rational sind.
 \end{proof}
 \end{theorem}
 
+
+\pagebreak
+\section{$N^{\rm th}$ band filter}\label{se:AnhangFilter}
+
+Prototypfilter für die Übertragungsfunktionen 
+der Analyse-Resynthese-Kanäle einer 
+perfekt rekonstruierenden Polyphasenfilterbank. 
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=83mm]{images/Figure_roots4.png}
+\caption{Nullstellen}
+\end{figure}
+
+Die Nullstellen treten paarweise auf, 
+und das Produkt eines jeden Paares
+hat den Betrag $1$.
+
+\begin{figure}[H]
+\centering
+\includegraphics[height=23mm]{images/Figure_cfnbir.png}
+\hspace{10mm}
+\includegraphics[height=23mm]{images/Figure_cfnbPolished.png}
+\caption{Impulsantwort, Frequenzgang}
+\end{figure}
 
 %
 % EOF

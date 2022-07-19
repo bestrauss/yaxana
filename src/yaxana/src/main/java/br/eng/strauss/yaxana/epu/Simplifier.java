@@ -147,7 +147,7 @@ final class Simplifier
    private static Algebraic powRoot(final Algebraic a, final int nom, final int denom)
    {
 
-      // TODO
+      // TODO simplification
       return a.pow(nom).root(denom);
    }
 }

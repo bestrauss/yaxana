@@ -48,7 +48,7 @@ public final class RobustTest extends YaxanaTest
       }
    }
 
-   @Ignore // TODO
+   @Ignore // TODO ignorierte Testmethode
    @Test
    public void testValueOfSyntaxTree()
    {
@@ -135,30 +135,58 @@ public final class RobustTest extends YaxanaTest
    public void testMul()
    {
 
-      final Robust a = Robust.valueOf(PI);
-      final Robust b = Robust.valueOf(0x1P-100);
-      final Robust c = a.mul(b);
-      final double v = PI * Math.pow(2d, -100);
-      assertEquals(Math.nextDown(v), c.lowerBound(), 0d);
-      assertEquals(Math.nextUp(v), c.upperBound(), 0d);
-      assertEquals(v, c.doubleValue(), 0d);
-      assertTrue(c.lowerBound() <= c.doubleValue());
-      assertTrue(c.doubleValue() <= c.upperBound());
+      {
+         final Robust a = Robust.valueOf(PI);
+         final Robust b = Robust.valueOf(0x1P-100);
+         final Robust c = a.mul(b);
+         final double v = PI * Math.pow(2d, -100);
+         assertEquals(v, c.lowerBound(), 0d);
+         assertEquals(v, c.upperBound(), 0d);
+         assertEquals(v, c.doubleValue(), 0d);
+         assertTrue(c.lowerBound() <= c.doubleValue());
+         assertTrue(c.doubleValue() <= c.upperBound());
+      }
+      if (false) // TODO Zahlenwerte, so dass nextDown/nextUp benötigt wird, wie oben
+      {
+         final Robust a = Robust.valueOf(PI);
+         final Robust b = Robust.valueOf(0x1P-100);
+         final Robust c = a.mul(b);
+         final double v = PI * Math.pow(2d, -100);
+         assertEquals(Math.nextDown(v), c.lowerBound(), 0d);
+         assertEquals(Math.nextUp(v), c.upperBound(), 0d);
+         assertEquals(v, c.doubleValue(), 0d);
+         assertTrue(c.lowerBound() <= c.doubleValue());
+         assertTrue(c.doubleValue() <= c.upperBound());
+      }
    }
 
    @Test
    public void testDiv()
    {
 
-      final Robust a = Robust.valueOf(PI);
-      final Robust b = Robust.valueOf(0x1P100);
-      final Robust c = a.div(b);
-      final double v = PI * Math.pow(2d, -100);
-      assertEquals(Math.nextDown(v), c.lowerBound(), 0d);
-      assertEquals(Math.nextUp(v), c.upperBound(), 0d);
-      assertEquals(v, c.doubleValue(), 0d);
-      assertTrue(c.lowerBound() <= c.doubleValue());
-      assertTrue(c.doubleValue() <= c.upperBound());
+      {
+         final Robust a = Robust.valueOf(PI);
+         final Robust b = Robust.valueOf(0x1P100);
+         final Robust c = a.div(b);
+         final double v = PI * Math.pow(2d, -100);
+         assertEquals(v, c.lowerBound(), 0d);
+         assertEquals(v, c.upperBound(), 0d);
+         assertEquals(v, c.doubleValue(), 0d);
+         assertTrue(c.lowerBound() <= c.doubleValue());
+         assertTrue(c.doubleValue() <= c.upperBound());
+      }
+      if (false) // TODO Zahlenwerte, so dass nextDown/nextUp benötigt wird, wie oben
+      {
+         final Robust a = Robust.valueOf(PI);
+         final Robust b = Robust.valueOf(0x1P100);
+         final Robust c = a.div(b);
+         final double v = PI * Math.pow(2d, -100);
+         assertEquals(Math.nextDown(v), c.lowerBound(), 0d);
+         assertEquals(Math.nextUp(v), c.upperBound(), 0d);
+         assertEquals(v, c.doubleValue(), 0d);
+         assertTrue(c.lowerBound() <= c.doubleValue());
+         assertTrue(c.doubleValue() <= c.upperBound());
+      }
    }
 
    @Test
@@ -202,6 +230,9 @@ public final class RobustTest extends YaxanaTest
       assertEquals(ONE, Robust.valueOf(PI).pow(0));
       assertEquals(Robust.valueOf(PI), Robust.valueOf(PI).pow(1));
       assertEquals(ONE.div(Robust.valueOf(PI)), Robust.valueOf(PI).pow(-1));
+      assertEquals(Robust.valueOf(125), Robust.valueOf(5).pow(3));
+      assertEquals(ONE.div(Robust.valueOf(125)), Robust.valueOf(5).pow(-3));
+      assertEquals(Robust.valueOf("2^2047"), Robust.valueOf(2).pow(Robust.MAX_EXPONENT));
    }
 
    @Test
@@ -243,7 +274,8 @@ public final class RobustTest extends YaxanaTest
    {
 
       assertEquals(1, Robust.valueOf(1d).index());
-      assertEquals(2, Robust.valueOf(2d).pow(2).index());
+      assertEquals(4, Robust.valueOf(2d).pow(2).index());
+      assertEquals(2, Robust.valueOf(PI).pow(2).index());
       assertEquals(2, Robust.valueOf(2d).root(2).index());
    }
 
@@ -257,8 +289,9 @@ public final class RobustTest extends YaxanaTest
          assertEquals(desired, actual);
       }
       {
-         final String desired = "|-2|^2-3/4";
-         final String actual = Robust.valueOf(desired).toString();
+         final String input = "|-2|^2-3/4";
+         final String desired = "0x1.AP+1";
+         final String actual = Robust.valueOf(input).toString();
          assertEquals(desired, actual);
       }
    }
@@ -307,13 +340,25 @@ public final class RobustTest extends YaxanaTest
    {
 
       {
-         final String desired = "\\2+\\3-\\(5+2*\\6)";
+         final String input = "(-|-2|)^2";
+         final String desired = "4";
+         final String actual = Robust.valueOf(input).toString();
+         assertEquals(desired, actual);
+      }
+      {
+         final String desired = "\\2+\\3-\\(5+2*\\7)";
          final String actual = Robust.valueOf(desired).toString();
          assertEquals(desired, actual);
       }
       {
-         final String desired = "(-|-2|)^2-3/4-((-|-2|)^2-3/4)";
+         final String desired = "\\2+\\3-\\(5+2*\\6)";
          final String actual = Robust.valueOf(desired).toString();
+         assertEquals("0", actual);
+      }
+      {
+         final String input = "(-|-2|)^2-3/4-((-|-2|)^2-3/5)";
+         final String desired = "0x1.AP+1-(4-3/5)";
+         final String actual = Robust.valueOf(input).toString();
          assertEquals(desired, actual);
       }
    }
@@ -341,11 +386,11 @@ public final class RobustTest extends YaxanaTest
    }
 
    @Test
-   public void testNoOfNonTerminalsOrTerminals()
+   public void testNoOfOperationsAndOperands()
    {
 
-      final Robust value = Robust.valueOf("1+2");
-      assertEquals(3, value.size());
-      assertEquals(2, value.terminalsSize());
+      final Robust value = Robust.valueOf("1/3+2");
+      assertEquals(3, value.noOfOperands());
+      assertEquals(2, value.noOfOperations());
    }
 }

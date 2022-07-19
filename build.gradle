@@ -15,7 +15,6 @@ buildscript
   }
   dependencies 
   {
-    // https://github.com/java9-modularity/gradle-modules-plugin
     classpath "org.javamodularity:moduleplugin:1.7.0"
   }
 }
@@ -34,15 +33,12 @@ subprojects
   apply plugin: 'eclipse'
   apply plugin: 'java-library'
   version       = '0.6.6-SNAPSHOT'
-  sourceCompatibility = 17
-  targetCompatibility = 17
+  sourceCompatibility = JavaVersion.VERSION_17
+  targetCompatibility = JavaVersion.VERSION_17
   compileJava.options.encoding = "ISO-8859-1"
   compileTestJava.options.encoding = "ISO-8859-1"
   tasks.withType(JavaCompile) 
-  compileJava.options.fork = true
-  compileJava.options.forkOptions.executable = 'C:/Program Files/Amazon Corretto/jdk17.0.2_8/bin/javac'
-  compileTestJava.options.fork = true
-  compileTestJava.options.forkOptions.executable = 'C:/Program Files/Amazon Corretto/jdk17.0.2_8/bin/javac'
+  // System.out.format("Projects Java Version: %s\n", JavaVersion.current());
   afterEvaluate {
     repositories {
       mavenCentral()
@@ -78,23 +74,29 @@ subprojects
   }
 }
 
-task backup(type: Zip) 
+task backup 
 {
-   from    '.'
-   include '**'
-   include '.gitignore'
-   include '**/.gitignore'
-   exclude '.git/**'
-   exclude '.gradle/**'
-   exclude '**/.gradle/**'
-   exclude 'build/**'
-   exclude '**/build/**'
-   exclude '**/bin/**'
-   exclude '**/literature/**'
-   exclude '**/main.pdf'
-   archiveName  'yaxana-' + (new Date()).format("YYYY-MM-dd-HH-mm-ss") + '.zip'
-   destinationDir(file('D:/Archive/bJ/2022/'))
-   println "creating file D:/Archive/bJ/2022/${archiveName}"
+  doLast 
+  {
+    tasks.create('doBackup', Zip) 
+    {
+      from    '.'
+      include '**'
+      include '.gitignore'
+      include '**/.gitignore'
+      exclude '.git/**'
+      exclude '.gradle/**'
+      exclude '**/.gradle/**'
+      exclude 'build/**'
+      exclude '**/build/**'
+      exclude '**/bin/**'
+      exclude '**/literature/**'
+      exclude '**/main.pdf'
+      archiveName  'yaxana-' + (new Date()).format("YYYY-MM-dd-HH-mm-ss") + '.zip'
+      destinationDir(file('D:/Archive/bJ/2022/'))
+      println "creating file D:/Archive/bJ/2022/${archiveName}"
+    }
+  }
 }
 
 //

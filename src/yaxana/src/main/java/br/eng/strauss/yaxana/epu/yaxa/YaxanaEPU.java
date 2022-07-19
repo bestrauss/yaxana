@@ -30,17 +30,17 @@ public final class YaxanaEPU extends AbstractEPU
    {
 
       final Algebraic value = this.operand;
-      if (value.type() != Type.SUB)
+      if (value.type() == Type.SUB)
       {
-         throw new UnsupportedOperationException();
+         value.approximation(1);
+         final int precision = value.yaxanaPrecision();
+         final BigFloat leftApprox = value.left().approximation().abs();
+         final boolean bigValues = leftApprox.compareTo(ONE) > 0;
+         final BigFloat testValue = bigValues ? value.approximation(precision)
+               : ONE.sub(value.right().div(value.left()).approximation(precision));
+         return testValue.abs().compareTo(twoTo(-precision)) < 0 ? PDCTools.setExactZero(value)
+               : PDCTools.ensureFiniteApproximation(value);
       }
-      value.approximation(1);
-      final int precision = value.yaxanaPrecision();
-      final BigFloat leftApprox = value.left().approximation().abs();
-      final boolean bigValues = leftApprox.compareTo(ONE) > 0;
-      final BigFloat testValue = bigValues ? value.approximation(precision)
-            : ONE.sub(value.right().div(value.left()).approximation(precision));
-      return testValue.abs().compareTo(twoTo(-precision)) < 0 ? PDCTools.setExactZero(value)
-            : PDCTools.ensureFiniteApproximation(value);
+      throw new UnsupportedOperationException();
    }
 }

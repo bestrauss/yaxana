@@ -10,9 +10,11 @@ import static br.eng.strauss.yaxana.pdc.Scrutinizer.rootIsExact;
 import static br.eng.strauss.yaxana.pdc.Scrutinizer.subIsExact;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.math.MathContext;
+import java.util.Objects;
 
 import org.junit.Test;
 
@@ -51,9 +53,9 @@ public final class AlgebraicTest extends YaxanaTest
    public void testHashCode()
    {
 
-      assertEquals(BigFloat.ONE.hashCode(), Algebraic.ONE.hashCode() ^ Integer.MAX_VALUE);
-      assertEquals(new BigFloat(-42).hashCode(),
-                   new Algebraic(-42d).hashCode() ^ Integer.MAX_VALUE);
+      assertEquals(Objects.hash(BigFloat.ONE, Integer.MAX_VALUE), Algebraic.ONE.hashCode());
+      assertEquals(Objects.hash(new BigFloat(-42), Integer.MAX_VALUE),
+                   new Algebraic(-42d).hashCode());
    }
 
    @Test
@@ -332,6 +334,22 @@ public final class AlgebraicTest extends YaxanaTest
          final Algebraic d = a.mul(b);
          final Algebraic f = ZERO.add(a.sqrt().add(b.sqrt())).sqr().sub(c).div(TWO).sqr().sub(d);
          assertTrue(f.isZero());
+      }
+   }
+
+   @Test
+   public void testEquals()
+   {
+
+      {
+         final Algebraic a = new Algebraic("2+\\3");
+         final Algebraic b = new Algebraic("2+\\3");
+         assertEquals(a, b);
+      }
+      {
+         final Algebraic a = new Algebraic("2+\\3");
+         final Algebraic b = new Algebraic("2+\\4");
+         assertNotEquals(a, b);
       }
    }
 }

@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import br.eng.strauss.yaxana.Robust;
+import br.eng.strauss.yaxana.Robusts;
 import br.eng.strauss.yaxana.YaxanaTest;
 import br.eng.strauss.yaxana.epu.Algebraic;
 import br.eng.strauss.yaxana.tools.SampleAlgebraic;
@@ -47,5 +49,45 @@ public final class RootBoundEPUTest extends YaxanaTest
       assertEquals("RootBoundEPU:\n  \\2", epu.toString());
       epu.signum(new Algebraic("\\3"));
       assertEquals("RootBoundEPU:\n  \\3", epu.toString());
+   }
+
+   @Test
+   public void testExponent()
+   {
+
+      testExponent("\\1", 2);
+      testExponent("1", 1);
+      testExponent("\\2-\\2", 2);
+      testExponent("\\2-\\3", 4);
+      testExponent("\\2-(\\3+\\2)", 4);
+      testExponent("(\\3+\\2)-(\\3+\\2)", 4);
+      testExponent("\\(\\3+\\2)-\\(\\3+\\2)", 8);
+   }
+
+   private void testExponent(final String expression, final int exponent)
+   {
+
+      try
+      {
+         Robusts.setSimplification(false);
+         final RootBoundEPU epu = new RootBoundEPU();
+         final Robust robust = Robust.valueOf(expression);
+         final Algebraic a = (Algebraic) robust.toSyntaxTree();
+         {
+            a.D = Long.MIN_VALUE;
+            epu.clearVisitedMarks(a);
+            epu.productOfIndices(a);
+            assertEquals(exponent, a.D);
+         }
+         {
+            a.D = Long.MIN_VALUE;
+            epu.sufficientPrecision(a);
+            assertEquals(exponent, a.D);
+         }
+      }
+      finally
+      {
+         Robusts.setSimplification(true);
+      }
    }
 }

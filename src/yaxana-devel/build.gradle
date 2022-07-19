@@ -15,6 +15,11 @@ jar
   }
 }
 
+tasks.javadoc.configure 
+{
+  onlyIf { false }
+}
+
 //
 // EOF
 //

@@ -39,7 +39,7 @@ public final class RobustHashcodeEqualsTest extends YaxanaTest
          }
          map.put(hashCode, value);
       }
-      assertEquals(count - 1, map.size());
+      assertEquals(count, map.size());
    }
 
    @Test

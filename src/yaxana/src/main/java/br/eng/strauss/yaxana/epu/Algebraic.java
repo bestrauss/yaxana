@@ -8,13 +8,16 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+import br.eng.strauss.yaxana.Algorithm;
 import br.eng.strauss.yaxana.Experimental;
 import br.eng.strauss.yaxana.Expression;
 import br.eng.strauss.yaxana.SyntaxTree;
 import br.eng.strauss.yaxana.Type;
 import br.eng.strauss.yaxana.big.BigFloat;
 import br.eng.strauss.yaxana.big.Rounder;
+import br.eng.strauss.yaxana.epu.robo.RootBoundEPU;
 import br.eng.strauss.yaxana.epu.yaxa.YaxanaEPU;
+import br.eng.strauss.yaxana.epu.zvaa.ZvaaEPU;
 import br.eng.strauss.yaxana.exc.UnreachedException;
 import br.eng.strauss.yaxana.io.Parser;
 import br.eng.strauss.yaxana.io.Stringifier;
@@ -70,19 +73,13 @@ public final class Algebraic
 
    /**
     * Returns a new value corresponding to a given expression.
-    * <p>
-    * This is used by {@code br.eng.strauss.yaxana.calculator.CodeWriter}.
     * 
     * @param expression
     *           the expression.
+    * @param rounder
+    *           rounder to be used or {@code null}
     * @return a new value corresponding to the given expression.
     */
-   public static Algebraic valueOf(final String expression)
-   {
-
-      return valueOf(expression, null);
-   }
-
    private static Algebraic valueOf(final String expression, final Rounder rounder)
    {
 
@@ -126,7 +123,7 @@ public final class Algebraic
       this.precision = precision;
       this.left = null;
       this.right = null;
-      this.hashCode = this.approximation.hashCode() ^ this.precision;
+      this.hashCode = Objects.hash(this.approximation, this.precision);
    }
 
    /**
@@ -299,11 +296,17 @@ public final class Algebraic
    public int signum()
    {
 
-      final Supplier<EPU> epu;
+      final Algorithm algorithm;
       synchronized (Algebraic.class)
       {
-         epu = Algebraic.epu;
+         algorithm = Algebraic.algorithm;
       }
+      final Supplier<EPU> epu = switch (algorithm)
+      {
+         case BFMSS2 -> () -> new RootBoundEPU();
+         case ZVAA -> () -> new ZvaaEPU();
+         case YAXANA -> () -> new YaxanaEPU();
+      };
       Approximable.super.ensureSignum(epu);
       return this.approximation.signum();
 
@@ -345,7 +348,7 @@ public final class Algebraic
          if (other instanceof Algebraic)
          {
             final Algebraic that = (Algebraic) other;
-            return astEquals(that);
+            return this.astEquals(that);
          }
          return false;
       }
@@ -373,6 +376,10 @@ public final class Algebraic
          if (this.right != null && !this.right.astEquals(that.right))
          {
             return false;
+         }
+         if (this.type == Type.TERMINAL)
+         {
+            return this.approximation.equals(that.approximation);
          }
          return true;
       }
@@ -489,31 +496,33 @@ public final class Algebraic
    }
 
    /**
-    * Returns the simple name of the class of the Exact Processing Unit used to determine the sign.
+    * Returns the algorithm being used for sign computation.
     * 
-    * @return the simple name of the class of the Exact Processing Unit used to determine the sign.
+    * @return the algorithm being used for sign computation.
+    * @see #setAlgorithm(Algorithm)
     */
-   public static String getEPUClassName()
+   public static Algorithm getAlgorithm()
    {
 
       synchronized (Algebraic.class)
       {
-         return Algebraic.epu.get().getClass().getSimpleName();
+         return algorithm;
       }
    }
 
    /**
-    * Sets Exact Processing Unit used to determine the sign.
+    * Sets the algorithm to be used for sign computation.
     * 
-    * @param epu
-    *           A supplier of Exact Processing Units.
+    * @param algorithm
+    *           the algorithm to be used for sign computation.
+    * @see #getAlgorithm()
     */
-   public static void setEPU(final Supplier<EPU> epu)
+   public static void setAlgorithm(final Algorithm algorithm)
    {
 
       synchronized (Algebraic.class)
       {
-         Algebraic.epu = epu;
+         Algebraic.algorithm = algorithm;
       }
    }
 
@@ -839,8 +848,8 @@ public final class Algebraic
    /** The number {@code 0.5}. */
    public static final Algebraic HALF = new Algebraic(0.5);
 
-   /** The {@link EPU} being used for sign testing. */
-   private static Supplier<EPU> epu = () -> new YaxanaEPU();
+   /** The {@link Algorithm} being used for sign computation. */
+   private static Algorithm algorithm = Algorithm.ZVAA;
 
    /** The type of expression represented by this {@link Algebraic}. */
    private final Type type;

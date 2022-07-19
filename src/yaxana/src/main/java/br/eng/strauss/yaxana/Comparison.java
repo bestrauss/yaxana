@@ -10,6 +10,7 @@ package br.eng.strauss.yaxana;
  */
 public abstract sealed interface Comparison<C extends Comparison<C>>
       extends Comparable<C> /**/ permits Expression<?>
+
 {
 
    /**

@@ -19,7 +19,7 @@ public final class PrecisionOverflowExceptionTest extends YaxanaTest
    public void test()
    {
 
-      final Algebraic a = Algebraic.valueOf("1");
+      final Algebraic a = Algebraic.ONE;
       final int precision = (int) PrecisionOverflowException.MAX_PRECISION;
       try
       {

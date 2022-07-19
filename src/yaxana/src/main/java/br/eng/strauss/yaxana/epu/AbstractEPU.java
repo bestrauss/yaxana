@@ -1,5 +1,8 @@
 package br.eng.strauss.yaxana.epu;
 
+import br.eng.strauss.yaxana.Type;
+import br.eng.strauss.yaxana.epu.zvaa.ZvaaEPU;
+
 /**
  * Base class for EPU implementations.
  * 
@@ -26,6 +29,14 @@ public abstract class AbstractEPU implements EPU
       }
       if (this.signum == null)
       {
+         if (operand.type() == Type.ADD)
+         {
+            final Algebraic difference = operand.left().sub(operand.right().neg());
+            final ZvaaEPU epu = new ZvaaEPU();
+            final int signum = epu.signum(difference);
+            this.operand.setApproximation(difference.approximation(), difference.signum());
+            return signum;
+         }
          this.signum = this.computeSignum();
       }
       return this.signum;

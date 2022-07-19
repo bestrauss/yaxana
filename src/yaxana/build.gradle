@@ -8,7 +8,7 @@ task customJavadoc(type: Exec)
 {
   doFirst
   {
-    new File("build/tmp", "javadoc.options.txt").text = """
+    new File("src/yaxana/build/tmp", "javadoc.options.txt").text = """
       -doctitle 'Yaxana $version API'
       -windowtitle 'Yaxana $version API'
       -d build/docs/javadoc

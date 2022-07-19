@@ -1,12 +1,15 @@
 package br.eng.strauss.yaxana.epu;
 
+import static br.eng.strauss.yaxana.Algorithm.YAXANA;
+import static br.eng.strauss.yaxana.Algorithm.ZVAA;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
+import br.eng.strauss.yaxana.Algorithm;
 import br.eng.strauss.yaxana.YaxanaTest;
-import br.eng.strauss.yaxana.epu.robo.RootBoundEPU;
+import br.eng.strauss.yaxana.anno.WithAlgorithms;
 import br.eng.strauss.yaxana.exc.PrecisionOverflowException;
 import br.eng.strauss.yaxana.tools.SampleAlgebraic;
 
@@ -19,12 +22,10 @@ import br.eng.strauss.yaxana.tools.SampleAlgebraic;
 public final class ExtremeExponentsTest extends YaxanaTest
 {
 
-   // @WithAllEPUs zu heavy für RootBoundEPU
+   @WithAlgorithms({ ZVAA, YAXANA })
    @Test
    public void test()
    {
-
-      yaxanaEPU();
 
       test("\\1p-100", 4, 0);
       test("\\1p-101", 4, 0);
@@ -56,7 +57,7 @@ public final class ExtremeExponentsTest extends YaxanaTest
       }
       catch (final PrecisionOverflowException e)
       {
-         if (Algebraic.getEPUClassName().equals(RootBoundEPU.class.getSimpleName()))
+         if (Algebraic.getAlgorithm().equals(Algorithm.BFMSS2))
          {
             return;
          }

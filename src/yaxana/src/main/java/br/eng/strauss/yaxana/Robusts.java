@@ -1,13 +1,12 @@
 package br.eng.strauss.yaxana;
 
+import static java.lang.StackWalker.Option.RETAIN_CLASS_REFERENCE;
+
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 import br.eng.strauss.yaxana.big.BigFloat;
-import br.eng.strauss.yaxana.epu.Algebraic;
 import br.eng.strauss.yaxana.epu.Cache;
-import br.eng.strauss.yaxana.epu.robo.RootBoundEPU;
-import br.eng.strauss.yaxana.epu.yaxa.YaxanaEPU;
 import br.eng.strauss.yaxana.rnd.RandomRobust;
 
 /**
@@ -18,17 +17,6 @@ import br.eng.strauss.yaxana.rnd.RandomRobust;
  */
 public final class Robusts
 {
-
-   /**
-    * Clears the cache.
-    * <p>
-    * For more relevant info about the cache see {@link #setMaximumCacheSize(int)}.
-    */
-   public static void clearCache()
-   {
-
-      Cache.getInstance().clear();
-   }
 
    /**
     * Sets the maximum size of the cache.
@@ -65,28 +53,13 @@ public final class Robusts
    }
 
    /**
-    * Switches between vintage mode, using the {@code BFMSS[2]} method for sign detection where
-    * interval arithmetic fails, and cutting-edge mode {@code BFMSS[2]UP}.
-    * <p>
-    * The default mode is cutting-edge mode. This method is intended to allow comparisons of modes.
-    * 
-    * @param vintageMode
-    *           whether vintage mode is to be set.
-    */
-   public static void setVintageMode(final boolean vintageMode)
-   {
-
-      Algebraic.setEPU(vintageMode ? () -> new RootBoundEPU() : () -> new YaxanaEPU());
-   }
-
-   /**
-    * Returns certain sequences of {@link Robust} instances.
+    * Returns a pseudo random sequence of {@link Robust} instances.
     * <p>
     * For each {@code maxDepth} the returned sequence is always the same for each call.
     * 
     * @param maxDepth
     *           the maximum depth of the abstract syntax tree of the {@link Robust} instances.
-    * @return a certain sequence of {@link Robust} instances.
+    * @return a pseudo random sequence of {@link Robust} instances.
     */
    public static Supplier<Robust> randomSequence(final int maxDepth)
    {
@@ -96,7 +69,19 @@ public final class Robusts
    }
 
    /**
-    * Returns a pattern which matches allowed terminal string representations.
+    * Clears the cache.
+    * <p>
+    * For more relevant info about the cache see {@link #setMaximumCacheSize(int)}.
+    */
+   public static void clearCache()
+   {
+
+      Cache.getInstance().clear();
+   }
+
+   /**
+    * Returns a pattern which matches licit string representations for values of terminal
+    * expressions.
     * <p>
     * The pattern matches the well known formats produced by {@link Double#toString(double)} and
     * {@link Double#toHexString(double)}. The mantissa may be decimal or hexadecimal. A hexadecimal
@@ -104,12 +89,35 @@ public final class Robusts
     * point). The optional exponent is decimal. It may be base ten {@code e}, {@code E} or base two
     * {@code p}, {@code P}. Mantissa and exponent optionally have a sign.
     * 
-    * @return a pattern which matches allowed terminal string representations.
+    * @return a pattern which matches licit string representations for values of terminal
+    *         expressions.
     */
    public static Pattern terminalPattern()
    {
 
       return BigFloat.terminalPattern();
+   }
+
+   /**
+    * Switches the simplification of {@link Robust} expressions on or off.
+    * 
+    * @param simplification
+    *           whether to switch the simplification of {@link Robust} expressions on or off.
+    * @throws IllegalCallerException
+    *            In case the caller is an API user, lacking rights.
+    */
+   public static void setSimplification(final boolean simplification) throws IllegalCallerException
+   {
+
+      final Class<?> callerClass = StackWalker.getInstance(RETAIN_CLASS_REFERENCE).getCallerClass();
+      if (callerClass.getPackageName().startsWith(Robusts.class.getPackageName()))
+      {
+         Robust.simplification = simplification;
+      }
+      else
+      {
+         throw new IllegalCallerException("API users are not allowed to call this method.");
+      }
    }
 
    private Robusts()

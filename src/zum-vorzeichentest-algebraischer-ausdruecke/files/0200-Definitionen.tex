@@ -81,7 +81,7 @@ Wert $\xi_E=\val{E}\in\A$ eines Ausdrucks $E$ ist
 Das Strukturpolynom $p_E(z)$ eines Ausdrucks $E$
 mit dem Wert $\xi_E$
 ist ein Polynom mit rationalen Koeffzienten,
-das eine Nullstelle bei $z=|\xi_E|$ hat
+das eine Nullstelle hat, deren Betrag $|\xi_E|$ ist
 und das anhand des abstrakten Syntaxbaums von $E$
 nach folgenden Bildungsregeln konstruiert wird:
 \begin{equation*}
@@ -102,13 +102,15 @@ Dabei
       die nicht verschwinden, denn die Bildungsregeln 
 	  gewährleisten dies.
 \item haben die gebildeten Polynome rationale Koeffizienten,
-      wie bereits angegeben. Dies wird 
-      abgesehen von den trivialen Fällen, 
+      was ebenfalls durch die Bildungsregeln gewährleistet ist.
+      Dies wird abgesehen von den trivialen Fällen
 	  in \refappendix{se:Anhang} gezeigt.
-\item ist $K$ im Term $z^{-K}$ bei der Addition 
-      die Anzahl an Nullstellen,
+\item könnte bei der Addition zweier Nullstellen $z_{k_0}+z_{k_1}$
+      eine Nullstelle bei $z=0$ entstehen,
+	  was aber durch den Term $z^{-K}$ vereitelt wird,
+	  der bis zu $K$ Nullstellen bei $z=0$ aufhebt.
+	  $K$ wird als Anzahl der Nullstellen gewählt,
       die das Polynom ohne den Term $z^{-K}$ hätte.
-      $z^{-K}$ befreit das Polynom von Nullstellen bei $z=0$.
 \item verändert der Term $z^{-K}$ die Koeffizienten nicht,
       sondern tauscht sie nur aus (verschiebt sie), 
 	  weshalb sie gleich und damit weiterhin rational bleiben.

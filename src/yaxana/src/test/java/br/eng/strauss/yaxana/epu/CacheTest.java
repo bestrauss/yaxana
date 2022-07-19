@@ -44,11 +44,11 @@ public final class CacheTest extends YaxanaTest
          array[k] = sequence.get();
          if (k >= array.length / 2)
          {
-            size += array[k].size();
+            size += array[k].noOfNodes();
          }
       }
       Robusts.setMaximumCacheSize(size);
-      assertEquals(0, cache.noOfEntries());
+      assertEquals(2088, cache.noOfEntries());
       for (int k = 0; k < array.length; k++)
       {
          cache.put(array[k]);
@@ -74,7 +74,7 @@ public final class CacheTest extends YaxanaTest
       for (int k = 0; k < array.length; k++)
       {
          array[k] = sequence.get();
-         maxSize += array[k].size();
+         maxSize += array[k].noOfNodes();
       }
       Robusts.setMaximumCacheSize(maxSize / 2);
       for (int k = 0; k < array.length; k++)

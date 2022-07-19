@@ -18,12 +18,4 @@ public final class RobustsTest extends YaxanaTest
       Robusts.setMaximumCacheSize(24);
       assertEquals(24, Robusts.getMaximumCacheSize());
    }
-
-   @Test
-   public void testVintageMode()
-   {
-
-      Robusts.setVintageMode(true);
-      Robusts.setVintageMode(false);
-   }
 }

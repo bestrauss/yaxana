@@ -86,6 +86,7 @@ public final class Stringifier<S extends SyntaxTree<S>>
          case POW :
          {
             final boolean parens = a.left().type() != Type.TERMINAL && a.left().type() != Type.ABS
+                  && a.left().type() != Type.ROOT
                   || a.left().type() == Type.TERMINAL && a.left().terminal().startsWith("-");
             append(sb, a.left(), a, parens);
             sb.append("^");

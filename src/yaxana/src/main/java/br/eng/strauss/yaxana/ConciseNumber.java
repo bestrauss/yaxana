@@ -1,0 +1,196 @@
+package br.eng.strauss.yaxana;
+
+import static br.eng.strauss.yaxana.Type.TERMINAL;
+import static java.lang.System.arraycopy;
+
+import java.util.Arrays;
+
+import br.eng.strauss.yaxana.big.BigFloat;
+import br.eng.strauss.yaxana.epu.Algebraic;
+import br.eng.strauss.yaxana.epu.Cache;
+
+/**
+ * Immutable expression with {@code double} terminals concisely stored in reverse polish notation.
+ * 
+ * @author Burkhard Strauﬂ
+ * @since 2023-09
+ */
+public abstract sealed class ConciseNumber extends Number permits Robust
+{
+
+   protected ConciseNumber(final short[] operations, final double[] operands, final int hashCode)
+   {
+
+      this.operations = operations;
+      this.operands = operands;
+      this.hashCode = hashCode;
+   }
+
+   /**
+    * Returns the number of nodes in the abstract syntax tree.
+    * 
+    * @return the number of nodes in the abstract syntax tree.
+    */
+   public final int noOfNodes()
+   {
+
+      return this.operations.length;
+   }
+
+   /**
+    * Returns the number of non-terminal nodes in the abstract syntax tree.
+    * 
+    * @return the number of non-terminal nodes in the abstract syntax tree.
+    */
+   public final int noOfOperations()
+   {
+
+      return this.operations.length - this.operands.length;
+   }
+
+   /**
+    * Returns the number of terminal nodes in the abstract syntax tree.
+    * 
+    * @return the number of terminal nodes in the abstract syntax tree.
+    */
+   public final int noOfOperands()
+   {
+
+      return this.operands.length;
+   }
+
+   @Override
+   public final boolean equals(final Object other)
+   {
+
+      if (other != this)
+      {
+         if (other instanceof final ConciseNumber that)
+         {
+            if (this.hashCode == that.hashCode && Arrays.equals(this.operations, that.operations)
+                  && Arrays.equals(this.operands, that.operands))
+            {
+               return true;
+            }
+         }
+         return false;
+      }
+      return true;
+   }
+
+   @Override
+   public final int hashCode()
+   {
+
+      return this.hashCode;
+   }
+
+   protected static Robust staticValueOf(final double value)
+   {
+
+      final Robust robust = Robust.valueOf(value);
+      Cache.getInstance().clear();
+      return robust;
+   }
+
+   protected static Robust valueOf(final short[] operations, final double[] operands,
+         final int hashCode, final double value, final double lo, final double hi,
+         final boolean mayBeZero)
+   {
+
+      final Cache cache = Cache.getInstance();
+      final Robust key = new Robust(operations, operands, hashCode, 0d, 0d, 0d, false);
+      Robust robust = cache.get(key);
+      if (robust == null)
+      {
+         robust = new Robust(operations, operands, hashCode, value, lo, hi, mayBeZero);
+         cache.put(robust);
+      }
+      return robust;
+   }
+
+   protected Robust newUnary(final Type type, final short exponent, final double value,
+         final double lo, final double hi)
+   {
+
+      final int k = this.operations.length;
+      final short[] operations = Arrays.copyOf(this.operations, k + 1);
+      operations[k] = (short) (type.ordinal() + (exponent << 4));
+      final int hashCode = 31 * this.hashCode() + operations[k];
+      return Robust.valueOf(operations, this.operands.clone(), hashCode, value, lo, hi, false)
+            .simplified();
+   }
+
+   protected Robust newBinary(final Type type, final Robust that, final double value,
+         final double lo, final double hi, final boolean mayBeZero)
+   {
+
+      final int lenU = this.operations.length + that.operations.length;
+      final int lenT = this.operands.length + that.operands.length;
+      final short[] operations = Arrays.copyOf(this.operations, lenU + 1);
+      final double[] operands = Arrays.copyOf(this.operands, lenT);
+      arraycopy(that.operations, 0, operations, this.operations.length, that.operations.length);
+      arraycopy(that.operands, 0, operands, this.operands.length, that.operands.length);
+      operations[lenU] = (short) type.ordinal();
+      final int hashCode = 31 * (31 * this.hashCode() + that.hashCode()) + type.ordinal();
+      return Robust.valueOf(operations, operands, hashCode, value, lo, hi, mayBeZero).simplified();
+   }
+
+   protected Algebraic toAlgebraic()
+   {
+
+      final CachedStack<Algebraic> stack = new CachedStack<>();
+      for (int kOperation = 0, kOperand = 0; kOperation < this.operations.length; kOperation++)
+      {
+         final int op = this.operations[kOperation];
+         final Type type = Type.values()[op & 0xF];
+         switch (type)
+         {
+            // @formatter:off
+            case TERMINAL -> { stack.push(new Algebraic(this.operands[kOperand++])); }
+            case NEG  -> { stack.push(stack.pop().neg()); }
+            case ABS  -> { stack.push(stack.pop().abs()); }
+            case POW  -> { stack.push(stack.pop().pow (op >> 4)); }
+            case ROOT -> { stack.push(stack.pop().root(op >> 4)); }
+            case ADD  -> { final Algebraic b = stack.pop(); stack.push(stack.pop().add(b)); }
+            case SUB  -> { final Algebraic b = stack.pop(); stack.push(stack.pop().sub(b)); }
+            case MUL  -> { final Algebraic b = stack.pop(); stack.push(stack.pop().mul(b)); }
+            case DIV  -> { final Algebraic b = stack.pop(); stack.push(stack.pop().div(b)); }
+            // @formatter:on
+         }
+      }
+      return stack.pop();
+   }
+
+   protected static double root(final double x, final int n)
+   {
+
+      if (n == 2)
+      {
+         return Math.sqrt(x);
+      }
+      if ((n & 1) == 1)
+      {
+         return x < 0d ? -Math.pow(-x, 1d / n) : Math.pow(x, 1d / n);
+      }
+      return Math.pow(Math.abs(x), 1d / n);
+   }
+
+   private static final long serialVersionUID = BigFloat.serialVersionUID;
+
+   /** The maximum exponent for pow and root operations. */
+   public static final int MAX_EXPONENT = 0x07FF;
+
+   protected static final short[] TERMINAL_OPERATIONS = new short[] { (short) TERMINAL.ordinal() };
+
+   protected static final int TERMINAL_OPERATIONS_HASHCODE = Arrays.hashCode(TERMINAL_OPERATIONS);
+
+   /** The operations. */
+   protected final short[] operations;
+
+   /** The operands. */
+   protected final double[] operands;
+
+   /** The precalculated hash code. */
+   private final int hashCode;
+}

@@ -626,7 +626,7 @@ public final class BigFloat extends Number implements Comparable<BigFloat>
          {
             final int oomRoot = oom / n;
             final int oomRadi = n * oomRoot;
-            return this.mulTwoTo(-oomRadi).sqrt(rounder).mulTwoTo(oomRoot);
+            return this.mulTwoTo(-oomRadi).root(n, rounder).mulTwoTo(oomRoot);
          }
       }
       final int prec = rounder.getPrecision();

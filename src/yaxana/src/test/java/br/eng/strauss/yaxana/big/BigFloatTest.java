@@ -5,6 +5,7 @@ import static br.eng.strauss.yaxana.big.BigFloat.ONE;
 import static br.eng.strauss.yaxana.big.BigFloat.TWO;
 import static br.eng.strauss.yaxana.big.BigFloat.ZERO;
 import static br.eng.strauss.yaxana.big.BigFloat.twoTo;
+import static java.util.Locale.US;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -176,7 +177,7 @@ public class BigFloatTest extends YaxanaTest
    }
 
    @Test
-   public void testDiv()
+   public void test_div()
    {
 
       assertTrue(ONE.div(ONE).compareTo(ONE) == 0);
@@ -353,6 +354,56 @@ public class BigFloatTest extends YaxanaTest
    }
 
    @Test
+   public void test_Root()
+   {
+
+      final Rounder r = new Rounder(1000);
+      final BigFloat eps = BigFloat.twoTo(-1000);
+      try
+      {
+         new BigFloat(3.14).root(0, r);
+         fail();
+      }
+      catch (final DivisionByZeroException e)
+      {
+      }
+      try
+      {
+         new BigFloat(-4).root(2, r);
+         fail();
+      }
+      catch (final NegativeRadicandException e)
+      {
+      }
+      assertEquals(new BigFloat(0.5), new BigFloat(2).root(-1, r));
+      assertEquals(new BigFloat(2), new BigFloat(2).root(1, r));
+      assertEquals(new BigFloat(2), new BigFloat(4).root(2, r));
+      assertEquals(new BigFloat(0), new BigFloat(0).root(3, r));
+      assertEquals(new BigFloat(4).root(3, r).neg(), new BigFloat(-4).root(3, r));
+      assertEquals(new BigFloat(1), new BigFloat(1).root(17, r));
+
+      for (final BigFloat value : new BigFloat[] { new BigFloat(2d), new BigFloat("0x0.101") })
+      {
+         for (final int exponent : new int[] { 2, 16, 3, 17 })
+         {
+            {
+               final BigFloat result = value.root(exponent, r).pow(exponent);
+               assertTrue(result.sub(value).compareTo(eps) < 0);
+            }
+            {
+               final BigFloat result = value.pow(exponent, r).root(exponent, r);
+               if (result.sub(value, r).compareTo(eps) >= 0)
+               {
+                  System.out.format(US, "%s\n", value.pow(exponent, r).toString());
+                  String.format("");
+               }
+               assertTrue(result.sub(value, r).compareTo(eps) < 0);
+            }
+         }
+      }
+   }
+
+   @Test
    public void test_other()
    {
 
@@ -496,7 +547,7 @@ public class BigFloatTest extends YaxanaTest
       }
       if (false)
       {
-         // TODO
+         // TODO TODO ignorierter Test
          final double val = -Math.pow(200d, 1d / 3d);
          assertEquals(new BigFloat(val), new BigFloat(-200d).root(3, r));
       }

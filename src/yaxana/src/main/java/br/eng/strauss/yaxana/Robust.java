@@ -1,24 +1,19 @@
 package br.eng.strauss.yaxana;
 
-import static br.eng.strauss.yaxana.Type.TERMINAL;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.Math.nextDown;
 import static java.lang.Math.nextUp;
-import static java.lang.System.arraycopy;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Stack;
 
 import br.eng.strauss.yaxana.big.BigFloat;
-import br.eng.strauss.yaxana.epu.Algebraic;
-import br.eng.strauss.yaxana.epu.Cache;
 import br.eng.strauss.yaxana.exc.DivisionByZeroException;
 import br.eng.strauss.yaxana.exc.IllegalExponentException;
 import br.eng.strauss.yaxana.exc.NotRepresentableAsADoubleException;
 import br.eng.strauss.yaxana.exc.UnreachedException;
 import br.eng.strauss.yaxana.io.Parser;
+import br.eng.strauss.yaxana.pdc.SafeDoubleOps;
 
 /**
  * Immutable, thread safe, ideally exact real algebraic {@link Number} intended to be used for
@@ -77,9 +72,9 @@ import br.eng.strauss.yaxana.io.Parser;
  * @author Burkhard Strauss
  * @since 05-2022
  * @see <a href=
- *      "https://github.com/bestrauss/yaxana/docs/Zum-Vorzeichentest-Algebraischer-Ausdruecke.pdf">Zum-Vorzeichentest-Algebraischer-Ausdrücke</a>.
+ *      "https://raw.githubusercontent.com/bestrauss/yaxana/main/docs/Zum-Vorzeichentest-Algebraischer-Ausdruecke.pdf">Zum-Vorzeichentest-Algebraischer-Ausdrücke</a>.
  */
-public final class Robust extends Number implements Expression<Robust>
+public final class Robust extends ConciseNumber implements Expression<Robust>
 {
 
    /**
@@ -139,7 +134,9 @@ public final class Robust extends Number implements Expression<Robust>
    public static Robust valueOf(final double value)
    {
 
-      return value != 0d ? new Robust(value) : ZERO;
+      final int hashCode = 31 * (31 + TERMINAL_OPERATIONS_HASHCODE) + Double.hashCode(value);
+      return valueOf(TERMINAL_OPERATIONS, new double[] { value }, hashCode, value, value, value,
+                     value == 0d);
    }
 
    /**
@@ -156,57 +153,17 @@ public final class Robust extends Number implements Expression<Robust>
       {
          // @formatter:off
          case TERMINAL -> { return valueOf(st.doubleValue()); }
-         case NEG  -> { return valueOf(st.left()).neg(); }
-         case ABS  -> { return valueOf(st.left()).abs(); }
-         case POW  -> { return valueOf(st.left()).pow(st.index()); }
-         case ROOT -> { return valueOf(st.left()).root(st.index()); }
-         case ADD  -> { return valueOf(st.left()).add(valueOf(st.right())); }
-         case SUB  -> { return valueOf(st.left()).sub(valueOf(st.right())); }
-         case MUL  -> { return valueOf(st.left()).mul(valueOf(st.right())); }
-         case DIV  -> { return valueOf(st.left()).div(valueOf(st.right())); }
+         case NEG      -> { return valueOf(st.left()).neg(); }
+         case ABS      -> { return valueOf(st.left()).abs(); }
+         case POW      -> { return valueOf(st.left()).pow(st.index()); }
+         case ROOT     -> { return valueOf(st.left()).root(st.index()); }
+         case ADD      -> { return valueOf(st.left()).add(valueOf(st.right())); }
+         case SUB      -> { return valueOf(st.left()).sub(valueOf(st.right())); }
+         case MUL      -> { return valueOf(st.left()).mul(valueOf(st.right())); }
+         case DIV      -> { return valueOf(st.left()).div(valueOf(st.right())); }
          // @formatter:on
       }
       throw new UnreachedException();
-   }
-
-   /**
-    * Returns a {@code hashCode} precalculated on construction conforming the general contract.
-    * 
-    * @see java.lang.Object#hashCode()
-    */
-   @Override
-   public int hashCode()
-   {
-
-      return this.hashCode;
-   }
-
-   /**
-    * Returns whether a given other object is a {@link Robust} which has an abstract syntax tree
-    * that is identical to the abstract syntax tree of {@code this}.
-    * <p>
-    * For comparison of the <u>values</u> of {@link Robust} instances use
-    * {@link #compareTo(Robust)}, {@link #isGreaterOrEqual(S)}, etc.
-    * 
-    * @see java.lang.Object#equals(java.lang.Object)
-    */
-   @Override
-   public boolean equals(final Object other)
-   {
-
-      if (other != this)
-      {
-         if (other instanceof final Robust that)
-         {
-            if (this.hashCode == that.hashCode && Arrays.equals(this.operations, that.operations)
-                  && Arrays.equals(this.operands, that.operands))
-            {
-               return true;
-            }
-         }
-         return false;
-      }
-      return true;
    }
 
    @Override
@@ -237,10 +194,18 @@ public final class Robust extends Number implements Expression<Robust>
       }
       final double addLo = this.lo + that.lo;
       final double addHi = this.hi + that.hi;
+      if (simplify(addLo, addHi, that))
+      {
+         final Double value = SafeDoubleOps.addOrNull(this.value, that.value);
+         if (value != null)
+         {
+            return valueOf(addLo);
+         }
+      }
       final double lo = nextDown(addLo);
       final double hi = nextUp(addHi);
       final double va = this.value + that.value;
-      return newBinary(Type.ADD, that, va, lo, hi);
+      return newBinary(Type.ADD, that, va, lo, hi, true);
    }
 
    @Override
@@ -257,10 +222,18 @@ public final class Robust extends Number implements Expression<Robust>
       }
       final double subLo = this.lo - that.hi;
       final double subHi = this.hi - that.lo;
+      if (simplify(subLo, subHi, that))
+      {
+         final Double value = SafeDoubleOps.subOrNull(this.value, that.value);
+         if (value != null)
+         {
+            return valueOf(subLo);
+         }
+      }
       final double lo = nextDown(subLo);
       final double hi = nextUp(subHi);
       final double va = this.value - that.value;
-      return newBinary(Type.SUB, that, va, lo, hi);
+      return newBinary(Type.SUB, that, va, lo, hi, true);
    }
 
    @Override
@@ -274,12 +247,21 @@ public final class Robust extends Number implements Expression<Robust>
       final boolean twist = this.lo >= 0 != that.lo >= 0;
       final double mulLo = this.lo * (twist ? that.hi : that.lo);
       final double mulHi = this.hi * (twist ? that.lo : that.hi);
+      if (simplify(mulLo, mulHi, that))
+      {
+         final Double value = SafeDoubleOps.mulOrNull(this.value, that.value);
+         if (value != null)
+         {
+            return valueOf(mulLo);
+         }
+      }
       final double sortedLo = mulLo < mulHi ? mulLo : mulHi;
       final double sortedHi = mulLo > mulHi ? mulLo : mulHi;
-      final double lo = nextDown(sortedLo);
-      final double hi = nextUp(sortedHi);
-      final double va = this.value * that.value;
-      return newBinary(Type.MUL, that, va, lo, hi);
+      final double lo = sortedLo != 0d ? nextDown(sortedLo) : 0d;
+      final double hi = sortedHi != 0d ? nextUp(sortedHi) : 0d;
+      final double v = this.value * that.value;
+      final double va = v != 0d ? v : twist ? nextDown(0d) : nextUp(0d);
+      return newBinary(Type.MUL, that, va, lo, hi, false);
    }
 
    @Override
@@ -297,12 +279,21 @@ public final class Robust extends Number implements Expression<Robust>
       final boolean twist = this.lo >= 0 != that.lo >= 0;
       final double divLo = this.lo / (twist ? that.hi : that.lo);
       final double divHi = this.hi / (twist ? that.lo : that.hi);
+      if (simplify(divLo, divHi, that))
+      {
+         final Double value = SafeDoubleOps.divOrNull(this.value, that.value);
+         if (value != null)
+         {
+            return valueOf(divLo);
+         }
+      }
       final double sortedLo = divLo < divHi ? divLo : divHi;
       final double sortedHi = divLo > divHi ? divLo : divHi;
       final double lo = nextDown(sortedLo);
       final double hi = nextUp(sortedHi);
-      final double va = this.value / that.value;
-      return newBinary(Type.DIV, that, va, lo, hi);
+      final double v = this.value / that.value;
+      final double va = v != 0d ? v : twist ? nextDown(0d) : nextUp(0d);
+      return newBinary(Type.DIV, that, va, lo, hi, false);
    }
 
    @Override
@@ -361,12 +352,23 @@ public final class Robust extends Number implements Expression<Robust>
       {
          throw new IllegalExponentException(n);
       }
-      final boolean twist = (n & 1) != 0 && this.value < 0d;
+      final boolean negative = this.value < 0d;
+      final boolean odd = (n & 1) != 0;
+      final boolean twist = odd && negative;
       final double powLo = twist ? Math.pow(this.hi, n) : Math.pow(this.lo, n);
       final double powHi = twist ? Math.pow(this.lo, n) : Math.pow(this.hi, n);
-      final double lo = nextDown(powLo);
-      final double hi = nextUp(powHi);
-      final double va = Math.pow(this.value, n);
+      if (simplify(powLo, powHi, null))
+      {
+         final Double value = SafeDoubleOps.powOrNull(this.value, n);
+         if (value != null)
+         {
+            return valueOf(powLo);
+         }
+      }
+      final double lo = twist || powLo > 0d ? nextDown(powLo) : powLo;
+      final double hi = !twist || powHi < 0d ? nextUp(powHi) : powHi;
+      final double v = Math.pow(this.value, n);
+      final double va = v != 0d ? v : twist ? nextDown(v) : nextUp(v);
       return newUnary(Type.POW, (short) n, va, lo, hi);
    }
 
@@ -397,6 +399,14 @@ public final class Robust extends Number implements Expression<Robust>
       final boolean twist = (n & 1) != 0 && this.value < 0d;
       final double rootLo = twist ? root(this.hi, n) : root(this.lo, n);
       final double rootHi = twist ? root(this.lo, n) : root(this.hi, n);
+      if (simplify(rootLo, rootHi, null))
+      {
+         final Double value = SafeDoubleOps.rootOrNull(this.value, n);
+         if (value != null)
+         {
+            return valueOf(rootLo);
+         }
+      }
       final double lo = rootLo == 0d ? 0d : nextDown(rootLo);
       final double hi = rootHi == 0d ? 0d : nextUp(rootHi);
       final double va = root(this.value, n);
@@ -535,28 +545,6 @@ public final class Robust extends Number implements Expression<Robust>
       return hi;
    }
 
-   /**
-    * Returns the number of nodes in the abstract syntax tree.
-    * 
-    * @return the number of nodes in the abstract syntax tree.
-    */
-   public int size()
-   {
-
-      return this.operations.length;
-   }
-
-   /**
-    * Returns the number of terminal nodes in the abstract syntax tree.
-    * 
-    * @return the number of terminal nodes in the abstract syntax tree.
-    */
-   public int terminalsSize()
-   {
-
-      return this.operands.length;
-   }
-
    @Override
    public Robust one()
    {
@@ -564,36 +552,26 @@ public final class Robust extends Number implements Expression<Robust>
       return ONE;
    }
 
-   private Robust(final double value)
+   protected Robust(final short[] operations, final double[] operands, final int hashCode,
+         final double value, final double lo, final double hi, final boolean mayBeZero)
    {
 
-      this(TERMINAL_OPERATIONS, new double[] { value }, value, value, value, hashCode(value));
-   }
-
-   private static final int hashCode(final double value)
-   {
-
-      return 31 * TERMINAL_OPERATIONS_HASHCODE + 31 + Double.hashCode(value);
-   }
-
-   private Robust(final short[] operations, final double[] operands, final double value,
-         final double lo, final double hi, final int hashCode)
-   {
-
-      this.operations = operations;
-      this.operands = operands;
-      this.hashCode = hashCode;
+      super(operations, operands, hashCode);
       final int signum;
-      if (lo <= 0d && hi >= 0d && lo != hi)
+      if (mayBeZero)
       {
-         final Cache cache = Cache.getInstance();
-         final Robust robust = cache.get(this);
-         signum = robust != null ? robust.signum() : toAlgebraic().signum();
-         cache.put(this);
+         if (lo <= 0d && hi >= 0d && lo != hi)
+         {
+            signum = toAlgebraic().signum();
+         }
+         else
+         {
+            signum = hi < 0d ? -1 : lo > 0d ? 1 : 0;
+         }
       }
       else
       {
-         signum = hi < 0d ? -1 : lo > 0d ? -1 : 0;
+         signum = value > 0d ? 1 : value < 0d ? -1 : 0;
       }
       if (signum == 0)
       {
@@ -615,86 +593,23 @@ public final class Robust extends Number implements Expression<Robust>
       }
    }
 
-   private Robust newUnary(final Type type, final short exponent, final double value,
-         final double lo, final double hi)
+   protected Robust simplified()
    {
 
-      final int k = this.operations.length;
-      final short[] operations = Arrays.copyOf(this.operations, k + 1);
-      operations[k] = (short) (type.ordinal() + (exponent << 4));
-      final int hashCode = 31 * this.hashCode + operations[k];
-      return new Robust(operations, this.operands.clone(), value, lo, hi, hashCode);
+      return simplification && this.lo == this.hi ? valueOf(this.value) : this;
    }
 
-   private Robust newBinary(final Type type, final Robust that, final double value, final double lo,
-         final double hi)
+   private boolean simplify(final double lo, final double hi, final Robust that)
    {
 
-      final int lenU = this.operations.length + that.operations.length;
-      final int lenT = this.operands.length + that.operands.length;
-      final short[] operations = Arrays.copyOf(this.operations, lenU + 1);
-      final double[] operands = Arrays.copyOf(this.operands, lenT);
-      arraycopy(that.operations, 0, operations, this.operations.length, that.operations.length);
-      arraycopy(that.operands, 0, operands, this.operands.length, that.operands.length);
-      operations[lenU] = (short) type.ordinal();
-      final int hashCode = 31 * (31 * this.hashCode + that.hashCode) + type.ordinal();
-      return new Robust(operations, operands, value, lo, hi, hashCode);
-   }
-
-   private Algebraic toAlgebraic()
-   {
-
-      final Stack<Algebraic> stack = new Stack<>();
-      for (int kOperation = 0, kOperand = 0; kOperation < this.operations.length; kOperation++)
-      {
-         final int op = this.operations[kOperation];
-         final Type type = Type.values()[op & 0xF];
-         switch (type)
-         {
-            // @formatter:off
-            case TERMINAL -> stack.push(new Algebraic(this.operands[kOperand++]));
-            case NEG  -> { stack.push(stack.pop().neg()); }
-            case ABS  -> { stack.push(stack.pop().abs()); }
-            case POW  -> { stack.push(stack.pop().pow (op >> 4)); }
-            case ROOT -> { stack.push(stack.pop().root(op >> 4)); }
-            case ADD  -> { final Algebraic b = stack.pop(); stack.push(stack.pop().add(b)); }
-            case SUB  -> { final Algebraic b = stack.pop(); stack.push(stack.pop().sub(b)); }
-            case MUL  -> { final Algebraic b = stack.pop(); stack.push(stack.pop().mul(b)); }
-            case DIV  -> { final Algebraic b = stack.pop(); stack.push(stack.pop().div(b)); }
-            // @formatter:on
-         }
-      }
-      return stack.pop();
-   }
-
-   private static double root(final double x, final int n)
-   {
-
-      if (n == 2)
-      {
-         return Math.sqrt(x);
-      }
-      if ((n & 1) == 1)
-      {
-         return x < 0d ? -Math.pow(-x, 1d / n) : Math.pow(x, 1d / n);
-      }
-      return Math.pow(Math.abs(x), 1d / n);
+      return simplification && Double.isFinite(lo) && lo == hi && this.lo == this.hi
+            && (that == null || that.lo == that.hi);
    }
 
    private static final long serialVersionUID = BigFloat.serialVersionUID;
 
-   private static final short[] TERMINAL_OPERATIONS = new short[] { (short) TERMINAL.ordinal() };
-
-   private static final int TERMINAL_OPERATIONS_HASHCODE = Arrays.hashCode(TERMINAL_OPERATIONS);
-
-   /** The operations (reverse polish notation). */
-   private final short[] operations;
-
-   /** The operands (reverse polish notation). */
-   private final double[] operands;
-
-   /** The precalculated hash code. */
-   private final int hashCode;
+   /** Whether simplification is done. */
+   protected static boolean simplification = true;
 
    /** See {@link #lowerBound()}. */
    private final double lo;
@@ -706,11 +621,8 @@ public final class Robust extends Number implements Expression<Robust>
    private final double value;
 
    /** The number zero. */
-   public static final Robust ZERO = new Robust(0d);
+   public static final Robust ZERO = staticValueOf(0d);
 
    /** The number one. */
-   public static final Robust ONE = new Robust(1d);
-
-   /** The maximum exponent for pow and root operations. */
-   public static final int MAX_EXPONENT = 0x07FF;
+   public static final Robust ONE = staticValueOf(1d);
 }

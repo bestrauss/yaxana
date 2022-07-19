@@ -8,6 +8,7 @@ import static java.math.RoundingMode.UP;
 
 import java.math.BigInteger;
 
+import br.eng.strauss.yaxana.Type;
 import br.eng.strauss.yaxana.big.BigFloat;
 import br.eng.strauss.yaxana.big.Rounder;
 import br.eng.strauss.yaxana.epu.AbstractEPU;
@@ -110,6 +111,8 @@ public final class RootBoundEPU extends AbstractEPU
    {
 
       ensureRootBoundParameters(value);
+      clearVisitedMarks(value);
+      productOfIndices(value);
       if (value.precision() == Integer.MAX_VALUE)
       {
          return Integer.MAX_VALUE;
@@ -148,7 +151,6 @@ public final class RootBoundEPU extends AbstractEPU
                a.vn = max(0, -m);
                a.u = new BigFloat(BigInteger.ONE.max(ap.unscaledValue().abs())).round(MCU);
                a.l = BigFloat.ONE;
-               a.D = 1;
                break;
             }
             case ADD :
@@ -162,7 +164,6 @@ public final class RootBoundEPU extends AbstractEPU
                final BigFloat fb = twoTo(left.vn + rite.vp - a.vp);
                a.u = fa.mul(left.u.mul(rite.l, MCU)).add(fb.mul(rite.u.mul(left.l, MCU), MCU), MCU);
                a.l = left.l.mul(rite.l, MCD);
-               mulDegree(a);
                break;
             }
             case MUL :
@@ -171,7 +172,6 @@ public final class RootBoundEPU extends AbstractEPU
                a.vn = left.vn + rite.vn;
                a.u = left.u.mul(rite.u, MCU);
                a.l = left.l.mul(rite.l, MCD);
-               mulDegree(a);
                break;
             }
             case DIV :
@@ -180,7 +180,6 @@ public final class RootBoundEPU extends AbstractEPU
                a.vn = left.vn + rite.vp;
                a.u = left.u.mul(rite.l, MCU);
                a.l = left.l.mul(rite.u, MCD);
-               mulDegree(a);
                break;
             }
             case POW :
@@ -190,7 +189,6 @@ public final class RootBoundEPU extends AbstractEPU
                a.vn = n * left.vn;
                a.u = left.u.pow(n, MCU);
                a.l = left.l.pow(n, MCD);
-               a.D = left.D;
                break;
             }
             case ROOT :
@@ -215,7 +213,6 @@ public final class RootBoundEPU extends AbstractEPU
                   a.u = left.u;
                   a.l = f.mul(left.u.pow(n - 1, MCU), MCU).mul(left.l, MCU).sqrt(MCU);
                }
-               a.D = n * left.D;
                break;
             }
             case NEG :
@@ -225,11 +222,54 @@ public final class RootBoundEPU extends AbstractEPU
                a.vn = left.vn;
                a.u = left.u;
                a.l = left.l;
-               a.D = left.D;
                break;
             }
          }
       }
+   }
+
+   protected void clearVisitedMarks(final Algebraic a)
+   {
+
+      a.D = Long.MIN_VALUE;
+      final Algebraic left = a.left();
+      if (left != null)
+      {
+         clearVisitedMarks(left);
+      }
+      final Algebraic rite = a.right();
+      if (rite != null)
+      {
+         clearVisitedMarks(rite);
+      }
+   }
+
+   protected long productOfIndices(final Algebraic a)
+   {
+
+      long product = 1L;
+      if (a.D == Long.MIN_VALUE)
+      {
+         final Algebraic left = a.left();
+         final Algebraic rite = a.right();
+         if (left != null && left.D == Long.MIN_VALUE)
+         {
+            product *= productOfIndices(left);
+         }
+         if (rite != null && rite.D == Long.MIN_VALUE)
+         {
+            product *= productOfIndices(rite);
+         }
+         if (a.type() == Type.ROOT)
+         {
+            product *= a.index();
+         }
+      }
+      if (!wellWorkedExpression && product >= PrecisionOverflowException.MAX_PRECISION)
+      {
+         throw new PrecisionOverflowException(a.toString());
+      }
+      return a.D = product;
    }
 
    public BigFloat rootBound(final Algebraic a)
@@ -249,16 +289,6 @@ public final class RootBoundEPU extends AbstractEPU
       catch (final ArithmeticException e)
       {
          throw new UnreachedException(e);
-      }
-   }
-
-   private void mulDegree(final Algebraic a)
-   {
-
-      a.D = a.left().D * a.right().D;
-      if (!wellWorkedExpression && a.D >= PrecisionOverflowException.MAX_PRECISION)
-      {
-         throw new PrecisionOverflowException(a.toString());
       }
    }
 

@@ -91,12 +91,13 @@ public final class RobustBoundsTest extends YaxanaTest
       {
          final Robust a = ONE.add(ONE);
          assertEquals(2d, a.doubleValue(), 0d);
-         assertEquals(nextDown(2d), a.lowerBound(), 0d);
-         assertEquals(nextUp(2d), a.upperBound(), 0d);
+         assertEquals(2d, a.lowerBound(), 0d);
+         assertEquals(2d, a.upperBound(), 0d);
          final Robust b = ONE.neg().add(ONE.neg());
          final Robust c = a.add(b);
          assertBounds(0d, c);
       }
+      // TODO coverage
    }
 
    @Test
@@ -126,9 +127,10 @@ public final class RobustBoundsTest extends YaxanaTest
          final Robust b = Robust.valueOf(PI);
          final Robust c = a.sub(b);
          assertEquals(2d - PI, c.doubleValue(), 0d);
-         assertEquals(nextDown(2d - PI), c.lowerBound(), 0d);
-         assertEquals(nextUp(2d - PI), c.upperBound(), 0d);
+         assertEquals(2d - PI, c.lowerBound(), 0d);
+         assertEquals(2d - PI, c.upperBound(), 0d);
       }
+      // TODO coverage
       {
          final Robust a = ONE.add(ONE);
          final Robust b = ONE.add(ONE);

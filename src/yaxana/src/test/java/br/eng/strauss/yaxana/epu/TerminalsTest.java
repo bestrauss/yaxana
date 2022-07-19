@@ -5,7 +5,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import br.eng.strauss.yaxana.YaxanaTest;
-import br.eng.strauss.yaxana.anno.WithAllEPUs;
+import br.eng.strauss.yaxana.anno.WithAlgorithms;
 
 /**
  * Tests constant values using all EPUs.
@@ -16,7 +16,7 @@ import br.eng.strauss.yaxana.anno.WithAllEPUs;
 public final class TerminalsTest extends YaxanaTest
 {
 
-   @WithAllEPUs
+   @WithAlgorithms
    @Test
    public void test()
    {

@@ -27,7 +27,7 @@ Nun ist der Wert $\xi_E$ des Ausdrucks $E$
 eine der Nullstellen $z_k$.
 Sei o.B.d.A. $\xi_E = z_1$.
 Dann ergibt sich
-\begin{equation}\label{eq:Nulltrennungschranke}
+\begin{equation*}
   \xi_E\ne0
   \quad\Rightarrow\quad
   |\xi_E|
@@ -35,24 +35,11 @@ Dann ergibt sich
   \frac{1}{\prod_{k=2}^N |z_k|}
   \ge
   \frac{1}{(\max_k|z_k|)^{N-1}}.
-\end{equation}
+\end{equation*}
 Der Term $(\max_k|z_k|)^{-(N-1)}$ wird als Nulltrennungsschranke 
 für ganzalgebraische Werte verwendet \cite{BFMS}.
 
-Um das Vorzeichen eines gegebenen, 
-bekanntermaßen nicht verschwindenden Wertes 
-eines Ausdrucks $E$ zu ermitteln,
-kann man Näherungen $\hat{\xi}_E$ mit schrittweise wachsender 
-absoluter Genauigkeit berechnen,
-bis man eine nicht verschwindende Näherung hat, 
-an der sich das Vorzeichen dann ablesen läßt.
-Verschwände der Wert aber, dann berechnete der Algorithmus
-immer mehr Nullen hinter dem Komma, ohne zu terminieren.
-Die Nulltrennungsschranke erlaubt es nun, 
-die Rechnung bei einer entsprechenden Genauigkeit abzubrechen,
-wonach dann $\sgn\xi_E=\sgn\hat{\xi}_E$ gilt.
-
-Es handelt sich bei Un-\refequation{eq:Nulltrennungschranke}
+Es handelt sich bei dieser Ungleichung
 in der typischen Praxis um eine unglaublich miserable Abschätzung,
 aber im schlimmsten Fall könnten ja tatsächlich alle Nullstellen
 mehr oder weniger genau auf einem riesigen Kreis 
@@ -66,29 +53,25 @@ Was man viel lieber hätte,
 wären hingegen Nullstellenpaare mit $|z_{k_0}\cdot z_{k_1}|=1$,
  so wie das bei gewissen zeitdiskreten Systemen
  in der Nachrichtentechnik vorkommt;
- man denke an die Übertragungsfunktionen 
- der Analyse-Resynthese-Kanäle
- in perfekt rekonstruierenden Polyphasen-
- oder Quadraturspiegelfilterbänken;
- ähnlich auch den Polstellen-Nullstellen-Paaren von Allpaßfiltern.
+ man denke etwa an $N^{\rm th}$ band filter (siehe \refappendix{se:AnhangFilter})
+ oder auch an die Polstellen-Nullstellen-Paare von Allpaßfiltern.
 Unter solch himmlisch geordneten Umständen könnte man die Abschätzung
-\begin{equation}\label{eq:Nulltrennungsschranke}
+\begin{equation*}
   \xi_E\ne0
   \quad\Rightarrow\quad
   |\xi_E|
   \ge
   \frac{1}{\max_k|z_k|}
-\end{equation}
+\end{equation*}
 verwenden, in der der monströse Exponent $N-1$ fehlt.
-Wie aus den Bildungsregeln des Strukturpolynoms hevorgeht,
-ist $N$ das Produkt der Wurzelexponenten 
-sämtlicher Wurzeloperationen in $E$,
+$N$ ist das Produkt der Wurzelexponenten 
+der unterschiedlichen Wurzelunterausdrücke in $E$,
 und daher der Grund,
 weshalb sich bisher die Behandlung von Ausdrücken 
-mit bereits moderat vielen Wurzeloperationen 
+mit bereits moderat vielen solchen
 in der Praxis verboten hat.
 Weiterhin wäre zusätzlich auch fest $c_0=1$,
-so daß nicht ein womöglich viel größerer Koeffizient
+so daß nicht ein womöglich sehr viel größerer Koeffizient
 mit bloß $1$ nach unten abgeschätzt würde.
 \end{remark}
 
@@ -169,7 +152,7 @@ gilt bei der Bildung des Strukturpolynoms
 \begin{equation*}
 p_{-E}(z) = p_{|E|}(z) = p_E(z),
 \end{equation*}
-weshalb der Bildungsvorgang beider Strukturpolynom 
+weshalb der Bildungsvorgang beider Strukturpolynome
 in jedem Zwischenschritt für Zähler und Nenner 
 dasselbe Ergebnis liefert.
 Laut Haupt-\reftheorem{th:Hauptsatz}

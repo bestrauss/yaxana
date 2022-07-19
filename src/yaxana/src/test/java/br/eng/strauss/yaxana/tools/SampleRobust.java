@@ -17,13 +17,13 @@ public final class SampleRobust
    }
 
    /**
-    * Returns the expressions {@code 1+q+q^2+...+q^(N-1)} und {@code (1-q^N)/(1-q)}.
+    * Returns the expressions {@code 1+q+q^2+...+q^(N-1)} and {@code (1-q^N)/(1-q)}.
     * 
     * @param q
     *           the {@code q}.
     * @param N
     *           the {@code N}.
-    * @return the expressions {@code 1+q+q^2+...+q^(N-1)} und {@code (1-q^N)/(1-q)}.
+    * @return the expressions {@code 1+q+q^2+...+q^(N-1)} and {@code (1-q^N)/(1-q)}.
     */
    public static Robust[] geometricSeriesArray(final Robust q, final int N)
    {

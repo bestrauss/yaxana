@@ -91,30 +91,30 @@ public final class Cache
          final Robust value = this.map.get(entry);
          if (value != null)
          {
-            this.map.remove(entry);
-            this.map.put(entry, entry);
+            this.map.remove(value);
+            this.map.put(value, value);
          }
          return value;
       }
    }
 
    /**
-    * Stores a given entry, beforehand possibly removing least recently stored entries.
+    * Stores a given value, beforehand possibly removing least recently stored entries.
     * 
-    * @param entry
-    *           the entry.
+    * @param value
+    *           the value.
     */
-   public void put(final Robust entry)
+   public void put(final Robust value)
    {
 
       synchronized (this.map)
       {
          if (this.maximumSize > 0)
          {
-            this.size -= this.map.remove(entry) == entry ? entry.size() : 0;
-            ensureSpaceFor(entry.size());
-            this.map.put(entry, entry);
-            this.size += entry.size();
+            this.size -= this.map.remove(value) == value ? value.noOfNodes() : 0;
+            ensureSpaceFor(value.noOfNodes());
+            this.map.put(value, value);
+            this.size += value.noOfNodes();
          }
       }
    }
@@ -140,7 +140,7 @@ public final class Cache
       {
          final Robust leastRecentEntry = this.map.keySet().iterator().next();
          this.map.remove(leastRecentEntry);
-         this.size -= leastRecentEntry.size();
+         this.size -= leastRecentEntry.noOfNodes();
       }
    }
 

@@ -7,17 +7,18 @@ import static org.junit.Assert.assertTrue;
 
 import java.math.MathContext;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import br.eng.strauss.yaxana.YaxanaTest;
-import br.eng.strauss.yaxana.anno.WithAllEPUs;
+import br.eng.strauss.yaxana.anno.WithAlgorithms;
 import br.eng.strauss.yaxana.big.BigFloat;
 
 /**
  * @author Burkhard Strauss
  * @since 06-2022
  */
-@WithAllEPUs
+@WithAlgorithms
 public final class SelectedExpressionsTest extends YaxanaTest
 {
 
@@ -182,6 +183,8 @@ public final class SelectedExpressionsTest extends YaxanaTest
       }
    }
 
+   // TODO dauert ewig
+   @Ignore
    @Test
    public void testBFMSExample()
    {
@@ -289,7 +292,7 @@ public final class SelectedExpressionsTest extends YaxanaTest
       }
       catch (final AssertionError e)
       {
-         format("EPU failure %s\n", Algebraic.getEPUClassName());
+         format("EPU failure %s\n", Algebraic.getAlgorithm());
          format("E1 = %s\n", E1);
          format("E2 = %s\n", E2);
          E1 = new Algebraic(e1);

@@ -25,10 +25,3 @@ Yet another exact algebraic numbers API, a Java 17 module.
 
  * clone this repository and call `gradlew build` to build.
  * call `gradlew ec` for eclipse classpath
-
-
-## History
-
- * July 14, 2022, Version V0.6.6 - first alpha test version
-    - >95% unit test coverage.
-    - root/pow don't support |exponent|>2 yet 

@@ -8,13 +8,16 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+import br.eng.strauss.yaxana.Algorithm;
 import br.eng.strauss.yaxana.Experimental;
 import br.eng.strauss.yaxana.Expression;
 import br.eng.strauss.yaxana.SyntaxTree;
 import br.eng.strauss.yaxana.Type;
 import br.eng.strauss.yaxana.big.BigFloat;
 import br.eng.strauss.yaxana.big.Rounder;
+import br.eng.strauss.yaxana.epu.robo.RootBoundEPU;
 import br.eng.strauss.yaxana.epu.yaxa.YaxanaEPU;
+import br.eng.strauss.yaxana.epu.zvaa.ZvaaEPU;
 import br.eng.strauss.yaxana.exc.UnreachedException;
 import br.eng.strauss.yaxana.io.Parser;
 import br.eng.strauss.yaxana.io.Stringifier;
@@ -299,11 +302,17 @@ public final class Algebraic
    public int signum()
    {
 
-      final Supplier<EPU> epu;
+      final Algorithm algorithm;
       synchronized (Algebraic.class)
       {
-         epu = Algebraic.epu;
+         algorithm = Algebraic.algorithm;
       }
+      final Supplier<EPU> epu = switch (algorithm)
+      {
+         case BFMSS2 -> () -> new RootBoundEPU();
+         case ZVAA -> () -> new ZvaaEPU();
+         case YAXANA -> () -> new YaxanaEPU();
+      };
       Approximable.super.ensureSignum(epu);
       return this.approximation.signum();
 
@@ -489,31 +498,33 @@ public final class Algebraic
    }
 
    /**
-    * Returns the simple name of the class of the Exact Processing Unit used to determine the sign.
+    * Returns the algorithm being used for sign computation.
     * 
-    * @return the simple name of the class of the Exact Processing Unit used to determine the sign.
+    * @return the algorithm being used for sign computation.
+    * @see #setAlgorithm(Algorithm)
     */
-   public static String getEPUClassName()
+   public static Algorithm getAlgorithm()
    {
 
       synchronized (Algebraic.class)
       {
-         return Algebraic.epu.get().getClass().getSimpleName();
+         return algorithm;
       }
    }
 
    /**
-    * Sets Exact Processing Unit used to determine the sign.
+    * Sets the algorithm to be used for sign computation.
     * 
-    * @param epu
-    *           A supplier of Exact Processing Units.
+    * @param algorithm
+    *           the algorithm to be used for sign computation.
+    * @see #getAlgorithm()
     */
-   public static void setEPU(final Supplier<EPU> epu)
+   public static void setAlgorithm(final Algorithm algorithm)
    {
 
       synchronized (Algebraic.class)
       {
-         Algebraic.epu = epu;
+         Algebraic.algorithm = algorithm;
       }
    }
 
@@ -839,8 +850,8 @@ public final class Algebraic
    /** The number {@code 0.5}. */
    public static final Algebraic HALF = new Algebraic(0.5);
 
-   /** The {@link EPU} being used for sign testing. */
-   private static Supplier<EPU> epu = () -> new YaxanaEPU();
+   /** The {@link Algorithm} being used for sign computation. */
+   private static Algorithm algorithm = Algorithm.ZVAA;
 
    /** The type of expression represented by this {@link Algebraic}. */
    private final Type type;

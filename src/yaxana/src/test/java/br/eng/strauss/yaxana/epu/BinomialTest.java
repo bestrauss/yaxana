@@ -5,7 +5,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import br.eng.strauss.yaxana.YaxanaTest;
-import br.eng.strauss.yaxana.anno.WithAllEPUs;
+import br.eng.strauss.yaxana.anno.WithAlgorithms;
 import br.eng.strauss.yaxana.big.BigFloat;
 import br.eng.strauss.yaxana.rnd.RandomBigFloat;
 
@@ -19,7 +19,7 @@ import br.eng.strauss.yaxana.rnd.RandomBigFloat;
 public final class BinomialTest extends YaxanaTest
 {
 
-   @WithAllEPUs
+   @WithAlgorithms
    @Test
    public void test()
    {
@@ -40,8 +40,7 @@ public final class BinomialTest extends YaxanaTest
          final BigFloat b = randomBigFloat.next().abs();
          comparisonTimeNs += testBinomial(a, b);
       }
-      format("%-12s comparison time: %7.2fms\n", Algebraic.getEPUClassName(),
-             1E-6 * comparisonTimeNs);
+      format("%-12s comparison time: %7.2fms\n", Algebraic.getAlgorithm(), 1E-6 * comparisonTimeNs);
    }
 
    private static long testBinomial(final String sx, final String sy)
@@ -90,7 +89,7 @@ public final class BinomialTest extends YaxanaTest
          }
          catch (final AssertionError e)
          {
-            format("EPU failure %s\n", Algebraic.getEPUClassName());
+            format("EPU failure %s\n", Algebraic.getAlgorithm());
             format("E1 = %s\n", E1);
             format("E2 = %s\n", E2);
             E1 = new Algebraic(e1);
@@ -114,7 +113,7 @@ public final class BinomialTest extends YaxanaTest
          }
          catch (final AssertionError e)
          {
-            format("EPU failure %s\n", Algebraic.getEPUClassName());
+            format("EPU failure %s\n", Algebraic.getAlgorithm());
             format("E1 = %s\n", E1);
             format("E2 = %s\n", E2);
             E1 = new Algebraic(e1);

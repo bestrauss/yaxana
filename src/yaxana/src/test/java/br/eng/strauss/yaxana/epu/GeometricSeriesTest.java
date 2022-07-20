@@ -5,9 +5,9 @@ import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
+import br.eng.strauss.yaxana.Algorithm;
 import br.eng.strauss.yaxana.YaxanaTest;
-import br.eng.strauss.yaxana.anno.WithAllEPUs;
-import br.eng.strauss.yaxana.epu.robo.RootBoundEPU;
+import br.eng.strauss.yaxana.anno.WithAlgorithms;
 import br.eng.strauss.yaxana.exc.PrecisionOverflowException;
 import br.eng.strauss.yaxana.tools.SampleAlgebraic;
 
@@ -20,7 +20,7 @@ import br.eng.strauss.yaxana.tools.SampleAlgebraic;
 public class GeometricSeriesTest extends YaxanaTest
 {
 
-   @WithAllEPUs
+   @WithAlgorithms
    @Test
    public void testEPU()
    {
@@ -46,14 +46,14 @@ public class GeometricSeriesTest extends YaxanaTest
          final Algebraic value = SampleAlgebraic.geometricSeries(q, N);
          if (value.signum() != desiredSignum)
          {
-            format("EPU: %s\n", Algebraic.getEPUClassName());
+            format("EPU: %s\n", Algebraic.getAlgorithm());
             format("value: %s\n", value);
          }
          assertTrue(value.signum() == desiredSignum);
       }
       catch (final PrecisionOverflowException e)
       {
-         if (Algebraic.getEPUClassName().equals(RootBoundEPU.class.getSimpleName()))
+         if (Algebraic.getAlgorithm().equals(Algorithm.BFMSS2))
          {
             return;
          }

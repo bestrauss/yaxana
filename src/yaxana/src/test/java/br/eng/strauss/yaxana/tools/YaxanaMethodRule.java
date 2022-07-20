@@ -1,19 +1,17 @@
 package br.eng.strauss.yaxana.tools;
 
 import java.lang.reflect.Method;
-import java.util.function.Supplier;
 
 import org.junit.AssumptionViolatedException;
 import org.junit.rules.MethodRule;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.Statement;
 
+import br.eng.strauss.yaxana.Algorithm;
 import br.eng.strauss.yaxana.YaxanaTest;
 import br.eng.strauss.yaxana.anno.Benchmark;
-import br.eng.strauss.yaxana.anno.WithAllEPUs;
+import br.eng.strauss.yaxana.anno.WithAlgorithms;
 import br.eng.strauss.yaxana.epu.Algebraic;
-import br.eng.strauss.yaxana.epu.EPU;
-import br.eng.strauss.yaxana.epu.robo.RootBoundEPU;
 
 /**
  * @author Burkhard Strauss
@@ -43,18 +41,25 @@ public final class YaxanaMethodRule implements MethodRule
                YaxanaTest.format("method %s skipped\n", name);
                throw new AssumptionViolatedException("skipped (SKIP_BENCHMARKS is set)");
             }
-            else if (clasz.getAnnotation(WithAllEPUs.class) != null
-                  || method.getAnnotation(WithAllEPUs.class) != null)
+            else if (method.getAnnotation(WithAlgorithms.class) != null)
             {
-               for (final Supplier<EPU> epu : YaxanaTest.getEPUsToTest())
+               for (final Algorithm algorithm : method.getAnnotation(WithAlgorithms.class).value())
                {
-                  Algebraic.setEPU(epu);
+                  Algebraic.setAlgorithm(algorithm);
+                  evaluate(name);
+               }
+            }
+            else if (clasz.getAnnotation(WithAlgorithms.class) != null)
+            {
+               for (final Algorithm algorithm : clasz.getAnnotation(WithAlgorithms.class).value())
+               {
+                  Algebraic.setAlgorithm(algorithm);
                   evaluate(name);
                }
             }
             else
             {
-               Algebraic.setEPU(() -> new RootBoundEPU());
+               Algebraic.setAlgorithm(Algorithm.BFMSS2);
                evaluate(name);
             }
          }
@@ -62,7 +67,7 @@ public final class YaxanaMethodRule implements MethodRule
          private void evaluate(final String name) throws Throwable
          {
 
-            final String epuName = String.format(" [%s]", Algebraic.getEPUClassName());
+            final String epuName = String.format(" [%s]", Algebraic.getAlgorithm());
             final long time = System.currentTimeMillis();
             try
             {

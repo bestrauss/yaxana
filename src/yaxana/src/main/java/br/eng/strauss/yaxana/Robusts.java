@@ -4,10 +4,7 @@ import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 import br.eng.strauss.yaxana.big.BigFloat;
-import br.eng.strauss.yaxana.epu.Algebraic;
 import br.eng.strauss.yaxana.epu.Cache;
-import br.eng.strauss.yaxana.epu.robo.RootBoundEPU;
-import br.eng.strauss.yaxana.epu.yaxa.YaxanaEPU;
 import br.eng.strauss.yaxana.rnd.RandomRobust;
 
 /**
@@ -65,21 +62,6 @@ public final class Robusts
    }
 
    /**
-    * Switches between vintage mode, using the {@code BFMSS[2]} method for sign detection where
-    * interval arithmetic fails, and cutting-edge mode {@code BFMSS[2]UP}.
-    * <p>
-    * The default mode is cutting-edge mode. This method is intended to allow comparisons of modes.
-    * 
-    * @param vintageMode
-    *           whether vintage mode is to be set.
-    */
-   public static void setVintageMode(final boolean vintageMode)
-   {
-
-      Algebraic.setEPU(vintageMode ? () -> new RootBoundEPU() : () -> new YaxanaEPU());
-   }
-
-   /**
     * Returns certain sequences of {@link Robust} instances.
     * <p>
     * For each {@code maxDepth} the returned sequence is always the same for each call.
@@ -96,7 +78,8 @@ public final class Robusts
    }
 
    /**
-    * Returns a pattern which matches allowed terminal string representations.
+    * Returns a pattern which matches licit string representations for values of terminal
+    * expressions.
     * <p>
     * The pattern matches the well known formats produced by {@link Double#toString(double)} and
     * {@link Double#toHexString(double)}. The mantissa may be decimal or hexadecimal. A hexadecimal
@@ -104,7 +87,8 @@ public final class Robusts
     * point). The optional exponent is decimal. It may be base ten {@code e}, {@code E} or base two
     * {@code p}, {@code P}. Mantissa and exponent optionally have a sign.
     * 
-    * @return a pattern which matches allowed terminal string representations.
+    * @return a pattern which matches licit string representations for values of terminal
+    *         expressions.
     */
    public static Pattern terminalPattern()
    {

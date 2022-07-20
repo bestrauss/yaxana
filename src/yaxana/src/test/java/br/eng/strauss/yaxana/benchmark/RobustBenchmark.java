@@ -1,21 +1,20 @@
 package br.eng.strauss.yaxana.benchmark;
 
+import static br.eng.strauss.yaxana.Algorithm.YAXANA;
+import static br.eng.strauss.yaxana.Algorithm.ZVAA;
 import static br.eng.strauss.yaxana.Robust.ZERO;
 
-import java.lang.reflect.Array;
 import java.util.Random;
-import java.util.function.Supplier;
 
 import org.junit.Test;
 
+import br.eng.strauss.yaxana.Algorithm;
 import br.eng.strauss.yaxana.Robust;
 import br.eng.strauss.yaxana.Robusts;
 import br.eng.strauss.yaxana.YaxanaTest;
 import br.eng.strauss.yaxana.anno.Benchmark;
 import br.eng.strauss.yaxana.epu.Algebraic;
 import br.eng.strauss.yaxana.epu.EPU;
-import br.eng.strauss.yaxana.epu.yaxa.YaxanaEPU;
-import br.eng.strauss.yaxana.epu.zvaa.ZvaaEPU;
 import br.eng.strauss.yaxana.pdc.PDCStats;
 import br.eng.strauss.yaxana.tools.SampleRobust;
 
@@ -45,11 +44,9 @@ public final class RobustBenchmark extends YaxanaTest
       try
       {
          YaxanaTest.quiet = true;
-         // for (final boolean vintageMode : new boolean[] { true, false })
-         for (final Supplier<EPU> epu : getEPUs2Test())
+         for (final Algorithm algorithm : ALGORITHMS)
          {
-            // Robusts.setVintageMode(vintageMode);
-            Algebraic.setEPU(epu);
+            Algebraic.setAlgorithm(algorithm);
             Robusts.clearCache();
             test(16);
          }
@@ -73,15 +70,12 @@ public final class RobustBenchmark extends YaxanaTest
    private static void test(final Robust epsilon, final int loopCount)
    {
 
-      // for (final boolean vintageMode : new boolean[] { true, false })
-      for (final Supplier<EPU> epu : getEPUs2Test())
+      for (final Algorithm algorithm : ALGORITHMS)
       {
-         // Robusts.setVintageMode(vintageMode);
-         Algebraic.setEPU(epu);
+         Algebraic.setAlgorithm(algorithm);
          Robusts.clearCache();
-         // if (Algebraic.getEPUClassName().toLowerCase().indexOf("yaxana") >= 0)
          {
-            format("%s: (epsilon=%s)\n", Algebraic.getEPUClassName(), epsilon);
+            format("%s: (epsilon=%s)\n", Algebraic.getAlgorithm(), epsilon);
             final long timeNs = testEPU(epsilon, loopCount);
             format("  total:  %8.2fms\n", 1E-6 * timeNs);
          }
@@ -125,21 +119,9 @@ public final class RobustBenchmark extends YaxanaTest
       return timeNs;
    }
 
-   private static Supplier<EPU>[] getEPUs2Test()
-   {
+   private static final int ORDER = 10;
 
-      if (true)
-      {
-         @SuppressWarnings("unchecked")
-         final Supplier<EPU>[] array = (Supplier<EPU>[]) Array.newInstance(Supplier.class, 2);
-         array[0] = () -> new ZvaaEPU();
-         array[1] = () -> new YaxanaEPU();
-         return array;
-      }
-      return YaxanaTest.getEPUsToTest();
-   }
-
-   private static final int ORDER = 8;
+   private static final Algorithm[] ALGORITHMS = { ZVAA, YAXANA };
 
    private static final Robust EPS_0 = ZERO;
    private static final Robust EPS_1 = Robust.valueOf("1p-10");

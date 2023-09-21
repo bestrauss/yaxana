@@ -1,6 +1,6 @@
 package br.eng.strauss.yaxana.exc;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import br.eng.strauss.yaxana.YaxanaTest;
 
@@ -11,7 +11,7 @@ import br.eng.strauss.yaxana.YaxanaTest;
 public final class NonPositiveLogarithmArgumentExceptionTest extends YaxanaTest
 {
 
-   @Test
+   @Test // TODO implementieren
    public void test()
    {
 

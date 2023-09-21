@@ -2,13 +2,13 @@ package br.eng.strauss.yaxana.epu;
 
 import static br.eng.strauss.yaxana.epu.Algebraic.ONE;
 import static br.eng.strauss.yaxana.epu.Algebraic.TWO;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.MathContext;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import br.eng.strauss.yaxana.YaxanaTest;
 import br.eng.strauss.yaxana.anno.WithAlgorithms;
@@ -183,8 +183,7 @@ public final class SelectedExpressionsTest extends YaxanaTest
       }
    }
 
-   // TODO dauert ewig
-   @Ignore
+   @Disabled // TODO dauert ewig
    @Test
    public void testBFMSExample()
    {

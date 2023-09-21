@@ -2,7 +2,7 @@ package br.eng.strauss.yaxana.proof;
 
 import static br.eng.strauss.yaxana.epu.Algebraic.ONE;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import br.eng.strauss.yaxana.YaxanaTest;
 import br.eng.strauss.yaxana.epu.Algebraic;

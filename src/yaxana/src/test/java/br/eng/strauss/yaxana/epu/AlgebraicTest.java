@@ -8,15 +8,15 @@ import static br.eng.strauss.yaxana.pdc.Scrutinizer.divIsExact;
 import static br.eng.strauss.yaxana.pdc.Scrutinizer.mulIsExact;
 import static br.eng.strauss.yaxana.pdc.Scrutinizer.rootIsExact;
 import static br.eng.strauss.yaxana.pdc.Scrutinizer.subIsExact;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.MathContext;
 import java.util.Objects;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import br.eng.strauss.yaxana.YaxanaTest;
 import br.eng.strauss.yaxana.big.BigFloat;

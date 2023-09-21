@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import br.eng.strauss.yaxana.Type;
 import br.eng.strauss.yaxana.YaxanaTest;
@@ -25,7 +25,7 @@ import br.eng.strauss.yaxana.epu.Algebraic;
 public final class UnarySingleDigitComparison extends YaxanaTest
 {
 
-   @Ignore
+   @Disabled
    @Test
    public void test()
    {

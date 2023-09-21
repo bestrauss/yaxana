@@ -1,16 +1,11 @@
 package br.eng.strauss.yaxana.epu;
 
-import static br.eng.strauss.yaxana.Algorithm.YAXANA;
-import static br.eng.strauss.yaxana.Algorithm.ZVAA;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import br.eng.strauss.yaxana.Algorithm;
 import br.eng.strauss.yaxana.YaxanaTest;
 import br.eng.strauss.yaxana.anno.WithAlgorithms;
-import br.eng.strauss.yaxana.exc.PrecisionOverflowException;
 import br.eng.strauss.yaxana.tools.SampleAlgebraic;
 
 /**
@@ -22,7 +17,7 @@ import br.eng.strauss.yaxana.tools.SampleAlgebraic;
 public final class ExtremeExponentsTest extends YaxanaTest
 {
 
-   @WithAlgorithms({ ZVAA, YAXANA })
+   @WithAlgorithms
    @Test
    public void test()
    {
@@ -49,19 +44,8 @@ public final class ExtremeExponentsTest extends YaxanaTest
    private void test(final String x, final int N, final int desiredSignum)
    {
 
-      try
-      {
-         final Algebraic q = new Algebraic(x).sqrt();
-         final Algebraic value = SampleAlgebraic.geometricSeries(q, N);
-         assertTrue(value.signum() == desiredSignum);
-      }
-      catch (final PrecisionOverflowException e)
-      {
-         if (Algebraic.getAlgorithm().equals(Algorithm.BFMSS2))
-         {
-            return;
-         }
-         fail();
-      }
+      final Algebraic q = new Algebraic(x).sqrt();
+      final Algebraic value = SampleAlgebraic.geometricSeries(q, N);
+      assertTrue(value.signum() == desiredSignum);
    }
 }

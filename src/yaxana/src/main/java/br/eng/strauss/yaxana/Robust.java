@@ -136,7 +136,7 @@ public final class Robust extends ConciseNumber implements Expression<Robust>
 
       final int hashCode = 31 * (31 + TERMINAL_OPERATIONS_HASHCODE) + Double.hashCode(value);
       return valueOf(TERMINAL_OPERATIONS, new double[] { value }, hashCode, value, value, value,
-                     value == 0d);
+                     value == 0d, false);
    }
 
    /**

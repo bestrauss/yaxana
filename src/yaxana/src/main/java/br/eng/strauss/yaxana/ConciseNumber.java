@@ -95,7 +95,7 @@ public abstract sealed class ConciseNumber extends Number permits Robust
 
    protected static Robust valueOf(final short[] operations, final double[] operands,
          final int hashCode, final double value, final double lo, final double hi,
-         final boolean mayBeZero)
+         final boolean mayBeZero, final boolean simplify)
    {
 
       final Cache cache = Cache.getInstance();
@@ -103,10 +103,9 @@ public abstract sealed class ConciseNumber extends Number permits Robust
       Robust robust = cache.get(key);
       if (robust == null)
       {
-         robust = new Robust(operations, operands, hashCode, value, lo, hi, mayBeZero);
-         cache.put(robust);
+         cache.put(robust = new Robust(operations, operands, hashCode, value, lo, hi, mayBeZero));
       }
-      return robust;
+      return simplify ? robust.simplified() : robust;
    }
 
    protected Robust newUnary(final Type type, final short exponent, final double value,
@@ -117,8 +116,8 @@ public abstract sealed class ConciseNumber extends Number permits Robust
       final short[] operations = Arrays.copyOf(this.operations, k + 1);
       operations[k] = (short) (type.ordinal() + (exponent << 4));
       final int hashCode = 31 * this.hashCode() + operations[k];
-      return Robust.valueOf(operations, this.operands.clone(), hashCode, value, lo, hi, false)
-            .simplified();
+      return Robust.valueOf(operations, this.operands.clone(), hashCode, value, lo, hi, false,
+                            true);
    }
 
    protected Robust newBinary(final Type type, final Robust that, final double value,
@@ -133,7 +132,7 @@ public abstract sealed class ConciseNumber extends Number permits Robust
       arraycopy(that.operands, 0, operands, this.operands.length, that.operands.length);
       operations[lenU] = (short) type.ordinal();
       final int hashCode = 31 * (31 * this.hashCode() + that.hashCode()) + type.ordinal();
-      return Robust.valueOf(operations, operands, hashCode, value, lo, hi, mayBeZero).simplified();
+      return Robust.valueOf(operations, operands, hashCode, value, lo, hi, mayBeZero, true);
    }
 
    protected Algebraic toAlgebraic()

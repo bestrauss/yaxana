@@ -10,5 +10,6 @@ module br.eng.strauss.yaxana
 {
 
    exports br.eng.strauss.yaxana;
+   exports br.eng.strauss.yaxana.big;
    exports br.eng.strauss.yaxana.exc;
 }

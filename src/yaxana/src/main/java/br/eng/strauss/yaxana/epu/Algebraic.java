@@ -526,17 +526,6 @@ public final class Algebraic
       }
    }
 
-   /**
-    * Returns a simplified version of {@code this}.
-    * 
-    * @return a simplified version of {@code this}.
-    */
-   public Algebraic simplified()
-   {
-
-      return Simplifier.simplified(this);
-   }
-
    public void ensureApproximationsNonZero()
    {
 

@@ -13,4 +13,4 @@ _site
 **/*.launch
 
 ### other
-**/.log
+**/*.log

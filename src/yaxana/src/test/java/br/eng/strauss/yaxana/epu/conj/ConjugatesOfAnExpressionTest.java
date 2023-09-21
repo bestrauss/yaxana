@@ -2,7 +2,7 @@ package br.eng.strauss.yaxana.epu.conj;
 
 import static br.eng.strauss.yaxana.YaxanaTest.format;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import br.eng.strauss.yaxana.epu.Algebraic;
 

@@ -4,7 +4,7 @@ import static br.eng.strauss.yaxana.Algorithm.BFMSS2;
 import static br.eng.strauss.yaxana.Algorithm.YAXANA;
 import static br.eng.strauss.yaxana.Algorithm.ZVAA;
 import static br.eng.strauss.yaxana.Robust.ZERO;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import br.eng.strauss.yaxana.Algorithm;
 import br.eng.strauss.yaxana.Robust;

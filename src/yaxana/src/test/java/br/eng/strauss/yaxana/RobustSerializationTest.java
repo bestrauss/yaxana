@@ -1,6 +1,6 @@
 package br.eng.strauss.yaxana;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Burkhard Strauss

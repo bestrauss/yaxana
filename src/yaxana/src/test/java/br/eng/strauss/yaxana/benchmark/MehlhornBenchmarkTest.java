@@ -1,6 +1,8 @@
 package br.eng.strauss.yaxana.benchmark;
 
-import org.junit.Test;
+import static br.eng.strauss.yaxana.YaxanaSettings.STRESS_LEVEL;
+
+import org.junit.jupiter.api.Test;
 
 import br.eng.strauss.yaxana.Robust;
 import br.eng.strauss.yaxana.anno.Benchmark;

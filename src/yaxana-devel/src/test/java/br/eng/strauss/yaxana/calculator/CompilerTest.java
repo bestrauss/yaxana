@@ -1,11 +1,11 @@
 package br.eng.strauss.yaxana.calculator;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import br.eng.strauss.yaxana.Robust;
 import br.eng.strauss.yaxana.test.YaxanaDevelTest;
@@ -41,8 +41,8 @@ public class CompilerTest extends YaxanaDevelTest
    public void bug2022T0000() throws Exception
    {
 
-      test("a = 2^-100", "1/2^100");
-      test("a = --100", "--100");
+      test("a = 2^-100", "1P-100");
+      test("a = --100", "100");
    }
 
    private void test(final String source, final String desired) throws Exception

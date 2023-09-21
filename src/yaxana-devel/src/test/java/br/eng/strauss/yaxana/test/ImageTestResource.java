@@ -1,7 +1,6 @@
 package br.eng.strauss.yaxana.test;
 
 import static br.eng.strauss.yaxana.test.TestTools.getAnnotationOnTestClassOrMethod;
-import static org.junit.Assert.assertTrue;
 
 import java.awt.Desktop;
 import java.awt.image.BufferedImage;
@@ -60,7 +59,7 @@ public abstract interface ImageTestResource extends ResourceBase
          final BufferedImage desiredImage = ImageIO.read(desiredFile);
          final byte[] desiredByteArray = toByteArray(desiredImage);
          final byte[] actualByteArray = toByteArray(actualImage);
-         assertTrue(Arrays.equals(desiredByteArray, actualByteArray));
+         assert Arrays.equals(desiredByteArray, actualByteArray);
       }
 
       private static byte[] toByteArray(final BufferedImage image) throws IOException

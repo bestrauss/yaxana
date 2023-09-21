@@ -4,10 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
 
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Rule;
-
 /**
  * Base class for all tests, benchmarks, and experiments.
  * 
@@ -16,12 +12,6 @@ import org.junit.Rule;
  */
 public abstract class YaxanaDevelTest
 {
-
-   @Rule
-   public YaxanaMethodRule methodRule = new YaxanaMethodRule();
-
-   @ClassRule
-   public static YaxanaClassRule classRule = new YaxanaClassRule();
 
    public static void format(final String format, final Object... args)
    {
@@ -50,18 +40,6 @@ public abstract class YaxanaDevelTest
          }
       }
       return sb.toString();
-   }
-
-   @BeforeClass
-   public static void beforeClassYaxanaTest()
-   {
-
-   }
-
-   @BeforeClass
-   public static void afterClassYaxanaTest()
-   {
-
    }
 
    public static final int STRESS_LEVEL = 0;

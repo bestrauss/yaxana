@@ -1,9 +1,9 @@
 package br.eng.strauss.yaxana.examples;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import br.eng.strauss.yaxana.Robust;
 import br.eng.strauss.yaxana.YaxanaTest;

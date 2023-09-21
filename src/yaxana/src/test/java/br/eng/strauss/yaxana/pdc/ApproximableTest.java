@@ -1,13 +1,14 @@
 package br.eng.strauss.yaxana.pdc;
 
+import static br.eng.strauss.yaxana.YaxanaSettings.STRESS_LEVEL;
 import static br.eng.strauss.yaxana.pdc.Scrutinizer.addIsExact;
 import static br.eng.strauss.yaxana.pdc.Scrutinizer.divIsExact;
 import static br.eng.strauss.yaxana.pdc.Scrutinizer.mulIsExact;
 import static br.eng.strauss.yaxana.pdc.Scrutinizer.rootIsExact;
 import static br.eng.strauss.yaxana.pdc.Scrutinizer.subIsExact;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import br.eng.strauss.yaxana.YaxanaTest;
 import br.eng.strauss.yaxana.big.BigFloat;
@@ -30,7 +31,6 @@ public final class ApproximableTest extends YaxanaTest
    {
 
       {
-
          final BigFloat a = new BigFloat("-0x1.EB560679052D43242B7DEE1D8P-2");
          final BigFloat b = new BigFloat("-106169686486635788906113091812658860519325696");
          testEnsurePrecisionDiv(a.mul(b), b);

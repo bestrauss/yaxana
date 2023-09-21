@@ -3,12 +3,12 @@ package br.eng.strauss.yaxana;
 import static br.eng.strauss.yaxana.Robust.ONE;
 import static br.eng.strauss.yaxana.Robust.ZERO;
 import static java.lang.Math.PI;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import br.eng.strauss.yaxana.big.BigFloat;
 import br.eng.strauss.yaxana.epu.Algebraic;
@@ -48,7 +48,7 @@ public final class RobustTest extends YaxanaTest
       }
    }
 
-   @Ignore // TODO ignorierte Testmethode
+   @Disabled // TODO ignorierte Testmethode
    @Test
    public void testValueOfSyntaxTree()
    {

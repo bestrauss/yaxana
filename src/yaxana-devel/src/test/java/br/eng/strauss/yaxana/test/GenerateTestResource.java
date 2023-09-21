@@ -8,14 +8,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Marker for {@code @Test}-methods of {@link YaxanaDevelTest}s which store desired values in files in
- * {@code src/test/resources} and use one of the interfaces based on {@link ResourceBase} to access
- * these files.
+ * Marker for {@code @Test}-methods of {@link YaxanaDevelTest}s which store desired values in files
+ * in {@code src/test/resources} and use one of the interfaces based on {@link ResourceBase} to
+ * access these files.
  * <p>
  * To generate the file instead of running the test, the developer temporarily sets {@code value} to
  * a non-zero value.
  * 
- * @author Burkhard Strauﬂü
+ * @author Burkhard Strauﬂ
  * @since 04-2022
  * @see ImageTestResource
  * @see StringTestResource

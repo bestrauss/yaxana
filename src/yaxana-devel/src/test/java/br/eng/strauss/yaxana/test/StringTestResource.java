@@ -1,7 +1,7 @@
 package br.eng.strauss.yaxana.test;
 
 import static br.eng.strauss.yaxana.test.TestTools.getAnnotationOnTestClassOrMethod;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.awt.Desktop;
 import java.io.File;

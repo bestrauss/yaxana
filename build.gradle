@@ -3,144 +3,63 @@
 //
 // @author Burkhard E. Strauss
 //
-
-buildscript 
+plugins 
 {
+  id "java"
+  id "java-library"
+  id "eclipse"
+}
+
+subprojects
+{
+  println "Name/Dir: ${project.name} -> ${projectDir}"
+  apply plugin: 'java'
+  apply plugin: 'java-library'
+  apply plugin: 'eclipse'
+  version = '0.6.6-SNAPSHOT'
   repositories 
-  {
-    maven 
-    {
-      url "https://plugins.gradle.org/m2/"
-    }
+  { 
+    mavenCentral()
+    flatDir { dirs '../compiler/lib'}
   }
   dependencies 
   {
-    classpath "org.javamodularity:moduleplugin:1.7.0"
+    implementation 'org.junit.jupiter:junit-jupiter-engine:5.10.0' 
   }
-}
-
-plugins {
-    id "application"
-}
-
-//
-// common subproject build
-//
-subprojects 
-{
-  apply plugin: 'java'
-  apply plugin: 'org.javamodularity.moduleplugin'
-  apply plugin: 'eclipse'
-  apply plugin: 'java-library'
-  version       = '0.6.6-SNAPSHOT'
   sourceCompatibility = JavaVersion.VERSION_17
   targetCompatibility = JavaVersion.VERSION_17
-  compileJava.options.encoding = "ISO-8859-1"
+  compileJava.options.encoding     = "ISO-8859-1"
   compileTestJava.options.encoding = "ISO-8859-1"
-  tasks.withType(JavaCompile) 
-  // System.out.format("Projects Java Version: %s\n", JavaVersion.current());
-  afterEvaluate {
-    repositories {
-      mavenCentral()
-    }
-    dependencies {
-      testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
-      implementation files('lib/jasmin.jar')
-    }
-  }
-  task javadocJar(type: Jar) 
+  java 
   {
-    from javadoc
-    classifier = 'javadoc'
+    modularity.inferModulePath = true
+    withSourcesJar()
+    withJavadocJar()
   }
-  task sourcesJar(type: Jar, dependsOn: [ classes, javadocJar ])
+  jar 
   {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-  }
-  artifacts {
-    archives sourcesJar
-  }
-  configurations {
-    testCompile
-  }
-  eclipse {
-    project {
-      file {
-        if (project.name == 'yaxana-yaxana') project.name = 'yaxana';
-        whenMerged { project -> println "  eclipse project.name ${project.name}" }
-      }
+    manifest 
+    { 
+      attributes(
+        "Name":    "${project.name}",
+        "Version": "V" + version,
+        "Author":  "Burkhard E. Strauss",
+        "URL":     "https://github.com/bestrauss/yaxana",
+      ) 
     }
   }
+  test {
+    useJUnitPlatform()  // make junit tests run at all
+    maxParallelForks = 8
+  }
+  javadoc { source = null } // project specific
 }
 
-task backup 
-{
-  doLast 
-  {
-    tasks.create('doBackup', Zip) 
-    {
-      from    '.'
-      include '**'
-      include '.gitignore'
-      include '**/.gitignore'
-      exclude '.git/**'
-      exclude '.gradle/**'
-      exclude '**/.gradle/**'
-      exclude 'build/**'
-      exclude '**/build/**'
-      exclude '**/bin/**'
-      exclude '**/literature/**'
-      exclude '**/main.pdf'
-      archiveName  'yaxana-' + (new Date()).format("YYYY-MM-dd-HH-mm-ss") + '.zip'
-      destinationDir(file('D:/Archive/bJ/2022/'))
-      println "creating file D:/Archive/bJ/2022/${archiveName}"
-    }
-  }
-}
-
-//
-// generate a working eclipse classpath file
-// 
-subprojects 
-{
-  afterEvaluate {
-    eclipse.classpath.file {
-      whenMerged {
-        entries.findAll { it.kind == 'src' && it.path.startsWith('src/test/') }.each { 
-          it.entryAttributes['test'] = 'true' 
-        }
-        entries.findAll { it.kind == 'src' && it.path.startsWith('/') }.each { 
-          it.entryAttributes['module'] = 'true' 
-        }
-        entries.findAll { it.kind == 'lib' && it.path.indexOf('/junit/') >= 0 }.each { 
-          it.entryAttributes['module'] = 'false' 
-        }
-        entries.findAll { it.kind == 'lib' && it.path.indexOf('/jasmin.jar') >= 0 }.each { 
-          it.entryAttributes['module'] = 'true' 
-        }
-      }
-    }
-  }
-}
-
-
-//
-// Third party modules
-//
-// All third party libraries referenced in the module-info.java files
-// must be registered here.
-//
-project.ext.thirdPartyModules = new HashSet<>();
-// project.ext.thirdPartyModules.add('com.google.code.gson:gson:2.8.6')
-// project.ext.thirdPartyModules.add('junit:junit:4.12')
-// project.ext.thirdPartyModules.add('org.slf4j:slf4j-api:1.7.25')
-
-//
-// Reads module-info.java files and creates dependencies. 
-//
-apply plugin: gradleplugin.modules.CreateDependenciesFromModulesPlugin
-
+// no rootProject:
+jar.enabled(false)
+tasks.eclipseProject.enabled(false) 
+tasks.eclipseClasspath.enabled(false)
+tasks.eclipseJdt.enabled(false)
 //
 // EOF
 //

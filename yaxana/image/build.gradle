@@ -1,0 +1,13 @@
+//
+// gradle subproject build for yaxana-image
+//
+// @author Burkhard E. Strauss
+//
+dependencies
+{ 
+   implementation project(':yaxana-test') 
+   implementation project(':yaxana-core')
+}
+//
+// EOF
+//

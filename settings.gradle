@@ -3,20 +3,16 @@
 //
 // @author Burkhard E. Strauss
 //
-
-//
-// the subprojects
-//
-include "yaxana"
+include "yaxana-core"
+include "yaxana-compiler"
 include "yaxana-devel"
+include "yaxana-image"
+include "yaxana-test"
 
-//
-// calculate subproject directories from project names
-//
+// determine subproject folder names from project names
 settings.rootProject.children.each { subproject ->
-    File projectDir = new File('src/' + subproject.name.replace('-', '-'))
-    // println "  subproject ${projectDir}"
-    subproject.projectDir = projectDir 
+  File projectDir = new File(subproject.name.replace('-', '/'))
+  subproject.projectDir = projectDir 
 }
 
 //

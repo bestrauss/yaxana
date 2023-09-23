@@ -18,7 +18,7 @@ public abstract interface StringTestResource extends ResourceBase
 
    public static final boolean MAKE_ALL = false;
 
-   public default void assertImageEquals(final File desiredFile, final String actualString)
+   public default void assertStringEquals(final File desiredFile, final String actualString)
          throws IOException
    {
 

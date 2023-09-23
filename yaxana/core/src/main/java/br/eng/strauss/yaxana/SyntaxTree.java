@@ -10,7 +10,7 @@ import br.eng.strauss.yaxana.epu.Algebraic;
  * @author Burkhard Strauss
  * @since July 2017
  */
-public abstract sealed interface SyntaxTree<S extends SyntaxTree<S>> /**/ permits Algebraic
+public abstract sealed interface SyntaxTree<S extends SyntaxTree<S>> permits Algebraic
 {
 
    /**

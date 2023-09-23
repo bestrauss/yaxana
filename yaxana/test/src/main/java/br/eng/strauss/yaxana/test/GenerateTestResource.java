@@ -8,7 +8,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Marker for {@code @Test}-methods of {@link YaxanaImageTest}s which store desired values in files
+ * Marker for {@code @Test}-methods of {@link YaxanaResourceTest}s which store desired values in files
  * in {@code src/test/resources} and use one of the interfaces based on {@link ResourceBase} to
  * access these files.
  * <p>

@@ -311,14 +311,6 @@ public final class BigFloat extends Number implements Comparable<BigFloat>
       if (thisScale != thatScale)
       {
          final int drop = overflow((long) thisScale - thatScale);
-         // TODO fertig machen oder raus
-         final boolean on = false;
-         if (on && rounder != null)
-         {
-            final int thisLen = this.precision() + (drop > 0 ? drop : 0);
-            final int thatLen = that.precision() + (drop < 0 ? -drop : 0);
-            //
-         }
          if (drop > 0)
          {
             thisUnscaledValue = thisUnscaledValue.shiftLeft(drop);

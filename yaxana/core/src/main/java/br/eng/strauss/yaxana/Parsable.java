@@ -10,8 +10,8 @@ import br.eng.strauss.yaxana.io.Parser;
  * @author Burkhard Strauss
  * @since July 2017
  */
-public abstract /* sealed */ interface Parsable<P extends Parsable<P>>
-      extends Operation<P> /* permits Expression<?> */
+public abstract sealed interface Parsable<P extends Parsable<P>> extends Operation<P>
+      permits Expression
 {
 
    /**

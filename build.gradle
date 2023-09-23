@@ -42,7 +42,7 @@ subprojects
     { 
       attributes(
         "Name":    "${project.name}",
-        "Version": "V" + version,
+        "Version": "V" + rootProject.version,
         "Author":  "Burkhard E. Strauss",
         "URL":     "https://github.com/bestrauss/yaxana",
       ) 

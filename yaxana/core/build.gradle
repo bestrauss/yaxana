@@ -5,17 +5,32 @@
 //
 tasks.javadoc.configure 
 {
+  // https://docs.gradle.org/current/dsl/org.gradle.api.tasks.javadoc.Javadoc.html
+  
   source = 'src/main/java'
+  options.addBooleanOption("-source-path src/main/java", true)
+  include('**/br/eng/strauss/yaxana/**')
+  exclude('**/br/eng/strauss/yaxana/epu/**')
+  exclude('**/br/eng/strauss/yaxana/io/**')
+  exclude('**/br/eng/strauss/yaxana/math/**')
+  exclude('**/br/eng/strauss/yaxana/pdc/**')
+  exclude('**/br/eng/strauss/yaxana/rnd/**')
+  
+  options.addBooleanOption("-show-members public", true)
+  options.addBooleanOption("-show-types public", true)
+  options.addBooleanOption("-show-module-contents api", true)
+  options.addBooleanOption("-show-packages exported", true)
+  
+  boolean warningsOff = false;
+  if (warningsOff)
+  {
+    options.addBooleanOption("Xdoclint:none", true)
+    options.addBooleanOption("Xmaxwarns 1", true)
+  }
   options.docTitle   ("Yaxana $version API")
   options.windowTitle("Yaxana $version API")
   options.quiet()
   options.noTimestamp()
-  options.addStringOption ("-show-members", "public")
-  options.addStringOption ("-show-module-contents", "api")
-  options.addStringOption ("-show-packages", "exported")
-  options.addStringOption ("-show-types", "public")
-  options.addBooleanOption("Xdoclint:none", true)
-  options.addStringOption ("Xmaxwarns", "1")
 }
 //
 // EOF

@@ -9,7 +9,7 @@ import br.eng.strauss.yaxana.epu.Algebraic;
  * @since 06-2022
  */
 public abstract sealed interface Expression<E extends Expression<E>>
-      extends Parsable<E>, Comparison<E> /**/ permits Algebraic,Robust
+      extends Parsable<E>, Comparison<E> permits Algebraic, Robust
 {
 
    /**

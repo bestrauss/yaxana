@@ -8,7 +8,7 @@ package br.eng.strauss.yaxana;
  * @author Burkhard Strauss
  * @since September 2017
  */
-public abstract /* sealed */ interface Operation<O extends Operation<O>> /* permits Parsable<?> */
+public abstract sealed interface Operation<O extends Operation<O>> permits Parsable
 {
 
    /**

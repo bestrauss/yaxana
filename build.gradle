@@ -53,6 +53,26 @@ subprojects
     maxParallelForks = 8
   }
   javadoc { source = null } // project specific
+
+  // configure eclipse project text-file encoding 
+  eclipse { project {
+    file { beforeMerged { gp ->
+      setEclipsePreference(file('.settings/org.eclipse.core.resources.prefs'), 'encoding/<project>', compileJava.options.encoding)
+    }}
+  }}
+  project.ext.setProperty = { File file, String key, String value ->
+    def s = file.text.replaceAll("(?ms)(^\\Q${key}\\E\\s*=).*?\$", '')
+    s = s.replaceAll('\n{2,}', '\n')
+    file.text = s + key + '=' + value + '\n'
+  }
+  project.ext.setEclipsePreference = { File prefsFile, String key, String value ->
+    println("edit ${prefsFile}:\t${key} := ${value}")
+    if (!prefsFile.exists()) {
+        prefsFile.parentFile.mkdirs()
+        prefsFile.write("eclipse.preferences.version=1\n")
+    }
+    setProperty(prefsFile, key, value)
+  }
 }
 
 // no rootProject:

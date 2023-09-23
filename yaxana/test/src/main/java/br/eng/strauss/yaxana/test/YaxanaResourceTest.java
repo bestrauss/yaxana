@@ -10,7 +10,7 @@ import java.util.Locale;
  * @author Burkhard Strauss
  * @since July 2017
  */
-public abstract class YaxanaImageTest
+public abstract class YaxanaResourceTest
 {
 
    public static void format(final String format, final Object... args)
@@ -41,7 +41,4 @@ public abstract class YaxanaImageTest
       }
       return sb.toString();
    }
-
-   public static final int STRESS_LEVEL = 0;
-   public static final boolean SKIP_BENCHMARKS = true;
 }

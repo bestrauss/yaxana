@@ -8,6 +8,7 @@ module br.eng.strauss.yaxana.test
 {
 
    requires transitive org.junit.jupiter.api;
+   requires transitive org.junit.platform.commons;
 
    requires transitive java.desktop;
 

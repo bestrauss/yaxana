@@ -1,4 +1,4 @@
-package br.eng.strauss.yaxana.tools.anno;
+package br.eng.strauss.yaxana.unittesttools;
 
 import static br.eng.strauss.yaxana.Algorithm.BFMSS2;
 import static br.eng.strauss.yaxana.Algorithm.YAXANA;
@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 import br.eng.strauss.yaxana.Algorithm;
 
 /**
- * Indicates that a test class is to be executed multiple times using all EPUs.
+ * Indicates that a test class is to be executed multiple times using various {@link Algorithm}s.
  * 
  * @author Burkhard Strauss
  * @since 06-2022
@@ -20,5 +20,8 @@ import br.eng.strauss.yaxana.Algorithm;
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface WithAlgorithms {
+   /**
+    * @return the algorithms to be used.
+    */
    Algorithm[] value() default { BFMSS2, ZVAA, YAXANA };
 }

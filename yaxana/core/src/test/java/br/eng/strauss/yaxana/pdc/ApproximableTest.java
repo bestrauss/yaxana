@@ -5,7 +5,7 @@ import static br.eng.strauss.yaxana.pdc.Scrutinizer.divIsExact;
 import static br.eng.strauss.yaxana.pdc.Scrutinizer.mulIsExact;
 import static br.eng.strauss.yaxana.pdc.Scrutinizer.rootIsExact;
 import static br.eng.strauss.yaxana.pdc.Scrutinizer.subIsExact;
-import static br.eng.strauss.yaxana.tools.YaxanaSettings.STRESS_LEVEL;
+import static br.eng.strauss.yaxana.unittesttools.YaxanaSettings.STRESS_LEVEL;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,7 @@ import br.eng.strauss.yaxana.big.Rounder;
 import br.eng.strauss.yaxana.epu.Algebraic;
 import br.eng.strauss.yaxana.rnd.RandomAlgebraic;
 import br.eng.strauss.yaxana.rnd.RandomBigFloat;
-import br.eng.strauss.yaxana.tools.YaxanaTest;
+import br.eng.strauss.yaxana.unittesttools.YaxanaTest;
 
 /**
  * Tests for {@link Approximable} bzw. {@link PDC}.

@@ -1,4 +1,4 @@
-package br.eng.strauss.yaxana.tools;
+package br.eng.strauss.yaxana.unittesttools;
 
 import static java.util.Locale.US;
 
@@ -14,6 +14,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 public abstract class YaxanaTest
 {
 
+   /**
+    * Print a formatted string to the console.
+    * 
+    * @param format
+    *           like in {@code String.format()}.
+    * @param args
+    *           like in {@code String.format()}.
+    */
    public static void format(final String format, final Object... args)
    {
 
@@ -23,5 +31,6 @@ public abstract class YaxanaTest
       }
    }
 
+   /** Used by some tests to stop littering the console output. */
    public static boolean quiet = false;
 }

@@ -1,4 +1,4 @@
-package br.eng.strauss.yaxana.tools;
+package br.eng.strauss.yaxana.unittesttools;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,6 +14,9 @@ import java.util.Properties;
 public final class YaxanaSettings
 {
 
+   /**
+    * Read the developers preferences.
+    */
    public static void readPrefs()
    {
 
@@ -53,6 +56,8 @@ public final class YaxanaSettings
    {
    }
 
+   /** Set to true to skip tedious benchmarks. */
    public static boolean SKIP_BENCHMARKS = false;
+   /** Set higher to increase test intensity. */
    public static int STRESS_LEVEL = 0;
 }

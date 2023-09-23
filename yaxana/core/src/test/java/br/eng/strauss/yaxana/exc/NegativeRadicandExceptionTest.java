@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import br.eng.strauss.yaxana.big.BigFloat;
 import br.eng.strauss.yaxana.big.Rounder;
-import br.eng.strauss.yaxana.tools.YaxanaTest;
+import br.eng.strauss.yaxana.unittesttools.YaxanaTest;
 
 /**
  * @author Burkhard Strauss

@@ -6,10 +6,8 @@ import java.math.RoundingMode;
 import java.util.regex.Pattern;
 
 import br.eng.strauss.yaxana.Robusts;
-import br.eng.strauss.yaxana.exc.DivisionByZeroException;
 import br.eng.strauss.yaxana.exc.ExponentOverflowException;
 import br.eng.strauss.yaxana.exc.ExponentUnderflowException;
-import br.eng.strauss.yaxana.exc.NegativeRadicandException;
 import br.eng.strauss.yaxana.exc.NonPositiveLogarithmArgumentException;
 import br.eng.strauss.yaxana.exc.NonTerminatingBinaryExpansionException;
 import br.eng.strauss.yaxana.exc.UnreachedException;
@@ -307,18 +305,30 @@ public final class BigFloat extends Number implements Comparable<BigFloat>
       final int thatScale = that.scale;
       BigInteger thisUnscaledValue = this.unscaledValue;
       BigInteger thatUnscaledValue = that.unscaledValue;
-      final int scale = thisScale < thatScale ? thisScale : thatScale;
+      int scale = thisScale < thatScale ? thisScale : thatScale;
       if (thisScale != thatScale)
       {
          final int drop = overflow((long) thisScale - thatScale);
-         if (drop > 0)
+         final int thisDropShiftLeft = drop > 0 ? drop : 0;
+         final int thatDropShiftLeft = drop > 0 ? 0 : -drop;
+         final int rndShiftLeft;
+         if (rounder != null)
          {
-            thisUnscaledValue = thisUnscaledValue.shiftLeft(drop);
+            final int thisPrecision = this.precision() + thisDropShiftLeft;
+            final int thatPrecision = that.precision() + thatDropShiftLeft;
+            final int precision = Math.max(thisPrecision, thatPrecision);
+            final int diffPrecision = rounder.precision + 2 - precision;
+            rndShiftLeft = diffPrecision > 0 ? diffPrecision : 0;
          }
          else
          {
-            thatUnscaledValue = thatUnscaledValue.shiftLeft(-drop);
+            rndShiftLeft = 0;
          }
+         final int thisShiftLeft = rndShiftLeft + thisDropShiftLeft;
+         final int thatShiftLeft = rndShiftLeft + thatDropShiftLeft;
+         thisUnscaledValue = thisUnscaledValue.shiftLeft(thisShiftLeft);
+         thatUnscaledValue = thatUnscaledValue.shiftLeft(thatShiftLeft);
+         scale -= rndShiftLeft;
       }
       return new BigFloat(thisUnscaledValue.add(thatUnscaledValue), scale).round(rounder);
    }
@@ -519,51 +529,7 @@ public final class BigFloat extends Number implements Comparable<BigFloat>
    public BigFloat sqrt(final Rounder rounder)
    {
 
-      switch (this.signum())
-      {
-         case 0 :
-            return BigFloat.ZERO;
-         case -1 :
-            throw new NegativeRadicandException();
-      }
-      if (this.isOne())
-      {
-         return ONE;
-      }
-      {
-         final int n = 2;
-         final int oom = this.msb();
-         if (Math.abs(oom) >= n)
-         {
-            final int oomRoot = oom / n;
-            final int oomRadi = n * oomRoot;
-            return this.mulTwoTo(-oomRadi).sqrt(rounder).mulTwoTo(oomRoot);
-         }
-      }
-      final int prec = rounder.getPrecision();
-      final BigFloat HALF = new BigFloat(BigInteger.ONE, -1);
-      final int maxPrecision = prec + 4 + this.precision();
-      final BigFloat acceptableError = BigFloat.twoTo(-(prec + 2));
-      BigFloat sqrt = this.mul(HALF, Rounder.SINGLE);
-      int adaptivePrecision = 2;
-      BigFloat previousSqrt;
-      do
-      {
-         if (adaptivePrecision < maxPrecision)
-         {
-            adaptivePrecision *= 3;
-            if (adaptivePrecision > maxPrecision)
-            {
-               adaptivePrecision = maxPrecision;
-            }
-         }
-         final Rounder ctx = new Rounder(adaptivePrecision);
-         previousSqrt = sqrt;
-         sqrt = this.div(sqrt, ctx).add(sqrt, ctx).mul(HALF, ctx);
-      }
-      while (adaptivePrecision < maxPrecision
-            || sqrt.sub(previousSqrt).abs().compareTo(acceptableError) > 0);
-      return sqrt.round(rounder);
+      return Root.sqrt(this, rounder);
    }
 
    /**
@@ -578,70 +544,7 @@ public final class BigFloat extends Number implements Comparable<BigFloat>
    public BigFloat root(final int n, final Rounder rounder)
    {
 
-      if (n == 0)
-      {
-         throw new DivisionByZeroException();
-      }
-      if (n < 0)
-      {
-         return BigFloat.ONE.div(this.root(-n, rounder), rounder);
-      }
-      if (n == 1)
-      {
-         return this;
-      }
-      if (n == 2)
-      {
-         return this.sqrt(rounder);
-      }
-      switch (this.signum())
-      {
-         case 0 :
-            return BigFloat.ZERO;
-         case -1 :
-            if ((n & 1) == 0)
-            {
-               throw new NegativeRadicandException();
-            }
-            else
-            {
-               return this.neg().root(n, rounder).neg();
-            }
-      }
-      if (this.isOne())
-      {
-         return ONE;
-      }
-      {
-         final int oom = this.msb();
-         if (Math.abs(oom) >= n)
-         {
-            final int oomRoot = oom / n;
-            final int oomRadi = n * oomRoot;
-            return this.mulTwoTo(-oomRadi).root(n, rounder).mulTwoTo(oomRoot);
-         }
-      }
-      final int prec = rounder.getPrecision();
-      final int maxPrecision = prec + 4 + this.precision();
-      final BigFloat acceptableError = BigFloat.twoTo(-(prec + 1));
-      final BigFloat bn = new BigFloat(n);
-      final int nMinus1 = n - 1;
-      BigFloat result = this.div(TWO, Rounder.SINGLE);
-      int adaptivePrecision = 2;
-      BigFloat step;
-      do
-      {
-         adaptivePrecision = adaptivePrecision * 3;
-         if (adaptivePrecision > maxPrecision)
-         {
-            adaptivePrecision = maxPrecision;
-         }
-         final Rounder ctx = new Rounder(adaptivePrecision);
-         step = this.div(result.pow(nMinus1, ctx), ctx).sub(result, ctx).div(bn, ctx);
-         result = result.add(step, ctx);
-      }
-      while (adaptivePrecision < maxPrecision || step.abs().compareTo(acceptableError) > 0);
-      return result.round(rounder);
+      return Root.root(this, n, rounder);
    }
 
    /**

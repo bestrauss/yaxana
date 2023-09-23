@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-import br.eng.strauss.yaxana.tools.YaxanaTest;
-import br.eng.strauss.yaxana.tools.anno.WithAlgorithms;
+import br.eng.strauss.yaxana.unittesttools.WithAlgorithms;
+import br.eng.strauss.yaxana.unittesttools.YaxanaTest;
 
 /**
  * Tests constant values using all EPUs.

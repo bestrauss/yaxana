@@ -9,7 +9,7 @@ import java.math.RoundingMode;
 
 import org.junit.jupiter.api.Test;
 
-import br.eng.strauss.yaxana.tools.YaxanaTest;
+import br.eng.strauss.yaxana.unittesttools.YaxanaTest;
 
 /**
  * Tests for {@link StringIO}.

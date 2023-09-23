@@ -7,14 +7,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import br.eng.strauss.yaxana.big.BigFloat;
 import br.eng.strauss.yaxana.epu.Algebraic;
 import br.eng.strauss.yaxana.exc.DivisionByZeroException;
 import br.eng.strauss.yaxana.rnd.RandomAlgebraic;
-import br.eng.strauss.yaxana.tools.YaxanaTest;
+import br.eng.strauss.yaxana.unittesttools.YaxanaTest;
 
 /**
  * @author Burkhard Strauss
@@ -49,7 +48,6 @@ public final class RobustTest extends YaxanaTest
       }
    }
 
-   @Disabled // TODO ignorierte Testmethode
    @Test
    public void testValueOfSyntaxTree()
    {
@@ -61,8 +59,12 @@ public final class RobustTest extends YaxanaTest
          final Robust value = Robust.valueOf(a);
          final Algebraic b = (Algebraic) value.toSyntaxTree();
          assertEquals(a.signum(), b.signum());
-         assertTrue(a.approximation().sub(b.approximation()).abs()
-               .compareTo(new BigFloat(1E-15)) < 0);
+         final BigFloat ba = a.approximation(100);
+         final BigFloat bb = b.approximation(100);
+         final BigFloat absMax = ba.max(bb).abs();
+         final BigFloat sub = ba.sub(bb);
+         final int cmp = sub.abs().compareTo(new BigFloat(1E-15).mul(absMax));
+         assertTrue(cmp <= 0);
       }
    }
 
@@ -147,18 +149,6 @@ public final class RobustTest extends YaxanaTest
          assertTrue(c.lowerBound() <= c.doubleValue());
          assertTrue(c.doubleValue() <= c.upperBound());
       }
-      if (false) // TODO Zahlenwerte, so dass nextDown/nextUp benötigt wird, wie oben
-      {
-         final Robust a = Robust.valueOf(PI);
-         final Robust b = Robust.valueOf(0x1P-100);
-         final Robust c = a.mul(b);
-         final double v = PI * Math.pow(2d, -100);
-         assertEquals(Math.nextDown(v), c.lowerBound(), 0d);
-         assertEquals(Math.nextUp(v), c.upperBound(), 0d);
-         assertEquals(v, c.doubleValue(), 0d);
-         assertTrue(c.lowerBound() <= c.doubleValue());
-         assertTrue(c.doubleValue() <= c.upperBound());
-      }
    }
 
    @Test
@@ -172,18 +162,6 @@ public final class RobustTest extends YaxanaTest
          final double v = PI * Math.pow(2d, -100);
          assertEquals(v, c.lowerBound(), 0d);
          assertEquals(v, c.upperBound(), 0d);
-         assertEquals(v, c.doubleValue(), 0d);
-         assertTrue(c.lowerBound() <= c.doubleValue());
-         assertTrue(c.doubleValue() <= c.upperBound());
-      }
-      if (false) // TODO Zahlenwerte, so dass nextDown/nextUp benötigt wird, wie oben
-      {
-         final Robust a = Robust.valueOf(PI);
-         final Robust b = Robust.valueOf(0x1P100);
-         final Robust c = a.div(b);
-         final double v = PI * Math.pow(2d, -100);
-         assertEquals(Math.nextDown(v), c.lowerBound(), 0d);
-         assertEquals(Math.nextUp(v), c.upperBound(), 0d);
          assertEquals(v, c.doubleValue(), 0d);
          assertTrue(c.lowerBound() <= c.doubleValue());
          assertTrue(c.doubleValue() <= c.upperBound());

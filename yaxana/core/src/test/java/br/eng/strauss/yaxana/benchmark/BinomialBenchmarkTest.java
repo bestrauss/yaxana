@@ -1,6 +1,6 @@
 package br.eng.strauss.yaxana.benchmark;
 
-import static br.eng.strauss.yaxana.tools.YaxanaSettings.STRESS_LEVEL;
+import static br.eng.strauss.yaxana.unittesttools.YaxanaSettings.STRESS_LEVEL;
 
 import org.junit.jupiter.api.Test;
 
@@ -8,7 +8,7 @@ import br.eng.strauss.yaxana.Robust;
 import br.eng.strauss.yaxana.big.BigFloat;
 import br.eng.strauss.yaxana.epu.EPU;
 import br.eng.strauss.yaxana.rnd.RandomBigFloat;
-import br.eng.strauss.yaxana.tools.anno.Benchmark;
+import br.eng.strauss.yaxana.unittesttools.Benchmark;
 
 /**
  * {@link EPU} benchmark, comparing EPUs.

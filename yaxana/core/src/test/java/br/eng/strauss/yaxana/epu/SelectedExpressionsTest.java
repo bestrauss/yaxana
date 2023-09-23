@@ -7,12 +7,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.MathContext;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import br.eng.strauss.yaxana.big.BigFloat;
-import br.eng.strauss.yaxana.tools.YaxanaTest;
-import br.eng.strauss.yaxana.tools.anno.WithAlgorithms;
+import br.eng.strauss.yaxana.unittesttools.WithAlgorithms;
+import br.eng.strauss.yaxana.unittesttools.YaxanaTest;
 
 /**
  * @author Burkhard Strauss
@@ -183,13 +182,12 @@ public final class SelectedExpressionsTest extends YaxanaTest
       }
    }
 
-   @Disabled // TODO dauert ewig
    @Test
    public void testBFMSExample()
    {
 
       {
-         final Algebraic value = new Algebraic("root(1p256 + 1, 256)-2");
+         final Algebraic value = new Algebraic("root(1p32 + 1, 32)-2");
          assertEquals(1, value.signum());
       }
    }

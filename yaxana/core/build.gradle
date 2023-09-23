@@ -1,0 +1,22 @@
+//
+// gradle subproject build for yaxana-core
+//
+// @author Burkhard E. Strauss
+//
+tasks.javadoc.configure 
+{
+  source = 'src/main/java'
+  options.docTitle   ("Yaxana $version API")
+  options.windowTitle("Yaxana $version API")
+  options.quiet()
+  options.noTimestamp()
+  options.addStringOption ("-show-members", "public")
+  options.addStringOption ("-show-module-contents", "api")
+  options.addStringOption ("-show-packages", "exported")
+  options.addStringOption ("-show-types", "public")
+  options.addBooleanOption("Xdoclint:none", true)
+  options.addStringOption ("Xmaxwarns", "1")
+}
+//
+// EOF
+//

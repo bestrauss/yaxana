@@ -1,0 +1,12 @@
+//
+// gradle subproject build for yaxana-test
+//
+// @author Burkhard E. Strauss
+//
+dependencies 
+{ 
+  api 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+}
+//
+// EOF
+//

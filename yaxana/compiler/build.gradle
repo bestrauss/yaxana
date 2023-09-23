@@ -1,0 +1,13 @@
+//
+// gradle subproject build for yaxana-compiler
+//
+// @author Burkhard E. Strauss
+//
+dependencies 
+{ 
+  implementation project(':yaxana-core')
+  implementation 'jasmin:jasmin' 
+}
+//
+// EOF
+//

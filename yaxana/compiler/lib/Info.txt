@@ -1,0 +1,3 @@
+See: https://github.com/davidar/jasmin
+A module-info.class was added to the jar.
+The module name is jasmin.

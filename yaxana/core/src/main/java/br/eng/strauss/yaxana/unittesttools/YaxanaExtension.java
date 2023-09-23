@@ -1,7 +1,7 @@
-package br.eng.strauss.yaxana.tools;
+package br.eng.strauss.yaxana.unittesttools;
 
 import static br.eng.strauss.yaxana.Algorithm.BFMSS2;
-import static br.eng.strauss.yaxana.tools.YaxanaSettings.SKIP_BENCHMARKS;
+import static br.eng.strauss.yaxana.unittesttools.YaxanaSettings.SKIP_BENCHMARKS;
 
 import java.lang.reflect.Method;
 import java.util.Optional;
@@ -17,13 +17,12 @@ import org.junit.jupiter.api.extension.ReflectiveInvocationContext;
 import br.eng.strauss.yaxana.Algorithm;
 import br.eng.strauss.yaxana.Robusts;
 import br.eng.strauss.yaxana.epu.Algebraic;
-import br.eng.strauss.yaxana.tools.anno.Benchmark;
-import br.eng.strauss.yaxana.tools.anno.WithAlgorithms;
 
 /**
  * @author Burkhard Strauﬂ
  * @since 2023-09
  */
+@SuppressWarnings("exports")
 public final class YaxanaExtension implements AfterAllCallback, BeforeAllCallback,
       AfterEachCallback, BeforeEachCallback, InvocationInterceptor
 {

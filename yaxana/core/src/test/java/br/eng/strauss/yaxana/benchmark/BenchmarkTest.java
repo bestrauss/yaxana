@@ -12,7 +12,7 @@ import br.eng.strauss.yaxana.Robusts;
 import br.eng.strauss.yaxana.epu.Algebraic;
 import br.eng.strauss.yaxana.epu.EPU;
 import br.eng.strauss.yaxana.pdc.PDCStats;
-import br.eng.strauss.yaxana.tools.YaxanaTest;
+import br.eng.strauss.yaxana.unittesttools.YaxanaTest;
 
 /**
  * {@link EPU} benchmark, comparing EPUs.

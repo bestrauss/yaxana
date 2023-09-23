@@ -1,8 +1,11 @@
 package br.eng.strauss.yaxana.exc;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.Test;
 
-import br.eng.strauss.yaxana.tools.YaxanaTest;
+import br.eng.strauss.yaxana.unittesttools.YaxanaTest;
 
 /**
  * @author Burkhard Strauss
@@ -14,5 +17,7 @@ public final class ExponentUnderflowExceptionTest extends YaxanaTest
    @Test
    public void test()
    {
+      assertTrue(new ExponentUnderflowException() instanceof ArithmeticException);
+      assertEquals("exponent underflow", new ExponentUnderflowException().getMessage());
    }
 }

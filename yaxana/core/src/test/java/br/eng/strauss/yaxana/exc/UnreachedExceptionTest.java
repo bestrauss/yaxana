@@ -2,7 +2,7 @@ package br.eng.strauss.yaxana.exc;
 
 import org.junit.jupiter.api.Test;
 
-import br.eng.strauss.yaxana.tools.YaxanaTest;
+import br.eng.strauss.yaxana.unittesttools.YaxanaTest;
 
 /**
  * @author Burkhard Strauss

@@ -1,4 +1,4 @@
-package br.eng.strauss.yaxana.tools.anno;
+package br.eng.strauss.yaxana.unittesttools;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -12,5 +12,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Benchmark {
+   /**
+    * @return zero if this benchmark is disabled.
+    */
    int value();
 }

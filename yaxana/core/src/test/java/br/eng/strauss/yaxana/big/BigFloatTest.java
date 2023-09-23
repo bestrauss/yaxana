@@ -14,12 +14,14 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.util.Random;
+import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.Test;
 
 import br.eng.strauss.yaxana.exc.DivisionByZeroException;
 import br.eng.strauss.yaxana.exc.NegativeRadicandException;
-import br.eng.strauss.yaxana.tools.YaxanaTest;
+import br.eng.strauss.yaxana.exc.NonTerminatingBinaryExpansionException;
+import br.eng.strauss.yaxana.unittesttools.YaxanaTest;
 
 /**
  * @author Burkhard Strauss
@@ -81,7 +83,44 @@ public class BigFloatTest extends YaxanaTest
    }
 
    @Test
-   public void test_BigFloat_orderOfMagnitude()
+   public void test_unscaledValue()
+   {
+
+      assertEquals(BigInteger.valueOf(0), new BigFloat(BigInteger.ZERO).unscaledValue());
+      assertEquals(BigInteger.valueOf(1), new BigFloat(BigInteger.ONE).unscaledValue());
+      assertEquals(BigInteger.valueOf(5), new BigFloat(BigInteger.TEN).unscaledValue());
+      assertEquals(BigInteger.valueOf(-15), new BigFloat(-15).unscaledValue());
+   }
+
+   @Test
+   public void test_scale()
+   {
+
+      assertEquals(0, new BigFloat(BigInteger.ZERO).scale());
+      assertEquals(0, new BigFloat(BigInteger.ONE).scale());
+      assertEquals(1, new BigFloat(BigInteger.TEN).scale());
+      assertEquals(0, new BigFloat(-15).scale());
+      assertEquals(-200, new BigFloat(0x1P-200).scale());
+   }
+
+   @Test
+   public void test_max()
+   {
+
+      assertEquals(new BigFloat(23.1), new BigFloat(23.0).max(new BigFloat(23.1)));
+      assertEquals(new BigFloat(23.2), new BigFloat(23.2).max(new BigFloat(23.1)));
+   }
+
+   @Test
+   public void test_min()
+   {
+
+      assertEquals(new BigFloat(23.0), new BigFloat(23.0).min(new BigFloat(23.1)));
+      assertEquals(new BigFloat(23.1), new BigFloat(23.2).min(new BigFloat(23.1)));
+   }
+
+   @Test
+   public void test_msb()
    {
 
       assertTrue(new BigFloat(1).msb() == 0);
@@ -135,6 +174,9 @@ public class BigFloatTest extends YaxanaTest
    {
 
       {
+         test(BigFloat.ZERO.add(BigFloat.ZERO), 0d);
+      }
+      {
          final double d0 = -8.746833419016434E9;
          final double d1 = -9.883514548968908E9;
          test(new BigFloat(d0).add(new BigFloat(d1)), d0 + d1);
@@ -149,6 +191,16 @@ public class BigFloatTest extends YaxanaTest
       test(new BigFloat(1).add(new BigFloat(1)), 2);
       test(new BigFloat(1).add(new BigFloat(2)), 3);
       test(new BigFloat(1).add(new BigFloat(-1)), 0);
+      {
+         final Rounder rounder = new Rounder(8);
+         final BigFloat value = new BigFloat(0xF).add(new BigFloat(0xFP-4), rounder);
+         assertEquals(new BigFloat(0x1.FEP+3), value);
+      }
+      {
+         final Rounder rounder = new Rounder(8);
+         final BigFloat value = new BigFloat(0xFP-4).add(new BigFloat(0xF), rounder);
+         assertEquals(new BigFloat(0x1.FEP+3), value);
+      }
    }
 
    @Test
@@ -179,6 +231,15 @@ public class BigFloatTest extends YaxanaTest
    @Test
    public void test_div()
    {
+
+      try
+      {
+         new BigFloat(1).div(new BigFloat(10));
+         fail();
+      }
+      catch (final NonTerminatingBinaryExpansionException e)
+      {
+      }
 
       assertTrue(ONE.div(ONE).compareTo(ONE) == 0);
       assertTrue(new BigFloat(124d).div(new BigFloat(32d)).doubleValue() == 3.875);
@@ -463,6 +524,9 @@ public class BigFloatTest extends YaxanaTest
       assertTrue(ONE.compareTo(MINUSONE) > 0);
       assertTrue(TWO.compareTo(MINUSONE) > 0);
       assertTrue(MINUSONE.compareTo(MINUSONE) == 0);
+
+      assertTrue(MINUSONE.compareTo(TWO.neg()) == 1);
+      assertTrue(TWO.neg().compareTo(MINUSONE) == -1);
    }
 
    @SuppressWarnings("unlikely-arg-type")
@@ -482,6 +546,71 @@ public class BigFloatTest extends YaxanaTest
          assertFalse(new BigFloat(d).equals(new BigFloat(1.1 * d)));
          assertTrue(new BigFloat(d).equals(new BigFloat(d)));
       }
+   }
+
+   @Test
+   public void test_intValue()
+   {
+
+      assertEquals(17, new BigFloat(17.7).intValue());
+   }
+
+   @Test
+   public void test_longValue()
+   {
+
+      assertEquals(Long.MAX_VALUE, new BigFloat(Long.MAX_VALUE).longValue());
+      assertEquals(Long.MIN_VALUE, new BigFloat(Long.MIN_VALUE).longValue());
+   }
+
+   @Test
+   public void test_floatValue()
+   {
+
+      final float value = 17.7f;
+      final double diff = value - new BigFloat(value).floatValue();
+      assertTrue(Math.abs(diff) <= Math.nextUp(0f));
+   }
+
+   @Test
+   public void test_doubleValue()
+   {
+
+      assertEquals(17.7, new BigFloat(17.7).doubleValue());
+   }
+
+   @Test
+   public void test_isInteger()
+   {
+
+      assertTrue(new BigFloat(17).isInteger());
+      assertFalse(new BigFloat(17.7).isInteger());
+   }
+
+   @Test
+   public void test_terminalPattern()
+   {
+
+      final Pattern p = BigFloat.terminalPattern();
+      final String s = "((-?0x[_0-9a-f]+([.][_0-9a-f]*)?|-?0x[_0-9a-f]*[.]([_0-9a-f]+)?)(([ep])([+-]?[0-9]+))?|(-?[_0-9]+([.][_0-9]*)?|-?[_0-9]*[.]([_0-9]+)?)(([ep])([+-]?[0-9]+))?)";
+      assertEquals(s, p.pattern());
+   }
+
+   @Test
+   public void test_toString()
+   {
+
+      assertEquals("1P-17", new BigFloat(0x1P-17).toString());
+      assertEquals("0x1P-17", new BigFloat(0x1P-17).toHexString());
+      assertEquals("7.629394531250000E-06", new BigFloat(0x1P-17).toString(MathContext.DECIMAL64));
+   }
+
+   @Test
+   public void test_precision()
+   {
+
+      assertEquals(1, new BigFloat(0).precision());
+      assertEquals(3, new BigFloat(7).precision());
    }
 
    @Test
@@ -544,12 +673,6 @@ public class BigFloatTest extends YaxanaTest
       {
          final double val = -Math.pow(2d, 1d / 3d);
          assertEquals(new BigFloat(Math.nextUp(val)), TWO.neg().root(3, r));
-      }
-      if (false)
-      {
-         // TODO TODO ignorierter Test
-         final double val = -Math.pow(200d, 1d / 3d);
-         assertEquals(new BigFloat(val), new BigFloat(-200d).root(3, r));
       }
    }
 

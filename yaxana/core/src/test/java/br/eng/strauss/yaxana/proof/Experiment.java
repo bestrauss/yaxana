@@ -5,7 +5,7 @@ import static br.eng.strauss.yaxana.epu.Algebraic.ONE;
 import org.junit.jupiter.api.Test;
 
 import br.eng.strauss.yaxana.epu.Algebraic;
-import br.eng.strauss.yaxana.tools.YaxanaTest;
+import br.eng.strauss.yaxana.unittesttools.YaxanaTest;
 
 /**
  * Kleinster relativer Unterschied zwischen zwei Gitterpunkten.

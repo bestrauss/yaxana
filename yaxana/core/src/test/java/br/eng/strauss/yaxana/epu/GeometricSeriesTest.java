@@ -8,8 +8,8 @@ import org.junit.jupiter.api.Test;
 import br.eng.strauss.yaxana.Algorithm;
 import br.eng.strauss.yaxana.exc.PrecisionOverflowException;
 import br.eng.strauss.yaxana.tools.SampleAlgebraic;
-import br.eng.strauss.yaxana.tools.YaxanaTest;
-import br.eng.strauss.yaxana.tools.anno.WithAlgorithms;
+import br.eng.strauss.yaxana.unittesttools.WithAlgorithms;
+import br.eng.strauss.yaxana.unittesttools.YaxanaTest;
 
 /**
  * Tests partial sums of the geometric series using all EPUs.

@@ -1,6 +1,6 @@
 package br.eng.strauss.yaxana.benchmark;
 
-import static br.eng.strauss.yaxana.tools.YaxanaSettings.STRESS_LEVEL;
+import static br.eng.strauss.yaxana.unittesttools.YaxanaSettings.STRESS_LEVEL;
 
 import java.util.Random;
 
@@ -10,12 +10,10 @@ import br.eng.strauss.yaxana.Robust;
 import br.eng.strauss.yaxana.Robusts;
 import br.eng.strauss.yaxana.epu.EPU;
 import br.eng.strauss.yaxana.tools.SampleRobust;
-import br.eng.strauss.yaxana.tools.anno.Benchmark;
+import br.eng.strauss.yaxana.unittesttools.Benchmark;
 
 /**
  * {@link EPU} benchmark, comparing EPUs.
- * <p>
- * TODO: wait till exponents greater than 2 are supported
  * 
  * @author Burkhard Strauss
  * @since August 2017

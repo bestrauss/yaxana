@@ -1,6 +1,6 @@
 package br.eng.strauss.yaxana.epu.conj;
 
-import static br.eng.strauss.yaxana.tools.YaxanaTest.format;
+import static br.eng.strauss.yaxana.unittesttools.YaxanaTest.format;
 
 import org.junit.jupiter.api.Test;
 

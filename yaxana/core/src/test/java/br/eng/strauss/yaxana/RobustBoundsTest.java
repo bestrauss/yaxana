@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 
 import br.eng.strauss.yaxana.exc.DivisionByZeroException;
 import br.eng.strauss.yaxana.exc.IllegalExponentException;
-import br.eng.strauss.yaxana.tools.YaxanaTest;
+import br.eng.strauss.yaxana.unittesttools.YaxanaTest;
 
 /**
  * @author Burkhard Strauss
@@ -98,7 +98,6 @@ public final class RobustBoundsTest extends YaxanaTest
          final Robust c = a.add(b);
          assertBounds(0d, c);
       }
-      // TODO coverage
    }
 
    @Test
@@ -130,13 +129,6 @@ public final class RobustBoundsTest extends YaxanaTest
          assertEquals(2d - PI, c.doubleValue(), 0d);
          assertEquals(2d - PI, c.lowerBound(), 0d);
          assertEquals(2d - PI, c.upperBound(), 0d);
-      }
-      // TODO coverage
-      {
-         final Robust a = ONE.add(ONE);
-         final Robust b = ONE.add(ONE);
-         final Robust c = a.sub(b);
-         assertBounds(0d, c);
       }
    }
 

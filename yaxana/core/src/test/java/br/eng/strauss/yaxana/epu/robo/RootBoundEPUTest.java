@@ -8,7 +8,7 @@ import br.eng.strauss.yaxana.Robust;
 import br.eng.strauss.yaxana.Robusts;
 import br.eng.strauss.yaxana.epu.Algebraic;
 import br.eng.strauss.yaxana.tools.SampleAlgebraic;
-import br.eng.strauss.yaxana.tools.YaxanaTest;
+import br.eng.strauss.yaxana.unittesttools.YaxanaTest;
 
 /**
  * @author Burkhard Strauss

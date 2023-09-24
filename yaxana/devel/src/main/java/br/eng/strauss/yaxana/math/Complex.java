@@ -38,10 +38,10 @@ public final class Complex implements Formattable, Comparable<Complex>
       this(complex.real, complex.imag);
    }
 
-   public static Complex[] newArray(final int L)
+   public static Complex[] newArray(final int length)
    {
 
-      final Complex[] samples = new Complex[L];
+      final Complex[] samples = new Complex[length];
       Arrays.fill(samples, Complex.ZERO);
       return samples;
    }

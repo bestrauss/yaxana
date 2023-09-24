@@ -1,4 +1,4 @@
-package br.eng.strauss.yaxana.unittesttools;
+package br.eng.strauss.yaxana.unittest;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -13,7 +13,7 @@ import br.eng.strauss.yaxana.big.BigFloat;
 import br.eng.strauss.yaxana.epu.Algebraic;
 import br.eng.strauss.yaxana.exc.DivisionByZeroException;
 import br.eng.strauss.yaxana.rnd.RandomAlgebraic;
-import br.eng.strauss.yaxana.unittesttools.YaxanaTest;
+import br.eng.strauss.yaxana.unittest.YaxanaTest;
 
 /**
  * @author Burkhard Strauss
@@ -55,7 +55,7 @@ public final class RobustTest extends YaxanaTest
       final RandomAlgebraic randomAlgebraic = new RandomAlgebraic(10, 10, 10);
       for (int k = 0; k < 100; k++)
       {
-         final Algebraic a = randomAlgebraic.next();
+         final Algebraic a = randomAlgebraic.next().sub(randomAlgebraic.next());
          final Robust value = Robust.valueOf(a);
          final Algebraic b = (Algebraic) value.toSyntaxTree();
          assertEquals(a.signum(), b.signum());

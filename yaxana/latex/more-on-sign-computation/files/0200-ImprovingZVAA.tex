@@ -1,0 +1,92 @@
+%
+% LaTeX
+%
+\pagebreak
+\section{Improving ZVAA}
+
+Let $\xi\in\A$ be the algebraic value $\val E$
+of an expression 
+\begin{equation}
+  E = E_0 - E_1
+  ,\qquad
+  \val E_0\ne 0, \val E_1\ne 0
+\end{equation}
+and $z_k$ the roots of its structutal Polynomial
+\begin{equation}
+  P_E(z) = \prod_{k=1}^N (z-z_k)
+\end{equation}
+Then the expression
+\begin{equation}
+  |E_0| + |E_1|.
+\end{equation}
+has the same structural polynomial
+\begin{equation}
+  P_{|E_0| + |E_1|}(z) = P_E(z).
+\end{equation}
+Since $\val(|E_0| + |E_1|) > 0$, we can form the third expression
+\begin{equation}
+  \frac{1}{|E_0| + |E_1|}.
+\end{equation}
+whose structural polynomial is
+\begin{equation}
+  P_{1\div(|E_0| + |E_1|)}(z) = \prod_{k=1}^N \left(z-\frac{1}{z_k}\right).
+\end{equation}
+Our forth expression
+\begin{equation}
+  E' = \frac{E_0 - E_1}{|E_0| + |E_1|}
+\end{equation}
+is $E'$, the test-expression known from \cite{ZVAA}.
+Its structural polynomial is
+\begin{equation}
+  P_{E'}(z) = \prod_{k=1}^N \left(z-z_k\right)\left(z-\frac{1}{z_k}\right).
+\end{equation}
+$P_{E'}(z)$ has pairs $\left(z_k, \frac{1}{z_k}\right)$ of roots 
+where all the products $z_k\frac{1}{z_k}$ 
+have the rational value $1$.
+Let, without loss of generality, 
+the value $\xi_E$  of the original expression $E$ be $\xi_E=z_1$. 
+Then the polynomial
+\begin{equation}
+  \left(z-z_1\right)\left(z-\frac{1}{z_1}\right)
+  =
+  z^2 - \left(z_1+\frac{1}{z_1}\right)z + 1.
+\end{equation}
+has two roots, one of which is $\xi_E=z_1$.
+The coefficients may not be invariably rational,
+but $c_0$ sure is. Moreover, 
+beside $|c_0|\ge 1$ we have $|c_0|=1$.
+
+Like in the case of polynomials with rational coefficients,
+we have
+\begin{equation}
+  \xi_E\ne 0
+  \quad\Rightarrow\quad
+  \prod_{k=1}^N |z_k|\frac{1}{|z_k|}
+  \ge
+  1  
+\end{equation}
+and even stronger
+\begin{equation}
+  \xi_E\ne 0
+  \quad\Rightarrow\quad
+  \prod_{k=1}^N |z_k|\frac{1}{|z_k|}
+  =
+  1  
+\end{equation}
+and hence
+\begin{equation}
+  \xi_E\ne 0
+  \quad\Rightarrow\quad
+  |\xi_E|\frac{1}{|z_1|}\prod_{k=2}^N |z_k|\frac{1}{|z_k|}
+  = 
+  |\xi_E|\frac{1}{|z_1|}
+  = 
+  1
+\end{equation}
+and
+\begin{equation}
+  |\xi_E|\frac{1}{|z_1|} = 1
+  \quad\Leftrightarrow\quad
+  |\xi_E| = |z_1|
+\end{equation}
+

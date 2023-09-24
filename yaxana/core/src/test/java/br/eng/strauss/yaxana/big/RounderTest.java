@@ -6,7 +6,7 @@ import java.math.RoundingMode;
 
 import org.junit.jupiter.api.Test;
 
-import br.eng.strauss.yaxana.unittesttools.YaxanaTest;
+import br.eng.strauss.yaxana.unittest.YaxanaTest;
 
 /**
  * Tests for {@link Rounder}.

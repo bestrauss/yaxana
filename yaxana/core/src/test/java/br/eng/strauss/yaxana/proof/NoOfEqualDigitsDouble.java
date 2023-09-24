@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import br.eng.strauss.yaxana.exc.UnreachedException;
-import br.eng.strauss.yaxana.unittesttools.YaxanaTest;
+import br.eng.strauss.yaxana.unittest.YaxanaTest;
 
 /**
  * Wieviele Nachkommastellen können in den nicht verschwindenden Bruchteilen zweier Wurzeln aus

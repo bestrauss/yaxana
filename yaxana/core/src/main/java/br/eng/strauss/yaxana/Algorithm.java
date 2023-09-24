@@ -1,6 +1,10 @@
 package br.eng.strauss.yaxana;
 
+import java.lang.reflect.Method;
+
 import br.eng.strauss.yaxana.epu.Algebraic;
+import br.eng.strauss.yaxana.exc.UnreachedException;
+import br.eng.strauss.yaxana.unittest.WithAlgorithms;
 
 /**
  * @author Burkhard Strauss
@@ -12,8 +16,8 @@ public enum Algorithm {
    BFMSS2,
    /** Strauß, Burkhard: Zum Vorzeichentest Algebraischer Ausdrücke. */
    ZVAA,
-   /** Unproven experimental algorithm. */
-   YAXANA;
+   /** Strauß, Burkhard: More on Sign Computation of Algebraic Expressions. */
+   MOSC;
 
    /**
     * Sets the algorithm to be used for {@link Robust} computation.
@@ -33,5 +37,26 @@ public enum Algorithm {
    {
 
       return Algebraic.getAlgorithm();
+   }
+
+   /**
+    * Returns the algorithms to used in unit tests per default.
+    * 
+    * @return see above.
+    */
+   @WithAlgorithms
+   public static Algorithm[] getValuesForTest()
+   {
+
+      try
+      {
+         final Method method = Algorithm.class.getMethod("getValuesForTest");
+         final WithAlgorithms withAlgorithms = method.getDeclaredAnnotation(WithAlgorithms.class);
+         return withAlgorithms.value();
+      }
+      catch (final Exception e)
+      {
+         throw new UnreachedException(e);
+      }
    }
 }

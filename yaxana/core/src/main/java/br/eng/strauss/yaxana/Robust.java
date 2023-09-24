@@ -8,6 +8,7 @@ import static java.lang.Math.nextUp;
 import java.io.Serializable;
 
 import br.eng.strauss.yaxana.big.BigFloat;
+import br.eng.strauss.yaxana.epu.EPUStats;
 import br.eng.strauss.yaxana.exc.DivisionByZeroException;
 import br.eng.strauss.yaxana.exc.IllegalExponentException;
 import br.eng.strauss.yaxana.exc.NotRepresentableAsADoubleException;
@@ -562,7 +563,7 @@ public final class Robust extends ConciseNumber implements Expression<Robust>
       {
          if (lo <= 0d && hi >= 0d && lo != hi)
          {
-            signum = toAlgebraic().signum();
+            signum = EPUStats.getInstance().signum(this.noOfNodes(), () -> toAlgebraic().signum());
          }
          else
          {

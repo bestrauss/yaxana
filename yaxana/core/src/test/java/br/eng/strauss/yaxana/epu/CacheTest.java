@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import br.eng.strauss.yaxana.Robust;
 import br.eng.strauss.yaxana.Robusts;
-import br.eng.strauss.yaxana.unittesttools.YaxanaTest;
+import br.eng.strauss.yaxana.unittest.YaxanaTest;
 
 /**
  * @author Burkhard Strauss
@@ -48,7 +48,7 @@ public final class CacheTest extends YaxanaTest
          }
       }
       Robusts.setMaximumCacheSize(size);
-      assertEquals(2088, cache.noOfEntries());
+      assertEquals(1924, cache.noOfEntries());
       for (int k = 0; k < array.length; k++)
       {
          cache.put(array[k]);

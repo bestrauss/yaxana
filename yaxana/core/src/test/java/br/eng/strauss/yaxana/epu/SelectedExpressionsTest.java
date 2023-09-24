@@ -10,8 +10,8 @@ import java.math.MathContext;
 import org.junit.jupiter.api.Test;
 
 import br.eng.strauss.yaxana.big.BigFloat;
-import br.eng.strauss.yaxana.unittesttools.WithAlgorithms;
-import br.eng.strauss.yaxana.unittesttools.YaxanaTest;
+import br.eng.strauss.yaxana.unittest.WithAlgorithms;
+import br.eng.strauss.yaxana.unittest.YaxanaTest;
 
 /**
  * @author Burkhard Strauss
@@ -234,6 +234,7 @@ public final class SelectedExpressionsTest extends YaxanaTest
       {
          final Algebraic value = new Algebraic(
                "(\\9999999999999999999999-\\9999999999999999999998)-(\\9999999999999999999998-\\9999999999999999999997)");
+         value.signum();
          assertEquals(-1, value.signum());
       }
       {
@@ -401,10 +402,6 @@ public final class SelectedExpressionsTest extends YaxanaTest
       format("value     : %s\n", value);
       format("approx dec: %s\n", value.approximation().toString(MathContext.DECIMAL64));
       format("approx hex: %s\n", Double.toHexString(value.doubleValue()).toUpperCase());
-      if (value.approximation() != null)
-      {
-         format("yaxanaPrecision: %s\n", value.yaxanaPrecision());
-      }
       format("\n");
    }
 }

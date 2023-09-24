@@ -1,7 +1,7 @@
 package br.eng.strauss.yaxana.epu;
 
+import java.util.Formatter;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 import br.eng.strauss.yaxana.Robust;
 import br.eng.strauss.yaxana.Robusts;
@@ -133,6 +133,18 @@ public final class Cache
       }
    }
 
+   public void print(final String indent, final Formatter formatter)
+   {
+
+      synchronized (this.map)
+      {
+         formatter.format("%s%d Cache entries: (least recent entry first)\n", indent, map.size());
+         map.forEach((key, value) -> {
+            formatter.format("%s  %s\n", indent, key);
+         });
+      }
+   }
+
    private void ensureSpaceFor(final int size)
    {
 
@@ -156,7 +168,7 @@ public final class Cache
 
    private static final Cache INSTANCE = new Cache();
 
-   private final Map<Robust, Robust> map;
+   private final LinkedHashMap<Robust, Robust> map;
 
    private int maximumSize;
 

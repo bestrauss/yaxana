@@ -1,0 +1,143 @@
+%
+% symbols.tex
+%
+% @author Burkhard E. Strauss
+% @since 1994
+%
+
+\newcommand*{\defeq}{\mathrel{\vcenter{\baselineskip0.5ex \lineskiplimit0pt
+                     \hbox{\scriptsize.}\hbox{\scriptsize.}}}%
+                     =}
+\newcommand*{\cmp}{\stackrel{?}{=}}
+
+% Schriftgrößen
+\def\mD{\displaystyle}
+\def\mT{\textstyle}
+\def\mS{\scriptstyle}
+\def\mSS{\scriptscriptstyle}
+
+
+% Zahlenmengen
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\A}{\mathbb{A}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\renewcommand{\C}{\mathbb{C}}
+
+% Impulsfolge
+\DeclareSymbolFont{cyrletters}{OT2}{wncyr}{m}{n}
+\DeclareMathSymbol{\Sha}{\mathalpha}{cyrletters}{"58}
+
+% Allgemein
+\newcommand{\idx}[3]{_{#1,#2}(#3)}
+\newcommand{\idxQ}[3]{_{#1,#2}^{\,2}(#3)}
+\newcommand{\Skt}{\idx{S}{k}{t}}
+\newcommand{\SKt}{\idx{S}{K}{t}}
+\newcommand{\SktQ}{\idxQ{S}{k}{t}}
+\newcommand{\sgn}{\operatorname{sgn}}
+\newcommand{\w}{{\rm w}}
+\newcommand{\ejo}{e^{j\omega}}
+\newcommand{\p}{\Sha}
+\newcommand{\pM}{\p_{{\mSS M}}}
+\newcommand{\pN}{\p_{{\mSS N}}}
+\newcommand{\M}[1]{{\bf #1}}
+\newcommand{\Hpr}{H_{{\rm pr}}}
+\newcommand{\hpr}{h_{{\rm pr}}}
+\newcommand{\poly}[1]{\hat{#1}} 
+
+\newcommand{\mth}{$M^{{\rm th}}$ }
+\newcommand{\mthband}{$M^{{\rm th}}$-band }
+\newcommand{\nth}{$N^{{\rm th}}$ }
+\newcommand{\nthband}{$N^{{\rm th}}$-band }
+\renewcommand{\th}[1]{${#1}^{{\rm th}}$}
+
+\newcommand{\cN}[1]{\mathop{\rm c}_{N,{#1}}\nolimits}
+\newcommand{\CN}[1]{\mathop{\rm C}_{N,{#1}}\nolimits}
+
+\def\nom{\mathop{\rm nom}\nolimits}
+\def\den{\mathop{\rm den}\nolimits}
+\def\card{\mathop{\rm card}\nolimits}
+\def\sep{\mathop{\rm sep}\nolimits}
+\def\ld{\mathop{\rm ld}\nolimits}
+\def\val{\mathop{\rm val}\nolimits}
+\def\sort{\mathop{\rm sort}\nolimits}
+\def\odd{\mathop{\rm Odd}\nolimits}
+\def\even{\mathop{\rm Even}\nolimits}
+\def\Im{\mathop{\rm Im}\nolimits}
+\def\Re{\mathop{\rm Re}\nolimits}
+
+
+\def\pc{\mathop{\rm pc}\nolimits}
+\def\PC{\mathop{\rm PC}\nolimits}
+\def\pd{\mathop{\rm pd}\nolimits}
+\def\PD{\mathop{\rm PD}\nolimits}
+
+% Allpässe
+\def\AP{\mathop{\rm AP}\nolimits}
+\def\ap{\mathop{\rm ap}\nolimits}
+\def\BP{\mathop{\widehat{{\rm AP}}}\nolimits}
+\def\bp{\mathop{\widehat{{\rm ap}}}\nolimits}
+\def\NAP{\mathop{\widetilde{{\rm AP}}}\nolimits}
+\def\Nap{\mathop{\widetilde{{\rm ap}}}\nolimits}
+\def\Nphi{\mathop{\widetilde{\varphi}}\nolimits}
+
+\newcommand{\cpx}[1]{\underline{#1}}
+\newcommand{\expj}[1]{e^{j{#1}}}
+
+
+
+%
+%  Transformationssymbole
+%
+
+\def\Bull{\circle*{1.5}}
+\def\Circ{\circle{1.5}}
+
+\newcommand{\vxtoy}[4]{\lower0.6em\hbox{%         vertikal
+\unitlength 0.237em
+\begin{picture}(4,12)
+\put(1,1){#4}
+\put(1,11){#1}
+\put(1,1.75){\line(0,1){8.5}}
+\put(3,3){\makebox(0,0){$\mS #3$}}
+\put(3,9){\makebox(0,0){$\mS #2$}}
+\put(3,6){\makebox(0,0){$\mS\updownarrow$}}
+\end{picture}}}
+
+\newcommand{\hxtoy}[4]{\;\raise0.06em\hbox{%        horizontal
+\unitlength 0.237em
+\begin{picture}(11,4)
+\put(1,1){#1}
+\put(10,1){#4}
+\put(1.75,1){\line(1,0){7.5}}
+\put(3.2,2.75){\makebox(0,0){$\mS #2$}}
+\put(7.8,2.75){\makebox(0,0){$\mS #3$}}
+\put(5.5,2.75){\makebox(0,0){$\mS\leftrightarrow$}}
+\end{picture}}\;}
+
+\def\voton{\vxtoy{\Bull}{\omega}{n}{\Circ}}      % \omega <-> n
+\def\vntoo{\vxtoy{\Circ}{n}{\omega}{\Bull}}
+\def\oton{\hxtoy{\Bull}{\omega}{n}{\Circ}}
+\def\ntoo{\hxtoy{\Circ}{n}{\omega}{\Bull}}
+\def\vzton{\vxtoy{\Bull}{z}{n}{\Circ}}           % z <-> n
+\def\vntoz{\vxtoy{\Circ}{n}{z}{\Bull}}
+\def\zton{\hxtoy{\Bull}{z}{n}{\Circ}}
+\def\ntoz{\hxtoy{\Circ}{n}{z}{\Bull}}
+\def\vnuton{\vxtoy{\Circ}{\nu}{n}{\Circ}}        % \nu <-> n
+\def\vntonu{\vxtoy{\Circ}{n}{\nu}{\Circ}}
+\def\nuton{\hxtoy{\Circ}{\nu}{n}{\Circ}}
+\def\ntonu{\hxtoy{\Circ}{n}{\nu}{\Circ}}
+\def\vOtoo{\vxtoy{\Bull}{\Omega}{\omega}{\Bull}} % \omega <-> \Omega
+\def\votoO{\vxtoy{\Bull}{\omega}{\Omega}{\Bull}}
+\def\Otoo{\hxtoy{\Bull}{\Omega}{\omega}{\Bull}}
+\def\otoO{\hxtoy{\Bull}{\omega}{\Omega}{\Bull}}
+\def\vOtonu{\vxtoy{\Bull}{\Omega}{\nu}{\Circ}}   % \Omega <-> \nu
+\def\vnutoO{\vxtoy{\Circ}{\nu}{\Omega}{\Bull}}
+\def\Otonu{\hxtoy{\Bull}{\Omega}{\nu}{\Circ}}
+\def\nutoO{\hxtoy{\Circ}{\nu}{\Omega}{\Bull}}
+
+%
+%  EOF
+%

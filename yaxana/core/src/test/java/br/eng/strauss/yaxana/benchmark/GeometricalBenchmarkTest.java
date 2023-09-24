@@ -1,6 +1,6 @@
 package br.eng.strauss.yaxana.benchmark;
 
-import static br.eng.strauss.yaxana.unittesttools.YaxanaSettings.STRESS_LEVEL;
+import static br.eng.strauss.yaxana.unittest.YaxanaSettings.STRESS_LEVEL;
 
 import java.util.Random;
 
@@ -10,7 +10,7 @@ import br.eng.strauss.yaxana.Robust;
 import br.eng.strauss.yaxana.Robusts;
 import br.eng.strauss.yaxana.epu.EPU;
 import br.eng.strauss.yaxana.tools.SampleRobust;
-import br.eng.strauss.yaxana.unittesttools.Benchmark;
+import br.eng.strauss.yaxana.unittest.Benchmark;
 
 /**
  * {@link EPU} benchmark, comparing EPUs.
@@ -52,7 +52,7 @@ public final class GeometricalBenchmarkTest extends BenchmarkTest
    protected int getLoopCount()
    {
 
-      return STRESS_LEVEL > 0 ? STRESS_LEVEL * 32 : 16;
+      return STRESS_LEVEL > 0 ? STRESS_LEVEL * 400 : 200;
    }
 
    private static final int ORDER = 10;

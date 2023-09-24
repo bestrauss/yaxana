@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
 import br.eng.strauss.yaxana.exc.DivisionByZeroException;
 import br.eng.strauss.yaxana.exc.NegativeRadicandException;
 import br.eng.strauss.yaxana.exc.NonTerminatingBinaryExpansionException;
-import br.eng.strauss.yaxana.unittesttools.YaxanaTest;
+import br.eng.strauss.yaxana.unittest.YaxanaTest;
 
 /**
  * @author Burkhard Strauss

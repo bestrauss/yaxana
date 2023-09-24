@@ -1,7 +1,7 @@
-package br.eng.strauss.yaxana.unittesttools;
+package br.eng.strauss.yaxana.unittest;
 
 import static br.eng.strauss.yaxana.Algorithm.BFMSS2;
-import static br.eng.strauss.yaxana.unittesttools.YaxanaSettings.SKIP_BENCHMARKS;
+import static br.eng.strauss.yaxana.unittest.YaxanaSettings.SKIP_BENCHMARKS;
 
 import java.lang.reflect.Method;
 import java.util.Optional;
@@ -126,6 +126,7 @@ public final class YaxanaExtension implements AfterAllCallback, BeforeAllCallbac
       final long time = System.currentTimeMillis();
       try
       {
+         YaxanaTest.format("using %s\n", epuName);
          invocation.proceed();
          final float ms = 0.001f * (System.currentTimeMillis() - time);
          YaxanaTest.format("method %s took: %.3fs%s\n", name, ms, epuName);

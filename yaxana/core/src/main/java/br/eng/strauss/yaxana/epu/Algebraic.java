@@ -21,7 +21,6 @@ import br.eng.strauss.yaxana.epu.zvaa.ZvaaEPU;
 import br.eng.strauss.yaxana.exc.UnreachedException;
 import br.eng.strauss.yaxana.io.Parser;
 import br.eng.strauss.yaxana.io.Stringifier;
-import br.eng.strauss.yaxana.math.Complex;
 import br.eng.strauss.yaxana.pdc.Approximable;
 
 /**
@@ -442,32 +441,6 @@ public final class Algebraic
          case ROOT     -> { return Math.pow(left().evaluate(), 1d / index()); }
          case ABS      -> { return Math.abs(left().evaluate()); }
          case NEG      -> { return -left().evaluate(); }
-         // @formatter:on
-      }
-      throw new UnreachedException();
-   }
-
-   public Complex complexValue()
-   {
-
-      switch (type())
-      {
-         // @formatter:off
-         case TERMINAL -> { return new Complex(doubleValue()); }
-         case ADD      -> { return left().complexValue().add(right().complexValue()); }
-         case SUB      -> { return left().complexValue().sub(right().complexValue()); }
-         case MUL      -> { return left().complexValue().mul(right().complexValue()); }
-         case DIV      -> { return left().complexValue().div(right().complexValue()); }
-         case POW      -> {
-            final int index = index(); 
-            return index == 2 ? left().complexValue().sqr() : left().complexValue().pow(index()); 
-         }
-         case ROOT     -> { 
-            final int index = index(); 
-            return index == 2 ? left().complexValue().sqrt() : left().complexValue().pow(1d / index());
-         }
-         case ABS      -> { return new Complex(left().complexValue().abs()); }
-         case NEG      -> { return left().complexValue().neg(); }
          // @formatter:on
       }
       throw new UnreachedException();

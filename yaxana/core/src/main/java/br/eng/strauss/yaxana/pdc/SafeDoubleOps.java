@@ -119,7 +119,7 @@ public final class SafeDoubleOps
       {
          final BigFloat bx = new BigFloat(x);
          final BigFloat by = new BigFloat(y);
-         final BigFloat br = bx.div(by);
+         final BigFloat br = bx.div(by, Rounder.DOUBLE);
          if (Scrutinizer.divIsExact(bx, by, br))
          {
             final double dr = br.doubleValue();

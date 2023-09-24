@@ -1,10 +1,11 @@
 ## Quality checks
 
- * `eclipseClean eclipse`
- * `clean build`
+ * run coverage, > 90%
  * no javadoc warnings
  * view the javadoc
- * no TODOs in sources
+ * no TODO in sources
+ * `eclipseClean eclipse`
+ * `clean build`
  * squash commits, commit message equals branch name, Yax-12345-title-of-ticket
 
 
@@ -25,3 +26,5 @@
     --add-exports=org.junit.platform.commons/org.junit.platform.commons.logging=ALL-UNNAMED
    ```
    See also: [edvpfau.de](https://www.edvpfau.de/junit5-debugging-mit-eclipse-und-gradle/)
+
+

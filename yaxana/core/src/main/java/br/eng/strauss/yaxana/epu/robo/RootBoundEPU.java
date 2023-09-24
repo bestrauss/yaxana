@@ -248,26 +248,29 @@ public final class RootBoundEPU extends AbstractEPU
    {
 
       long product = 1L;
-      if (a.D == Long.MIN_VALUE)
+      if (!this.wellWorkedExpression)
       {
-         final Algebraic left = a.left();
-         final Algebraic rite = a.right();
-         if (left != null && left.D == Long.MIN_VALUE)
+         if (a.D == Long.MIN_VALUE)
          {
-            product *= productOfIndices(left);
+            final Algebraic left = a.left();
+            final Algebraic rite = a.right();
+            if (left != null && left.D == Long.MIN_VALUE)
+            {
+               product *= productOfIndices(left);
+            }
+            if (rite != null && rite.D == Long.MIN_VALUE)
+            {
+               product *= productOfIndices(rite);
+            }
+            if (a.type() == Type.ROOT)
+            {
+               product *= a.index();
+            }
          }
-         if (rite != null && rite.D == Long.MIN_VALUE)
+         if (product >= PrecisionOverflowException.MAX_PRECISION)
          {
-            product *= productOfIndices(rite);
+            throw new PrecisionOverflowException(a.toString());
          }
-         if (a.type() == Type.ROOT)
-         {
-            product *= a.index();
-         }
-      }
-      if (!wellWorkedExpression && product >= PrecisionOverflowException.MAX_PRECISION)
-      {
-         throw new PrecisionOverflowException(a.toString());
       }
       return a.D = product;
    }

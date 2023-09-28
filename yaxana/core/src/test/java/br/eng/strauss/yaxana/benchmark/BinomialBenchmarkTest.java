@@ -1,6 +1,6 @@
 package br.eng.strauss.yaxana.benchmark;
 
-import static br.eng.strauss.yaxana.unittesttools.YaxanaSettings.STRESS_LEVEL;
+import static br.eng.strauss.yaxana.unittest.YaxanaSettings.STRESS_LEVEL;
 
 import org.junit.jupiter.api.Test;
 
@@ -8,13 +8,13 @@ import br.eng.strauss.yaxana.Robust;
 import br.eng.strauss.yaxana.big.BigFloat;
 import br.eng.strauss.yaxana.epu.EPU;
 import br.eng.strauss.yaxana.rnd.RandomBigFloat;
-import br.eng.strauss.yaxana.unittesttools.Benchmark;
+import br.eng.strauss.yaxana.unittest.Benchmark;
 
 /**
  * {@link EPU} benchmark, comparing EPUs.
  * <p>
- * ZVAA is shown to be massively faster than BMFSS[2] on expressions with high degree whose values
- * vanish. If the values do not vanish, ZVAA is about 20% slower.
+ * ZVAA[2] is shown to be massively faster than BMFSS[2] on expressions with high degree whose
+ * values vanish. If the values do not vanish, both are equally fast.
  * 
  * @author Burkhard Strauss
  * @since August 2017

@@ -1,23 +1,17 @@
 package br.eng.strauss.yaxana.epu;
 
 import static br.eng.strauss.yaxana.Type.TERMINAL;
-import static java.lang.Math.max;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 
 import br.eng.strauss.yaxana.Algorithm;
-import br.eng.strauss.yaxana.Experimental;
 import br.eng.strauss.yaxana.Expression;
 import br.eng.strauss.yaxana.SyntaxTree;
 import br.eng.strauss.yaxana.Type;
 import br.eng.strauss.yaxana.big.BigFloat;
 import br.eng.strauss.yaxana.big.Rounder;
-import br.eng.strauss.yaxana.epu.robo.RootBoundEPU;
-import br.eng.strauss.yaxana.epu.yaxa.YaxanaEPU;
-import br.eng.strauss.yaxana.epu.zvaa.ZvaaEPU;
+import br.eng.strauss.yaxana.exc.DivisionByZeroException;
 import br.eng.strauss.yaxana.exc.UnreachedException;
 import br.eng.strauss.yaxana.io.Parser;
 import br.eng.strauss.yaxana.io.Stringifier;
@@ -277,7 +271,7 @@ public final class Algebraic
       switch (n)
       {
          case 0 :
-            return ONE;
+            throw new DivisionByZeroException();
          case 1 :
             return this;
       }
@@ -302,13 +296,12 @@ public final class Algebraic
       }
       final Supplier<EPU> epu = switch (algorithm)
       {
-         case BFMSS2 -> () -> new RootBoundEPU();
+         case BFMSS2 -> () -> new BfmssEPU();
          case ZVAA -> () -> new ZvaaEPU();
-         case YAXANA -> () -> new YaxanaEPU();
+         case MOSC -> () -> new MoscEPU();
       };
       Approximable.super.ensureSignum(epu);
       return this.approximation.signum();
-
    }
 
    @Override
@@ -426,26 +419,6 @@ public final class Algebraic
       return Algebraic.ONE;
    }
 
-   public double evaluate()
-   {
-
-      switch (type())
-      {
-         // @formatter:off
-         case TERMINAL -> { return doubleValue(); }
-         case ADD      -> { return left().evaluate() + right().evaluate(); }
-         case SUB      -> { return left().evaluate() - right().evaluate(); }
-         case MUL      -> { return left().evaluate() * right().evaluate(); }
-         case DIV      -> { return left().evaluate() / right().evaluate(); }
-         case POW      -> { return Math.pow(left().evaluate(), index()); }
-         case ROOT     -> { return Math.pow(left().evaluate(), 1d / index()); }
-         case ABS      -> { return Math.abs(left().evaluate()); }
-         case NEG      -> { return -left().evaluate(); }
-         // @formatter:on
-      }
-      throw new UnreachedException();
-   }
-
    @Override
    public int precision()
    {
@@ -499,128 +472,58 @@ public final class Algebraic
       }
    }
 
-   public void ensureApproximationsNonZero()
-   {
-
-      switch (type())
-      {
-         // @formatter:off
-         case TERMINAL            -> {}
-         case ADD, SUB, MUL, DIV  -> 
-         { 
-            this.left.ensureApproximationsNonZero(); 
-            this.right.ensureApproximationsNonZero();
-            ensureApproximationNonZero();
-         }
-         case NEG, ABS, POW, ROOT -> 
-         { 
-            this.left.ensureApproximationsNonZero(); 
-            ensureApproximationNonZero();
-         }
-         // @formatter:on
-      }
-   }
-
-   public void ensureApproximationNonZero()
-   {
-
-      while (this.approximation == null || this.approximation.abs().compareTo(error()) < 0)
-      {
-         approximation(max(24, 2 * this.precision));
-      }
-   }
-
    /**
-    * Returns a precision sufficient for |a-b| |1-b/a| sign tests.
-    * 
-    * @return see above.
-    */
-   @Experimental
-   public int yaxanaPrecision()
-   {
-
-      // @formatter:off
-      if (left  != null) { left .yaxanaPrecision(); }
-      if (right != null) { right.yaxanaPrecision(); }
-      switch (type)
-      {
-         case TERMINAL -> { vp = yaxanaLength();
-                            vn = 0;                                           }
-         case ADD, SUB -> { vp = max(left.vp, right.vp);
-                            vn = max(left.vn, right.vn);                      }
-         case MUL, DIV -> { vp = max(yaxanaLength(), max(left.vp, right.vp));
-                            vn = max(left.vn, right.vn);                      }
-         case NEG, ABS -> { vp = left.vp;
-                            vn = left.vn;                                     }
-         case POW      -> { vp = max(yaxanaLength(), left.vp);
-                            vn = left.vn;                                     }
-         case ROOT     -> { vp = left.vp;
-                            vn = left.vn + (left.vp * index() >> 2);          }
-      }
-      return this.vp + this.vn;
-      // @formatter:on
-   }
-
-   /**
-    * Returns the number of bits from the most significant bit left of the binary point (BP) to the
-    * BP, from the most significant bit left of the BP to the least significant bit right of the BP,
-    * or from the BP to the least significant bit.
-    * 
-    * @return see above.
-    */
-   private int yaxanaLength()
-   {
-
-      final BigFloat abs = this.approximation.abs();
-      final int bl = abs.unscaledValue().bitLength();
-      final int sc = abs.scale();
-      return sc >= 0 ? bl + sc : type == TERMINAL ? max(bl, -sc) : -sc;
-   }
-
-   /**
-    * Returns the number of nested square root operations which is equally bad or slightly worse
-    * with respect to sign calculation than an n-th root operation.
-    * 
-    * @param n
-    *           The n in n-th root.
-    * @return the smallest {@code k} such that {@code 2}<sup>{@code k}</sup> {@code >= |n|}, which
-    *         for {@code n != 0} equals {@code ceil(log}<sub>2</sub>{@code |n|}).
-    */
-   public static int ceilOfLog2OfAbsOf(final int n)
-   {
-
-      return n != 0 ? 32 - Integer.numberOfLeadingZeros(Math.abs(n) - 1) : 0;
-   }
-
-   /**
-    * Removes an expression for the conjugate of the structural polynomial with the greatest
+    * Returns an expression for the conjugate root of the structural polynomial with the greatest
     * absolute value.
+    * <p>
+    * The return value will have positive terminals and be free of {@code SUB}, {@code NEG} and
+    * {@code ABS} operations.
     * 
-    * @param nf
-    *           will be called each time a negation is removed.
     * @return see above.
     */
-   public Algebraic maxExpression(final Runnable nf)
+   public Algebraic maxConjugate()
    {
 
       // @formatter:off
-      switch (type)
+      return switch (type)
       {
-         case TERMINAL -> { if (approximation.signum() < 0) { nf.run(); }
-                            return new Algebraic(approximation.abs());                            }
-         case ADD      -> {           return left.maxExpression(nf).add(right.maxExpression(nf)); }
-         case SUB      -> { nf.run(); return left.maxExpression(nf).add(right.maxExpression(nf)); }
-         case MUL      -> {           return left.maxExpression(nf).mul(right.maxExpression(nf)); }
-         case DIV      -> {           return left.maxExpression(nf).div(right.maxExpression(nf)); }
-         case NEG      -> { nf.run(); return left.maxExpression(nf);                              }
-         case ABS      -> {           return left.maxExpression(nf);                              }
-         case POW      -> {           return left.maxExpression(nf).pow(index());                 }
-         case ROOT     -> {           return left.maxExpression(nf).root(index());                }
-      }
-      throw new UnreachedException();
+         case TERMINAL -> new Algebraic(approximation.abs());
+         case ADD      -> left.maxConjugate().add(right.maxConjugate()); 
+         case SUB      -> left.maxConjugate().add(right.maxConjugate()); 
+         case MUL      -> left.maxConjugate().mul(right.maxConjugate()); 
+         case DIV      -> left.maxConjugate().div(right.maxConjugate()); 
+         case NEG      -> left.maxConjugate();                           
+         case ABS      -> left.maxConjugate();                           
+         case POW      -> left.maxConjugate().pow(index());              
+         case ROOT     -> left.maxConjugate().root(index());             
+      };
       // @formatter:on
    }
 
+   public Algebraic minConjugate()
+   {
+
+      final Algebraic thiz = this.maxConjugate();
+      // @formatter:off
+      return switch (thiz.type)
+      {
+         case TERMINAL -> thiz;
+         case ADD      -> thiz.left.minConjugate().sub(thiz.right.minConjugate()).abs(); 
+         case MUL      -> thiz.left.minConjugate().mul(thiz.right.minConjugate()); 
+         case DIV      -> thiz.left.minConjugate().div(thiz.right.minConjugate()); 
+         case POW      -> thiz.left.minConjugate().pow(thiz.index());              
+         case ROOT     -> thiz.left.minConjugate().root(thiz.index());             
+         default -> throw new UnreachedException(); 
+      };
+      // @formatter:on
+   }
+
+   /**
+    * Returns a new instance whose terminals are integers and which is a quotient of two division
+    * free values.
+    * 
+    * @return see above.
+    */
    public Algebraic toIntegerSingleDiv()
    {
 
@@ -631,7 +534,7 @@ public final class Algebraic
             final int scale = approximation.scale();
             return scale < 0
                   ? new Algebraic(new BigFloat(approximation.unscaledValue()))
-                        .div(new Algebraic(-scale))
+                        .div(new Algebraic(BigFloat.twoTo(-scale)))
                   : new Algebraic(approximation).div(Algebraic.ONE);
          }
          case ADD ->
@@ -682,117 +585,6 @@ public final class Algebraic
          }
       }
       throw new UnreachedException();
-   }
-
-   public Algebraic productOfConjugates()
-   {
-
-      Algebraic product = null;
-      for (final Algebraic conjugate : conjugates())
-      {
-         product = product == null ? conjugate : product.mul(conjugate);
-      }
-      return product;
-   }
-
-   public List<Algebraic> conjugates()
-   {
-
-      final List<Algebraic> list;
-      switch (type())
-      {
-         // @formatter:off
-         default -> throw new UnreachedException();
-         case TERMINAL -> { list = new ArrayList<>(1); list.add(this);  }
-         case ADD      -> { 
-            final List<Algebraic> leftList = this.left.conjugates();
-            final List<Algebraic> riteList = this.right.conjugates();
-            list = new ArrayList<>(leftList.size() * riteList.size());
-            for (final Algebraic left : leftList)
-            {
-               for (final Algebraic rite : riteList)
-               {
-                  list.add(left.add(rite));
-               }
-            }
-         }
-         case SUB      -> { 
-            final List<Algebraic> leftList = this.left.conjugates();
-            final List<Algebraic> riteList = this.right.conjugates();
-            list = new ArrayList<>(leftList.size() * riteList.size());
-            for (final Algebraic left : leftList)
-            {
-               for (final Algebraic rite : riteList)
-               {
-                  list.add(left.sub(rite));
-               }
-            }
-         }
-         case MUL      -> { 
-            final List<Algebraic> leftList = this.left.conjugates();
-            final List<Algebraic> riteList = this.right.conjugates();
-            list = new ArrayList<>(leftList.size() * riteList.size());
-            for (final Algebraic left : leftList)
-            {
-               for (final Algebraic rite : riteList)
-               {
-                  list.add(left.mul(rite));
-               }
-            }
-         }
-         case DIV      -> { 
-            final List<Algebraic> leftList = this.left.conjugates();
-            final List<Algebraic> riteList = this.right.conjugates();
-            list = new ArrayList<>(leftList.size() * riteList.size());
-            for (final Algebraic left : leftList)
-            {
-               for (final Algebraic rite : riteList)
-               {
-                  list.add(left.div(rite));
-               }
-            }
-         }
-         case NEG ->
-         {
-            final List<Algebraic> leftList = this.left.conjugates();
-            list = new ArrayList<>(leftList.size());
-            for (final Algebraic left : leftList)
-            {
-               list.add(left.neg());
-            }
-         }
-         case ABS ->
-         {
-            final List<Algebraic> leftList = this.left.conjugates();
-            list = new ArrayList<>(leftList.size());
-            for (final Algebraic left : leftList)
-            {
-               list.add(left.abs());
-            }
-         }
-         case POW ->
-         {
-            final List<Algebraic> leftList = this.left.conjugates();
-            list = new ArrayList<>(leftList.size());
-            for (final Algebraic left : leftList)
-            {
-               list.add(left.pow(index()));
-            }
-         }
-         case ROOT -> 
-         { 
-            final List<Algebraic> leftList = this.left.conjugates();
-            list = new ArrayList<>(leftList.size());
-            for (final Algebraic left : leftList)
-            {
-               final Algebraic root = left.root(index());
-               list.add(root);
-               list.add(root.neg());
-            }
-         }
-         // @formatter:on
-      }
-      return list;
    }
 
    /** The number {@code 0}. */

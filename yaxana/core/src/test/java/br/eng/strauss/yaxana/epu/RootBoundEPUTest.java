@@ -1,4 +1,4 @@
-package br.eng.strauss.yaxana.epu.robo;
+package br.eng.strauss.yaxana.epu;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -6,9 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import br.eng.strauss.yaxana.Robust;
 import br.eng.strauss.yaxana.Robusts;
-import br.eng.strauss.yaxana.epu.Algebraic;
 import br.eng.strauss.yaxana.tools.SampleAlgebraic;
-import br.eng.strauss.yaxana.unittesttools.YaxanaTest;
+import br.eng.strauss.yaxana.unittest.YaxanaTest;
 
 /**
  * @author Burkhard Strauss
@@ -24,7 +23,7 @@ public final class RootBoundEPUTest extends YaxanaTest
       final int N = 3;
       final Algebraic q = new Algebraic("50000000p-12").sqrt();
       final Algebraic value = SampleAlgebraic.geometricSeries(q, N);
-      final RootBoundEPU epu = new RootBoundEPU();
+      final RootBoundEPU epu = new BfmssEPU();
       assertEquals(0, epu.signum(value));
    }
 
@@ -35,7 +34,7 @@ public final class RootBoundEPUTest extends YaxanaTest
       final int N = 3;
       final Algebraic q = new Algebraic("1237251p-1").sqrt();
       final Algebraic value = SampleAlgebraic.geometricSeries(q, N);
-      final RootBoundEPU epu = new RootBoundEPU();
+      final RootBoundEPU epu = new BfmssEPU();
       assertEquals(0, epu.signum(value));
    }
 
@@ -43,12 +42,12 @@ public final class RootBoundEPUTest extends YaxanaTest
    public void testToString()
    {
 
-      final RootBoundEPU epu = new RootBoundEPU();
-      assertEquals("RootBoundEPU:\n  -no operand-", epu.toString());
-      epu.signum(new Algebraic("\\2"));
-      assertEquals("RootBoundEPU:\n  \\2", epu.toString());
-      epu.signum(new Algebraic("\\3"));
-      assertEquals("RootBoundEPU:\n  \\3", epu.toString());
+      final RootBoundEPU epu = new BfmssEPU();
+      assertEquals("BfmssEPU:\n  -no operand-", epu.toString());
+      epu.signum(new Algebraic("\\2-\\3"));
+      assertEquals("BfmssEPU:\n  \\2-\\3", epu.toString());
+      epu.signum(new Algebraic("\\3-\\2"));
+      assertEquals("BfmssEPU:\n  \\3-\\2", epu.toString());
    }
 
    @Test
@@ -70,7 +69,7 @@ public final class RootBoundEPUTest extends YaxanaTest
       try
       {
          Robusts.setSimplification(false);
-         final RootBoundEPU epu = new RootBoundEPU();
+         final BfmssEPU epu = new BfmssEPU();
          final Robust robust = Robust.valueOf(expression);
          final Algebraic a = (Algebraic) robust.toSyntaxTree();
          {

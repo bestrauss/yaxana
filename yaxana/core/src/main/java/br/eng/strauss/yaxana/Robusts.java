@@ -2,6 +2,7 @@ package br.eng.strauss.yaxana;
 
 import static java.lang.StackWalker.Option.RETAIN_CLASS_REFERENCE;
 
+import java.util.Formatter;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
@@ -50,6 +51,30 @@ public final class Robusts
    {
 
       return Cache.getInstance().getMaximumSize();
+   }
+
+   /**
+    * Prints the content of the cache.
+    * 
+    * @param indent
+    *           is printed before each line.
+    * @param formatter
+    *           the sink to print to or {@code null} for stdout.
+    */
+   public static void printCache(final String indent, final Formatter formatter)
+   {
+
+      if (formatter != null)
+      {
+         Cache.getInstance().print(indent, formatter);
+      }
+      else
+      {
+         try (final Formatter f = new Formatter(System.out))
+         {
+            Cache.getInstance().print(indent, f);
+         }
+      }
    }
 
    /**

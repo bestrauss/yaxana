@@ -1,58 +1,27 @@
-package br.eng.strauss.yaxana.epu.robo;
+package br.eng.strauss.yaxana.epu;
 
 import static br.eng.strauss.yaxana.big.BigFloat.twoTo;
 import static br.eng.strauss.yaxana.big.Rounder.DOUBLE;
 import static java.lang.Math.max;
-import static java.math.RoundingMode.DOWN;
-import static java.math.RoundingMode.UP;
 
 import java.math.BigInteger;
+import java.math.RoundingMode;
 
-import br.eng.strauss.yaxana.Type;
 import br.eng.strauss.yaxana.big.BigFloat;
 import br.eng.strauss.yaxana.big.Rounder;
-import br.eng.strauss.yaxana.epu.AbstractEPU;
-import br.eng.strauss.yaxana.epu.Algebraic;
-import br.eng.strauss.yaxana.exc.PrecisionOverflowException;
 import br.eng.strauss.yaxana.exc.UnreachedException;
 import br.eng.strauss.yaxana.pdc.PDCTools;
 
 /**
- * EPU implementation using the root bound approach.
- * <p>
- * The root bound approach computes bounds for the absolute values of the roots of the minimum monic
- * polynomials of two algebraic integers to determine the precision of an approximation needed to
- * safely recognize the signum of the exact value of an algebraic expression and then calculates
- * approximations with increasing precision up to the possibly needed one, to ascertain the signum
- * of the exact value.
- * <p>
- * This implementation specifically uses the {@code BMFSS[k], k = 2} root bound. See the papers
- * cited below.
- * 
  * @author Burkhard Strauss
  * @since August 2017
- * @see <a><em>Christoph Burnikel et. al.:</em>
- *      "A Strong and Easily Computable Separation Bound for Arithmetic Expressions Involving Radicals"
- *      </a>
- * @see <a><em>Christoph Burnikel et. al.:</em>
- *      "A Separation Bound for Real Algebraic Expressions"</a>
- * @see <a><em>Sylvain Pion, Chee Yap:</em>
- *      "Constructive root bound for k-ary rational input numbers", Journal of Theoretical Computer
- *      Science (TCS), Elsevier, 2006, 369 (1-3), pp.361-376.</a>
  */
-public final class RootBoundEPU extends AbstractEPU
+abstract class RootBoundEPU extends AbstractEPU
 {
 
-   public RootBoundEPU()
+   protected RootBoundEPU()
    {
 
-      this(false);
-   }
-
-   public RootBoundEPU(final boolean wellWorkedExpression)
-   {
-
-      this.wellWorkedExpression = wellWorkedExpression;
    }
 
    @Override
@@ -101,7 +70,7 @@ public final class RootBoundEPU extends AbstractEPU
     * @return a precision which is suffices to guarantee that a zero approximation value of that
     *         same precision signals a zero true value.
     */
-   public int sufficientPrecision()
+   protected final int sufficientPrecision()
    {
 
       return sufficientPrecision(this.operand);
@@ -111,20 +80,18 @@ public final class RootBoundEPU extends AbstractEPU
    {
 
       ensureRootBoundParameters(value);
-      clearVisitedMarks(value);
-      productOfIndices(value);
       if (value.precision() == Integer.MAX_VALUE)
       {
          return Integer.MAX_VALUE;
       }
       else
       {
-         final BigFloat zeta = rootBound(value);
+         final BigFloat zeta = lowerRootBound(value);
          return zeta.signum() != 0 ? max(1, 1 - zeta.msb()) : 0;
       }
    }
 
-   public void ensureRootBoundParameters(final Algebraic a)
+   public final void ensureRootBoundParameters(final Algebraic a)
    {
 
       if (a.u == null)
@@ -149,7 +116,7 @@ public final class RootBoundEPU extends AbstractEPU
                final int m = ap.scale();
                a.vp = max(0, m);
                a.vn = max(0, -m);
-               a.u = new BigFloat(BigInteger.ONE.max(ap.unscaledValue().abs())).round(MCU);
+               a.u = new BigFloat(BigInteger.ONE.max(ap.unscaledValue().abs())).round(UP);
                a.l = BigFloat.ONE;
                break;
             }
@@ -162,24 +129,24 @@ public final class RootBoundEPU extends AbstractEPU
                a.vn = left.vn + rite.vn;
                final BigFloat fa = twoTo(left.vp + rite.vn - a.vp);
                final BigFloat fb = twoTo(left.vn + rite.vp - a.vp);
-               a.u = fa.mul(left.u.mul(rite.l, MCU)).add(fb.mul(rite.u.mul(left.l, MCU), MCU), MCU);
-               a.l = left.l.mul(rite.l, MCD);
+               a.u = fa.mul(left.u.mul(rite.l, UP)).add(fb.mul(rite.u.mul(left.l, UP), UP), UP);
+               a.l = left.l.mul(rite.l, DN);
                break;
             }
             case MUL :
             {
                a.vp = left.vp + rite.vp;
                a.vn = left.vn + rite.vn;
-               a.u = left.u.mul(rite.u, MCU);
-               a.l = left.l.mul(rite.l, MCD);
+               a.u = left.u.mul(rite.u, UP);
+               a.l = left.l.mul(rite.l, DN);
                break;
             }
             case DIV :
             {
                a.vp = left.vp + rite.vn;
                a.vn = left.vn + rite.vp;
-               a.u = left.u.mul(rite.l, MCU);
-               a.l = left.l.mul(rite.u, MCD);
+               a.u = left.u.mul(rite.l, UP);
+               a.l = left.l.mul(rite.u, DN);
                break;
             }
             case POW :
@@ -187,8 +154,8 @@ public final class RootBoundEPU extends AbstractEPU
                final int n = a.index();
                a.vp = n * left.vp;
                a.vn = n * left.vn;
-               a.u = left.u.pow(n, MCU);
-               a.l = left.l.pow(n, MCD);
+               a.u = left.u.pow(n, UP);
+               a.l = left.l.pow(n, DN);
                break;
             }
             case ROOT :
@@ -201,7 +168,7 @@ public final class RootBoundEPU extends AbstractEPU
                   a.vp = vs / n;
                   a.vn = left.vn;
                   f = twoTo(vs - n * a.vp);
-                  a.u = f.mul(left.u, MCU).mul(left.l.pow(n - 1, MCU), MCU).sqrt(MCU);
+                  a.u = f.mul(left.u, UP).mul(left.l.pow(n - 1, UP), UP).root(n, UP);
                   a.l = left.l;
                }
                else
@@ -211,7 +178,7 @@ public final class RootBoundEPU extends AbstractEPU
                   a.vn = vs / n;
                   f = twoTo(vs - n * a.vn);
                   a.u = left.u;
-                  a.l = f.mul(left.u.pow(n - 1, MCU), MCU).mul(left.l, MCU).sqrt(MCU);
+                  a.l = f.mul(left.u.pow(n - 1, UP), UP).mul(left.l, UP).root(n, UP);
                }
                break;
             }
@@ -228,54 +195,7 @@ public final class RootBoundEPU extends AbstractEPU
       }
    }
 
-   protected void clearVisitedMarks(final Algebraic a)
-   {
-
-      a.D = Long.MIN_VALUE;
-      final Algebraic left = a.left();
-      if (left != null)
-      {
-         clearVisitedMarks(left);
-      }
-      final Algebraic rite = a.right();
-      if (rite != null)
-      {
-         clearVisitedMarks(rite);
-      }
-   }
-
-   protected long productOfIndices(final Algebraic a)
-   {
-
-      long product = 1L;
-      if (!this.wellWorkedExpression)
-      {
-         if (a.D == Long.MIN_VALUE)
-         {
-            final Algebraic left = a.left();
-            final Algebraic rite = a.right();
-            if (left != null && left.D == Long.MIN_VALUE)
-            {
-               product *= productOfIndices(left);
-            }
-            if (rite != null && rite.D == Long.MIN_VALUE)
-            {
-               product *= productOfIndices(rite);
-            }
-            if (a.type() == Type.ROOT)
-            {
-               product *= a.index();
-            }
-         }
-         if (product >= PrecisionOverflowException.MAX_PRECISION)
-         {
-            throw new PrecisionOverflowException(a.toString());
-         }
-      }
-      return a.D = product;
-   }
-
-   public BigFloat rootBound(final Algebraic a)
+   protected final BigFloat lowerRootBound(final Algebraic a)
    {
 
       try
@@ -284,10 +204,8 @@ public final class RootBoundEPU extends AbstractEPU
          {
             return BigFloat.ZERO;
          }
-         final Rounder rounder = MCD;
          final BigFloat nom = BigFloat.twoTo(a.vp - a.vn);
-         final int exponent = this.wellWorkedExpression ? 1 : (int) (a.D - 1L);
-         return nom.div(a.u.pow(exponent).mul(a.l), rounder);
+         return nom.div(a.u.pow(exponent(a)).mul(a.l), DN);
       }
       catch (final ArithmeticException e)
       {
@@ -295,8 +213,12 @@ public final class RootBoundEPU extends AbstractEPU
       }
    }
 
-   protected static final Rounder MCU = new Rounder(DOUBLE.getPrecision(), UP);
-   protected static final Rounder MCD = new Rounder(DOUBLE.getPrecision(), DOWN);
+   protected int exponent(final Algebraic a)
+   {
 
-   private final boolean wellWorkedExpression;
+      return 1;
+   }
+
+   protected static final Rounder UP = new Rounder(DOUBLE.getPrecision(), RoundingMode.UP);
+   protected static final Rounder DN = new Rounder(DOUBLE.getPrecision(), RoundingMode.DOWN);
 }

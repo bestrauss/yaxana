@@ -121,15 +121,7 @@ public abstract sealed interface Approximable<A extends Approximable<A>> /**/ pe
 
       if (this.precision() < precision)
       {
-         try
-         {
-            assert PDCStats.enter(precision);
-            PDC.ensurePrecision(this, precision, FRACTIONAL_DIGITS);
-         }
-         finally
-         {
-            assert PDCStats.exit();
-         }
+         PDC.ensurePrecision(this, precision, FRACTIONAL_DIGITS);
       }
       return approximation();
    }

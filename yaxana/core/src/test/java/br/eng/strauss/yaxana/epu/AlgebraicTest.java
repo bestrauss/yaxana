@@ -2,7 +2,6 @@ package br.eng.strauss.yaxana.epu;
 
 import static br.eng.strauss.yaxana.epu.Algebraic.TWO;
 import static br.eng.strauss.yaxana.epu.Algebraic.ZERO;
-import static br.eng.strauss.yaxana.epu.Algebraic.ceilOfLog2OfAbsOf;
 import static br.eng.strauss.yaxana.pdc.Scrutinizer.addIsExact;
 import static br.eng.strauss.yaxana.pdc.Scrutinizer.divIsExact;
 import static br.eng.strauss.yaxana.pdc.Scrutinizer.mulIsExact;
@@ -12,16 +11,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.math.MathContext;
 import java.util.Objects;
 
 import org.junit.jupiter.api.Test;
 
+import br.eng.strauss.yaxana.Robust;
+import br.eng.strauss.yaxana.Type;
 import br.eng.strauss.yaxana.big.BigFloat;
 import br.eng.strauss.yaxana.big.Rounder;
+import br.eng.strauss.yaxana.exc.DivisionByZeroException;
 import br.eng.strauss.yaxana.pdc.Scrutinizer;
-import br.eng.strauss.yaxana.unittesttools.YaxanaTest;
+import br.eng.strauss.yaxana.rnd.RandomRobust;
+import br.eng.strauss.yaxana.unittest.YaxanaTest;
 
 /**
  * Some basic tests for {@link Algebraic} to make sure that things work in principle.
@@ -238,6 +242,43 @@ public final class AlgebraicTest extends YaxanaTest
    }
 
    @Test
+   public void testPow()
+   {
+
+      assertTrue(Algebraic.TWO.pow(0) == Algebraic.ONE);
+      assertTrue(Algebraic.TWO.pow(1) == Algebraic.TWO);
+   }
+
+   @Test
+   public void testRoot()
+   {
+
+      try
+      {
+         assertTrue(Algebraic.TWO.root(0) == Algebraic.ONE);
+         fail();
+      }
+      catch (final DivisionByZeroException e)
+      {
+      }
+      assertTrue(Algebraic.TWO.root(1) == Algebraic.TWO);
+   }
+
+   @Test
+   public void testOne()
+   {
+
+      assertTrue(Algebraic.ZERO.one() == Algebraic.ONE);
+   }
+
+   @Test
+   public void testCompareTo()
+   {
+
+      assertTrue(Algebraic.ZERO.one().compareTo(Algebraic.ONE) == 0);
+   }
+
+   @Test
    public void testSampleFromImprovedImplementationOfLedaReals()
    {
 
@@ -283,37 +324,6 @@ public final class AlgebraicTest extends YaxanaTest
    }
 
    @Test
-   public void testCeilOfLog2OfAbsOf()
-   {
-
-      assertEquals(0, ceilOfLog2OfAbsOf(0));
-      assertEquals(0, ceilOfLog2OfAbsOf(1));
-      assertEquals(1, ceilOfLog2OfAbsOf(2));
-      assertEquals(2, ceilOfLog2OfAbsOf(3));
-      assertEquals(2, ceilOfLog2OfAbsOf(4));
-      assertEquals(3, ceilOfLog2OfAbsOf(5));
-      assertEquals(3, ceilOfLog2OfAbsOf(6));
-      assertEquals(3, ceilOfLog2OfAbsOf(7));
-      assertEquals(3, ceilOfLog2OfAbsOf(8));
-      assertEquals(4, ceilOfLog2OfAbsOf(9));
-
-      assertEquals(4, ceilOfLog2OfAbsOf(15));
-      assertEquals(4, ceilOfLog2OfAbsOf(16));
-      assertEquals(5, ceilOfLog2OfAbsOf(17));
-
-      assertEquals(0, ceilOfLog2OfAbsOf(-0));
-      assertEquals(0, ceilOfLog2OfAbsOf(-1));
-      assertEquals(1, ceilOfLog2OfAbsOf(-2));
-      assertEquals(2, ceilOfLog2OfAbsOf(-3));
-      assertEquals(2, ceilOfLog2OfAbsOf(-4));
-      assertEquals(3, ceilOfLog2OfAbsOf(-5));
-      assertEquals(3, ceilOfLog2OfAbsOf(-6));
-      assertEquals(3, ceilOfLog2OfAbsOf(-7));
-      assertEquals(3, ceilOfLog2OfAbsOf(-8));
-      assertEquals(4, ceilOfLog2OfAbsOf(-9));
-   }
-
-   @Test
    public void testCalculatorBug20220526()
    {
 
@@ -351,5 +361,109 @@ public final class AlgebraicTest extends YaxanaTest
          final Algebraic b = new Algebraic("2+\\4");
          assertNotEquals(a, b);
       }
+   }
+
+   @Test
+   public void testMaxConjugate()
+   {
+
+      final int exponent = 64;
+      final BigFloat base = BigFloat.TWO;
+      final String format = "root(%s^%s-1, %s)-%s";
+      final String string = String.format(format, base, exponent, exponent, base);
+      {
+         final Algebraic value = new Algebraic(string);
+         final Algebraic maxConjugate = value.maxConjugate();
+         final String expected = "root(2^64+1, 64)+2";
+         final String actual = maxConjugate.toString();
+         assertEquals(expected, actual);
+      }
+      {
+         final Algebraic value = new Algebraic("1/(" + string + ")");
+         final Algebraic maxConjugate = value.maxConjugate();
+         final String expected = "1/(root(2^64+1, 64)+2)";
+         final String actual = maxConjugate.toString();
+         assertEquals(expected, actual);
+      }
+      {
+         final Algebraic value = new Algebraic("|-5|*\\7");
+         final Algebraic maxConjugate = value.maxConjugate();
+         final String expected = "5*\\7";
+         final String actual = maxConjugate.toString();
+         assertEquals(expected, actual);
+      }
+   }
+
+   @Test
+   public void testMinConjugate()
+   {
+
+      final int exponent = 64;
+      final BigFloat base = BigFloat.TWO;
+      final String format = "root(%s^%s-1, %s)-%s";
+      final String string = String.format(format, base, exponent, exponent, base);
+      {
+         final Algebraic value = new Algebraic(string);
+         final Algebraic minConjugate = value.minConjugate();
+         final String expected = "|root(|2^64-1|, 64)-2|";
+         final String actual = minConjugate.toString();
+         assertEquals(expected, actual);
+      }
+      {
+         final Algebraic value = new Algebraic("1/(" + string + ")");
+         final Algebraic minConjugate = value.minConjugate();
+         final String expected = "1/|root(|2^64-1|, 64)-2|";
+         final String actual = minConjugate.toString();
+         assertEquals(expected, actual);
+      }
+      {
+         final Algebraic value = new Algebraic("|-5|*\\7");
+         final Algebraic minConjugate = value.minConjugate();
+         final String expected = "5*\\7";
+         final String actual = minConjugate.toString();
+         assertEquals(expected, actual);
+      }
+   }
+
+   @Test
+   public void testToIntegerSingleDiv()
+   {
+
+      final RandomRobust rr = new RandomRobust(10);
+      for (int k = 0; k < 10; k++)
+      {
+         testToIntegerSingleDiv(rr.next());
+      }
+      {
+         final Algebraic thiz = new Algebraic(17);
+         final Algebraic that = thiz.toIntegerSingleDiv();
+         assertEquals(Type.DIV, that.type());
+         assertEquals("17", that.left().toString());
+         assertEquals("1", that.right().toString());
+      }
+      {
+         final Algebraic thiz = new Algebraic("17/\\7");
+         final Algebraic that = thiz.toIntegerSingleDiv();
+         assertEquals(Type.DIV, that.type());
+         assertEquals("17*\\(7*1)", that.left().toString());
+         assertEquals("1*7", that.right().toString());
+      }
+      {
+         final Algebraic thiz = new Algebraic("17/root(7, 3)");
+         final Algebraic that = thiz.toIntegerSingleDiv();
+         assertEquals(Type.DIV, that.type());
+         assertEquals("17*root(7^2*1, 3)", that.left().toString());
+         assertEquals("1*7", that.right().toString());
+      }
+   }
+
+   private static void testToIntegerSingleDiv(final Robust robust)
+   {
+
+      final Algebraic thiz = (Algebraic) robust.toSyntaxTree();
+      final Algebraic that = thiz.toIntegerSingleDiv();
+      final double thisD = thiz.approximation(52).doubleValue();
+      final double thatD = that.approximation(52).doubleValue();
+      assertTrue(Math.abs(thisD - thatD) < 1E-10);
    }
 }

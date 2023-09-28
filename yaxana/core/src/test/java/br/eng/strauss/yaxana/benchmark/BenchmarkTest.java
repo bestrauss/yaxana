@@ -1,8 +1,5 @@
 package br.eng.strauss.yaxana.benchmark;
 
-import static br.eng.strauss.yaxana.Algorithm.BFMSS2;
-import static br.eng.strauss.yaxana.Algorithm.YAXANA;
-import static br.eng.strauss.yaxana.Algorithm.ZVAA;
 import static br.eng.strauss.yaxana.Robust.ZERO;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -11,8 +8,8 @@ import br.eng.strauss.yaxana.Robust;
 import br.eng.strauss.yaxana.Robusts;
 import br.eng.strauss.yaxana.epu.Algebraic;
 import br.eng.strauss.yaxana.epu.EPU;
-import br.eng.strauss.yaxana.pdc.PDCStats;
-import br.eng.strauss.yaxana.unittesttools.YaxanaTest;
+import br.eng.strauss.yaxana.epu.EPUStats;
+import br.eng.strauss.yaxana.unittest.YaxanaTest;
 
 /**
  * {@link EPU} benchmark, comparing EPUs.
@@ -28,6 +25,7 @@ abstract class BenchmarkTest extends YaxanaTest
 
       warmupJVM();
       test(getLoopCount());
+      // Robusts.printCache("X ", null);
    }
 
    private void warmupJVM()
@@ -38,12 +36,7 @@ abstract class BenchmarkTest extends YaxanaTest
       try
       {
          YaxanaTest.quiet = true;
-         for (final Algorithm algorithm : ALGORITHMS)
-         {
-            Algebraic.setAlgorithm(algorithm);
-            Robusts.clearCache();
-            test(2);
-         }
+         test(4);
       }
       finally
       {
@@ -55,23 +48,22 @@ abstract class BenchmarkTest extends YaxanaTest
    private void test(final int loopCount)
    {
 
-      test(EPS_0, loopCount);
-      test(EPS_1, loopCount);
-      test(EPS_2, loopCount);
-      test(EPS_3, loopCount);
+      for (final Robust epsilon : createEpsilons())
+      {
+         test(epsilon, loopCount);
+      }
    }
 
    private void test(final Robust epsilon, final int loopCount)
    {
 
-      for (final Algorithm algorithm : ALGORITHMS)
+      for (final Algorithm algorithm : Algorithm.getValuesForTest())
       {
          Algebraic.setAlgorithm(algorithm);
          Robusts.clearCache();
          {
-            format("%s: (epsilon=%s)\n", Algebraic.getAlgorithm(), epsilon);
-            final long timeNs = testEPU(epsilon, loopCount);
-            format("  total:  %8.2fms\n", 1E-6 * timeNs);
+            format("%-6s: (epsilon=%-7s) - ", Algebraic.getAlgorithm(), epsilon);
+            testEPU(epsilon, loopCount);
          }
       }
    }
@@ -79,9 +71,9 @@ abstract class BenchmarkTest extends YaxanaTest
    private long testEPU(final Robust epsilon, final int loopCount)
    {
 
-      PDCStats.INSTANCE.set(new PDCStats());
+      EPUStats.getInstance().clear();
       final long timeNs = testRun(epsilon, loopCount);
-      format("  approx: %s\n", PDCStats.INSTANCE.get());
+      format("%s\n", EPUStats.getInstance());
       return timeNs;
    }
 
@@ -91,10 +83,10 @@ abstract class BenchmarkTest extends YaxanaTest
       long timeNs = 0L;
       for (int k = 0; k < loopCount; k++)
       {
-         final Robust[] E = createNewLeftAndRightExpressions();
-         final long now = System.nanoTime();
-         final Robust E1 = E[0].add(epsilon);
+         final Robust[] E = createNewLeftAndRightExpressions(epsilon);
+         final Robust E1 = E[0];
          final Robust E2 = E[1];
+         final long now = System.nanoTime();
          final int cmp = E1.compareTo(E2);
          timeNs += System.nanoTime() - now;
          if (cmp == 0 != (epsilon == ZERO))
@@ -108,14 +100,33 @@ abstract class BenchmarkTest extends YaxanaTest
       return timeNs;
    }
 
-   protected abstract Robust[] createNewLeftAndRightExpressions();
+   protected Robust[] createEpsilons()
+   {
+
+      // @formatter:off
+      return new Robust[] 
+      { 
+        ZERO, 
+        Robust.valueOf("1p-10"), 
+        Robust.valueOf("1p-100"),
+        Robust.valueOf("1p-1000") 
+      };
+      // @formatter:on
+   }
+
+   protected Robust[] createNewLeftAndRightExpressions(final Robust epsilon)
+   {
+
+      final Robust[] E = createNewLeftAndRightExpressions();
+      E[0] = E[0].add(epsilon);
+      return E;
+   }
+
+   protected Robust[] createNewLeftAndRightExpressions()
+   {
+
+      return new Robust[0];
+   }
 
    protected abstract int getLoopCount();
-
-   private static final Algorithm[] ALGORITHMS = { BFMSS2, ZVAA, YAXANA };
-
-   private static final Robust EPS_0 = ZERO;
-   private static final Robust EPS_1 = Robust.valueOf("1p-10");
-   private static final Robust EPS_2 = Robust.valueOf("1p-100");
-   private static final Robust EPS_3 = Robust.valueOf("1p-1000");
 }

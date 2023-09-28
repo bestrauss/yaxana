@@ -1,5 +1,8 @@
 package br.eng.strauss.yaxana.rnd;
 
+import static br.eng.strauss.yaxana.Type.ADD;
+import static br.eng.strauss.yaxana.Type.SUB;
+
 import java.util.Random;
 
 import br.eng.strauss.yaxana.Expression;
@@ -67,7 +70,7 @@ public abstract class RandomExpression<E extends Expression<E>>
          case DIV :
          {
             final E expression = next(dr);
-            if (expression.signum() == 0)
+            if (expression.type() != SUB && expression.type() != ADD || expression.signum() == 0)
             {
                return next(dl);
             }

@@ -1,4 +1,4 @@
-package br.eng.strauss.yaxana.unittesttools;
+package br.eng.strauss.yaxana.unittest;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

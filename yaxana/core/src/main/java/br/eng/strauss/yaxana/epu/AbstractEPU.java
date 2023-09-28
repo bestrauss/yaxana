@@ -1,7 +1,6 @@
 package br.eng.strauss.yaxana.epu;
 
 import br.eng.strauss.yaxana.Type;
-import br.eng.strauss.yaxana.epu.zvaa.ZvaaEPU;
 
 /**
  * Base class for EPU implementations.
@@ -24,26 +23,36 @@ public abstract class AbstractEPU implements EPU
 
       if (this.operand != operand)
       {
-         this.operand = operand;
+         if (operand.type() == Type.ADD)
+         {
+            this.operand = operand.left().sub(operand.right().neg());
+         }
+         else if (operand.type() != Type.SUB)
+         {
+            throw new UnsupportedOperationException(
+                  "the operand must be a difference of two expressions");
+         }
+         else
+         {
+            this.operand = operand;
+         }
          this.signum = null;
       }
       if (this.signum == null)
       {
-         if (operand.type() == Type.ADD)
-         {
-            final Algebraic difference = operand.left().sub(operand.right().neg());
-            final ZvaaEPU epu = new ZvaaEPU();
-            final int signum = epu.signum(difference);
-            this.operand.setApproximation(difference.approximation(), difference.signum());
-            return signum;
-         }
          this.signum = this.computeSignum();
+      }
+      if (this.operand != operand)
+      {
+         operand.setApproximation(this.operand.approximation(), this.operand.precision());
       }
       return this.signum;
    }
 
    /**
     * Computes and returns the signum of the exact value of the operand.
+    * <p>
+    * The operand is guaranteed to be of type {@code SUB}.
     * 
     * @return the signum of the exact value of the operand.
     */

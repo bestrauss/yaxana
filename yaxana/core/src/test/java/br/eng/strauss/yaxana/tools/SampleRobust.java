@@ -28,16 +28,29 @@ public final class SampleRobust
    public static Robust[] geometricSeriesArray(final Robust q, final int N)
    {
 
-      Robust sum = Robust.ZERO;
-      Robust product = Robust.ONE;
-      for (int k = 0; k < N; k++)
+      if (false)
       {
-         sum = k == 0 ? product : sum.add(product);
-         product = k == 0 ? q : product.mul(q);
+         Robust sum = Robust.ZERO;
+         for (int k = 0; k < N; k++)
+         {
+            sum = sum.add(q.pow(k));
+         }
+         final Robust quotient = Robust.ONE.sub(q.pow(N)).div(Robust.ONE.sub(q));
+         return new Robust[] { sum, quotient };
       }
-      final Robust E1 = sum;
-      final Robust E2 = Robust.ONE.sub(product).div(Robust.ONE.sub(q));
-      return new Robust[] { E1, E2 };
+      else // use no pow-function
+      {
+         Robust sum = Robust.ZERO;
+         Robust product = Robust.ONE;
+         for (int k = 0; k < N; k++)
+         {
+            sum = k == 0 ? product : sum.add(product);
+            product = k == 0 ? q : product.mul(q);
+         }
+         final Robust E1 = sum;
+         final Robust E2 = Robust.ONE.sub(product).div(Robust.ONE.sub(q));
+         return new Robust[] { E1, E2 };
+      }
    }
 
    private SampleRobust()

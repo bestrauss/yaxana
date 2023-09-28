@@ -5,4 +5,4 @@
  * <li>Don't use in production code.
  * </ul>
  */
-package br.eng.strauss.yaxana.unittesttools;
+package br.eng.strauss.yaxana.unittest;

@@ -15,5 +15,5 @@ module br.eng.strauss.yaxana
    exports br.eng.strauss.yaxana.big;
    exports br.eng.strauss.yaxana.exc;
 
-   exports br.eng.strauss.yaxana.unittesttools;
+   exports br.eng.strauss.yaxana.unittest;
 }

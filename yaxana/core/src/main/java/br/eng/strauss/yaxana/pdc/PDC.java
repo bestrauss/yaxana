@@ -18,7 +18,6 @@ import java.math.RoundingMode;
 import br.eng.strauss.yaxana.Robust;
 import br.eng.strauss.yaxana.big.BigFloat;
 import br.eng.strauss.yaxana.big.Rounder;
-import br.eng.strauss.yaxana.epu.Algebraic;
 
 /**
  * Precision driven computation of approximations.
@@ -243,7 +242,7 @@ final class PDC
       if (2 <= n && n <= Robust.MAX_EXPONENT)
       {
          final Approximable<?> left = a.left();
-         final int ldN = Algebraic.ceilOfLog2OfAbsOf(n);
+         final int ldN = Ld.ceilOfLdOfAbsOf(n);
          final int ltPrec = precision + LdNOverHalfN.valueOf(n)
                + (n - 1) * (max(0, msbOfApprox(left)) + 1);
          ensurePrecision(left, ltPrec);

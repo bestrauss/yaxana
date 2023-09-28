@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.Test;
 
 import br.eng.strauss.yaxana.exc.DivisionByZeroException;
-import br.eng.strauss.yaxana.unittesttools.YaxanaTest;
+import br.eng.strauss.yaxana.unittest.YaxanaTest;
 
 /**
  * @author Burkhard Strauss
@@ -119,6 +119,29 @@ public final class RobustSimplificationTest extends YaxanaTest
       final String desired = "-1/\\3*1";
       final String actual = Robust.valueOf(input).toString();
       assertEquals(desired, actual);
+   }
+
+   @Test
+   public void testExample2()
+   {
+
+      final String input = "root(2^64-1, 64)-2";
+      final String simplified = "root(1P+64-1, 64)-2";
+      try
+      {
+         Robusts.setSimplification(false);
+         final Robust r = Robust.valueOf(input);
+         assertEquals(input, r.toString());
+      }
+      finally
+      {
+         Robusts.setSimplification(true);
+      }
+      {
+         assertEquals(true, Robust.simplification);
+         final Robust r = Robust.valueOf(input);
+         assertEquals(simplified, r.toString());
+      }
    }
 
    private final Robust value = Robust.valueOf("\\2+\\3");

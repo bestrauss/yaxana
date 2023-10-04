@@ -73,14 +73,7 @@ public final class RootBoundEPUTest extends YaxanaTest
          final Robust robust = Robust.valueOf(expression);
          final Algebraic a = (Algebraic) robust.toSyntaxTree();
          {
-            a.D = Long.MIN_VALUE;
-            epu.clearVisitedMarks(a);
-            epu.productOfIndices(a);
-            assertEquals(exponent, a.D);
-         }
-         {
-            a.D = Long.MIN_VALUE;
-            epu.sufficientPrecision(a);
+            epu.exponent(a);
             assertEquals(exponent, a.D);
          }
       }

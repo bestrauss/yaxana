@@ -2,7 +2,9 @@ package br.eng.strauss.yaxana.epu;
 
 import static br.eng.strauss.yaxana.Type.TERMINAL;
 
+import java.math.BigInteger;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import br.eng.strauss.yaxana.Algorithm;
@@ -235,6 +237,20 @@ public final class Algebraic
       return new Algebraic(Type.MUL, this, that);
    }
 
+   private Algebraic omul(final Algebraic that)
+   {
+
+      if (this == ONE)
+      {
+         return that;
+      }
+      if (that == ONE)
+      {
+         return this;
+      }
+      return this.mul(that);
+   }
+
    @Override
    public Algebraic div(final Algebraic that)
    {
@@ -289,6 +305,13 @@ public final class Algebraic
    public int signum()
    {
 
+      return signum(null);
+   }
+
+   @Override
+   public int signum(final Consumer<Integer> sufficientPrecision)
+   {
+
       final Algorithm algorithm;
       synchronized (Algebraic.class)
       {
@@ -299,8 +322,9 @@ public final class Algebraic
          case BFMSS2 -> () -> new BfmssEPU();
          case ZVAA -> () -> new ZvaaEPU();
          case MOSC -> () -> new MoscEPU();
+         case YAXANA -> () -> new YaxanaEPU();
       };
-      Approximable.super.ensureSignum(epu);
+      Approximable.super.ensureSignum(epu, sufficientPrecision);
       return this.approximation.signum();
    }
 
@@ -323,7 +347,7 @@ public final class Algebraic
     * <p>
     * For exact comparison of algebraic number values see {@link #compareTo(Algebraic)}.
     * 
-    * @param other
+    * @param object
     *           The object to compare to.
     * @return {@code true} if {@code other} is {@code this} or another {@link Algebraic} and
     *         {@link #astEquals(Algebraic)}.
@@ -332,14 +356,14 @@ public final class Algebraic
     * @see #astEquals(Algebraic)
     */
    @Override
-   public boolean equals(final Object other)
+   public boolean equals(final Object object)
    {
 
-      if (other != this)
+      if (object != this)
       {
-         if (other instanceof Algebraic)
+         if (object instanceof Algebraic)
          {
-            final Algebraic that = (Algebraic) other;
+            final Algebraic that = (Algebraic) object;
             return this.astEquals(that);
          }
          return false;
@@ -473,49 +497,22 @@ public final class Algebraic
    }
 
    /**
-    * Returns an expression for the conjugate root of the structural polynomial with the greatest
-    * absolute value.
-    * <p>
-    * The return value will have positive terminals and be free of {@code SUB}, {@code NEG} and
-    * {@code ABS} operations.
+    * Returns whether this algebraic is free of division operations and of non integer terminals.
     * 
     * @return see above.
     */
-   public Algebraic maxConjugate()
+   public boolean isDivisionFree()
    {
 
-      // @formatter:off
       return switch (type)
       {
-         case TERMINAL -> new Algebraic(approximation.abs());
-         case ADD      -> left.maxConjugate().add(right.maxConjugate()); 
-         case SUB      -> left.maxConjugate().add(right.maxConjugate()); 
-         case MUL      -> left.maxConjugate().mul(right.maxConjugate()); 
-         case DIV      -> left.maxConjugate().div(right.maxConjugate()); 
-         case NEG      -> left.maxConjugate();                           
-         case ABS      -> left.maxConjugate();                           
-         case POW      -> left.maxConjugate().pow(index());              
-         case ROOT     -> left.maxConjugate().root(index());             
+         // @formatter:off
+         case TERMINAL            -> approximation.scale() >= 0;
+         case NEG, ABS, POW, ROOT -> left.isDivisionFree();
+         case ADD, SUB, MUL       -> left.isDivisionFree() && right.isDivisionFree();
+         case DIV                 -> false;
+         // @formatter:on
       };
-      // @formatter:on
-   }
-
-   public Algebraic minConjugate()
-   {
-
-      final Algebraic thiz = this.maxConjugate();
-      // @formatter:off
-      return switch (thiz.type)
-      {
-         case TERMINAL -> thiz;
-         case ADD      -> thiz.left.minConjugate().sub(thiz.right.minConjugate()).abs(); 
-         case MUL      -> thiz.left.minConjugate().mul(thiz.right.minConjugate()); 
-         case DIV      -> thiz.left.minConjugate().div(thiz.right.minConjugate()); 
-         case POW      -> thiz.left.minConjugate().pow(thiz.index());              
-         case ROOT     -> thiz.left.minConjugate().root(thiz.index());             
-         default -> throw new UnreachedException(); 
-      };
-      // @formatter:on
    }
 
    /**
@@ -532,34 +529,43 @@ public final class Algebraic
          case TERMINAL ->
          {
             final int scale = approximation.scale();
-            return scale < 0
-                  ? new Algebraic(new BigFloat(approximation.unscaledValue()))
-                        .div(new Algebraic(BigFloat.twoTo(-scale)))
-                  : new Algebraic(approximation).div(Algebraic.ONE);
+            if (scale < 0)
+            {
+               final Algebraic nom = approximation.unscaledValue().equals(BigInteger.ONE)
+                     ? Algebraic.ONE
+                     : new Algebraic(new BigFloat(approximation.unscaledValue()));
+               return nom.div(new Algebraic(BigFloat.twoTo(-scale)));
+            }
+            else
+            {
+               final Algebraic nom = approximation.equals(BigFloat.ONE) ? Algebraic.ONE
+                     : new Algebraic(approximation);
+               return nom.div(ONE);
+            }
          }
          case ADD ->
          {
             final Algebraic a = left.toIntegerSingleDiv();
             final Algebraic b = right.toIntegerSingleDiv();
-            return a.left.mul(b.right).add(a.right.mul(b.left)).div(a.right.mul(b.right));
+            return a.left.omul(b.right).add(a.right.omul(b.left)).div(a.right.omul(b.right));
          }
          case SUB ->
          {
             final Algebraic a = left.toIntegerSingleDiv();
             final Algebraic b = right.toIntegerSingleDiv();
-            return a.left.mul(b.right).sub(a.right.mul(b.left)).div(a.right.mul(b.right));
+            return a.left.omul(b.right).sub(a.right.omul(b.left)).div(a.right.omul(b.right));
          }
          case MUL ->
          {
             final Algebraic a = left.toIntegerSingleDiv();
             final Algebraic b = right.toIntegerSingleDiv();
-            return a.left.mul(b.left).div(a.right.mul(b.right));
+            return a.left.omul(b.left).div(a.right.omul(b.right));
          }
          case DIV ->
          {
             final Algebraic a = left.toIntegerSingleDiv();
             final Algebraic b = right.toIntegerSingleDiv();
-            return a.left.mul(b.right).div(a.right.mul(b.left));
+            return a.left.omul(b.right).div(a.right.omul(b.left));
          }
          case NEG ->
          {
@@ -580,8 +586,8 @@ public final class Algebraic
          {
             final Algebraic a = left.toIntegerSingleDiv();
             final int index = index();
-            return index == 2 ? a.left.div(a.left.mul(a.right).root(index))
-                  : a.left.div(a.left.pow(index - 1).mul(a.right).root(index));
+            return index == 2 ? a.left.div(a.left.omul(a.right).root(index))
+                  : a.left.div(a.left.pow(index - 1).omul(a.right).root(index));
          }
       }
       throw new UnreachedException();
@@ -603,7 +609,7 @@ public final class Algebraic
    public static final Algebraic HALF = new Algebraic(0.5);
 
    /** The {@link Algorithm} being used for sign computation. */
-   private static Algorithm algorithm = Algorithm.ZVAA;
+   private static Algorithm algorithm = Algorithm.MOSC;
 
    /** The type of expression represented by this {@link Algebraic}. */
    private final Type type;

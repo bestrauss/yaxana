@@ -17,7 +17,7 @@ import br.eng.strauss.yaxana.unittest.Benchmark;
  * @author Burkhard Strauss
  * @since August 2017
  */
-public final class RootOfPowMinusOneTest extends BenchmarkTest
+public final class RootOfPowMinusOneBenchmarkTest extends BenchmarkTest
 {
 
    @Benchmark(1)
@@ -39,9 +39,9 @@ public final class RootOfPowMinusOneTest extends BenchmarkTest
          Robust robustR = null;
          for (int k = 0; k < 1; k++)
          {
-            final int exponent = 16;
+            final int exponent = 20;
             final BigFloat base = randomBigFloat.next().abs().mulTwoTo(-1000);
-            final String format = "root(%s^%s-%s, %s)";
+            final String format = "root(%s^%s+%s, %s)";
             final String stringL = String.format(format, base, exponent, epsilon, exponent);
             final String stringR = String.format("%s", base);
             final Robust l = Robust.valueOf(stringL);

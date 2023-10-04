@@ -25,7 +25,6 @@ abstract class BenchmarkTest extends YaxanaTest
 
       warmupJVM();
       test(getLoopCount());
-      // Robusts.printCache("X ", null);
    }
 
    private void warmupJVM()
@@ -62,7 +61,7 @@ abstract class BenchmarkTest extends YaxanaTest
          Algebraic.setAlgorithm(algorithm);
          Robusts.clearCache();
          {
-            format("%-6s: (epsilon=%-7s) - ", Algebraic.getAlgorithm(), epsilon);
+            format("%-6s: (eps=%-7s) - ", Algebraic.getAlgorithm(), epsilon);
             testEPU(epsilon, loopCount);
          }
       }

@@ -16,6 +16,9 @@ import br.eng.strauss.yaxana.exc.UnreachedException;
  * Immutable binary floating point numbers {@code unscaledValue*2^scale} with {@link BigInteger}
  * {@code unscaledValue} and {@code int} {@code scale} normed to avoid {@code unscaledValue}s with
  * trailing zeros.
+ * <p>
+ * {@link BigFloat}s are {@code k}-ary rationals in the sense of Chee K. Yap and thus a
+ * generalization of integers.
  * 
  * @author Burkhard Strauss
  * @since August 2017

@@ -15,7 +15,16 @@ public final class PDCToolsTest
 {
 
    @Test
-   public void pimpCoverage()
+   public void testEnsureFiniteApproximation()
+   {
+
+      final Algebraic a = new Algebraic("\\7P-200");
+      PDCTools.ensureFiniteApproximation(a);
+      assertTrue(a.approximation().compareTo(BigFloat.ZERO) > 0);
+   }
+
+   @Test
+   public void testEnsureFiniteApproximation2()
    {
 
       final Algebraic a = new Algebraic("\\7P-200");

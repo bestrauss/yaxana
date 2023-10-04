@@ -1,6 +1,5 @@
 package br.eng.strauss.yaxana.unittest;
 
-import static br.eng.strauss.yaxana.Algorithm.BFMSS2;
 import static br.eng.strauss.yaxana.unittest.YaxanaSettings.SKIP_BENCHMARKS;
 
 import java.lang.reflect.Method;
@@ -17,6 +16,7 @@ import org.junit.jupiter.api.extension.ReflectiveInvocationContext;
 import br.eng.strauss.yaxana.Algorithm;
 import br.eng.strauss.yaxana.Robusts;
 import br.eng.strauss.yaxana.epu.Algebraic;
+import br.eng.strauss.yaxana.epu.Cache;
 
 /**
  * @author Burkhard Strauﬂ
@@ -94,7 +94,7 @@ public final class YaxanaExtension implements AfterAllCallback, BeforeAllCallbac
       }
       else
       {
-         Algebraic.setAlgorithm(BFMSS2);
+         Algebraic.setAlgorithm(DEFAULT_ALGORITHM);
          evaluate(invocation, name);
       }
    }
@@ -113,6 +113,7 @@ public final class YaxanaExtension implements AfterAllCallback, BeforeAllCallbac
       for (final Algorithm algorithm : algorithms)
       {
          Algebraic.setAlgorithm(algorithm);
+         Cache.getInstance().clear();
          final Invocation<Void> i = followUp ? followUpInvocation : invocation;
          evaluate(i, name);
          followUp = true;
@@ -122,7 +123,7 @@ public final class YaxanaExtension implements AfterAllCallback, BeforeAllCallbac
    private void evaluate(final Invocation<Void> invocation, final String name) throws Throwable
    {
 
-      final String epuName = String.format(" [%s]", Algebraic.getAlgorithm());
+      String epuName = String.format(" [%s]", Algebraic.getAlgorithm());
       final long time = System.currentTimeMillis();
       try
       {
@@ -134,10 +135,13 @@ public final class YaxanaExtension implements AfterAllCallback, BeforeAllCallbac
       catch (final Throwable t)
       {
          final float ms = 0.001f * (System.currentTimeMillis() - time);
+         epuName = String.format(" [%s]", Algebraic.getAlgorithm());
          YaxanaTest.format("method %s failed in: %.3fs%s\n", name, ms, epuName);
          throw t;
       }
    }
+
+   private static final Algorithm DEFAULT_ALGORITHM = Algorithm.YAXANA;
 
    private String currentClassName;
 

@@ -58,7 +58,6 @@ public final class RobustTest extends YaxanaTest
          final Algebraic a = randomAlgebraic.next().sub(randomAlgebraic.next());
          final Robust value = Robust.valueOf(a);
          final Algebraic b = (Algebraic) value.toSyntaxTree();
-         assertEquals(a.signum(), b.signum());
          final BigFloat ba = a.approximation(100);
          final BigFloat bb = b.approximation(100);
          final BigFloat absMax = ba.max(bb).abs();

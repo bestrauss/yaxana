@@ -1,5 +1,7 @@
 package br.eng.strauss.yaxana.epu;
 
+import java.util.function.Consumer;
+
 import br.eng.strauss.yaxana.Type;
 
 /**
@@ -14,37 +16,29 @@ public abstract class AbstractEPU implements EPU
    /** The operand. */
    protected Algebraic operand;
 
+   /** Stats or {@code null}. */
+   protected Consumer<Integer> sufficientPrecision;
+
    /** The signum or {@code null} if not yet calculated. */
    protected Integer signum;
 
    @Override
-   public final int signum(final Algebraic operand)
+   public final int signum(final Algebraic operand, final Consumer<Integer> sufficientPrecision)
    {
 
+      this.sufficientPrecision = sufficientPrecision;
       if (this.operand != operand)
       {
-         if (operand.type() == Type.ADD)
+         if (operand.type() != Type.SUB)
          {
-            this.operand = operand.left().sub(operand.right().neg());
+            throw new UnsupportedOperationException("only subtraction supported");
          }
-         else if (operand.type() != Type.SUB)
-         {
-            throw new UnsupportedOperationException(
-                  "the operand must be a difference of two expressions");
-         }
-         else
-         {
-            this.operand = operand;
-         }
+         this.operand = operand;
          this.signum = null;
       }
       if (this.signum == null)
       {
          this.signum = this.computeSignum();
-      }
-      if (this.operand != operand)
-      {
-         operand.setApproximation(this.operand.approximation(), this.operand.precision());
       }
       return this.signum;
    }

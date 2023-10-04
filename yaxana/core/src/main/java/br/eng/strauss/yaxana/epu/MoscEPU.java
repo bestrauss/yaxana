@@ -15,10 +15,10 @@ final class MoscEPU extends RootBoundEPU
    public int sufficientPrecision(final Algebraic value)
    {
 
-      final Algebraic denom = this.operand.left().abs().add(this.operand.right().abs());
+      final Algebraic denom = value.left().abs().add(value.right().abs());
       PDCTools.ensureFiniteApproximation(denom);
-      final int denomPrec = Math.max(0, -denom.approximation().msb());
-      final Algebraic customOperand = this.operand.div(denom);
-      return super.sufficientPrecision(customOperand) + denomPrec;
+      final int denomPrec = 1 - denom.approximation().msb();
+      final int precision = super.sufficientPrecision(value.div(denom)) + denomPrec;
+      return denomPrec >= 0 ? precision : (int) (1.65 * precision + 0.5);
    }
 }

@@ -26,45 +26,38 @@ final class BfmssEPU extends RootBoundEPU
    }
 
    @Override
-   public int sufficientPrecision(final Algebraic value)
+   protected int exponent(final Algebraic value)
    {
 
       clearVisitedMarks(value);
       productOfIndices(value);
-      return super.sufficientPrecision(value);
+      return (int) (value.D - 1L);
    }
 
-   @Override
-   protected int exponent(final Algebraic a)
+   static void clearVisitedMarks(final Algebraic value)
    {
 
-      return (int) (a.D - 1L);
-   }
-
-   void clearVisitedMarks(final Algebraic a)
-   {
-
-      a.D = Long.MIN_VALUE;
-      final Algebraic left = a.left();
+      value.D = Long.MIN_VALUE;
+      final Algebraic left = value.left();
       if (left != null)
       {
          clearVisitedMarks(left);
       }
-      final Algebraic rite = a.right();
+      final Algebraic rite = value.right();
       if (rite != null)
       {
          clearVisitedMarks(rite);
       }
    }
 
-   long productOfIndices(final Algebraic a)
+   static long productOfIndices(final Algebraic value)
    {
 
       long product = 1L;
-      if (a.D == Long.MIN_VALUE)
+      if (value.D == Long.MIN_VALUE)
       {
-         final Algebraic left = a.left();
-         final Algebraic rite = a.right();
+         final Algebraic left = value.left();
+         final Algebraic rite = value.right();
          if (left != null && left.D == Long.MIN_VALUE)
          {
             product *= productOfIndices(left);
@@ -73,15 +66,15 @@ final class BfmssEPU extends RootBoundEPU
          {
             product *= productOfIndices(rite);
          }
-         if (a.type() == Type.ROOT)
+         if (value.type() == Type.ROOT)
          {
-            product *= a.index();
+            product *= value.index();
          }
       }
       if (product >= PrecisionOverflowException.MAX_PRECISION)
       {
-         throw new PrecisionOverflowException(a.toString());
+         throw new PrecisionOverflowException(value.toString());
       }
-      return a.D = product;
+      return value.D = product;
    }
 }

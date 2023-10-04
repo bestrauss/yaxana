@@ -10,8 +10,8 @@ import static br.eng.strauss.yaxana.pdc.Scrutinizer.subIsExact;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.math.MathContext;
 import java.util.Objects;
@@ -211,14 +211,14 @@ public final class AlgebraicTest extends YaxanaTest
 
       {
          final Algebraic a = Algebraic.TWO.sqrt();
-         assertTrue(a.compareTo(a) == 0);
+         a.approximation(1);
          assertFalse(rootIsExact(BigFloat.TWO, 2, a.approximation()));
       }
       {
          final Algebraic SEVENS = new Algebraic("777777777777777");
          final Algebraic SEVENS2 = SEVENS.mul(SEVENS);
          final Algebraic a = SEVENS2.sqrt();
-         assertTrue(a.compareTo(a) == 0);
+         a.approximation(1);
          assertTrue(rootIsExact(SEVENS2.approximation(), 2, a.approximation()));
       }
    }
@@ -229,14 +229,14 @@ public final class AlgebraicTest extends YaxanaTest
 
       {
          final Algebraic a = Algebraic.TWO.root(2);
-         assertTrue(a.compareTo(a) == 0);
+         a.approximation(1);
          assertFalse(rootIsExact(BigFloat.TWO, 2, a.approximation()));
       }
       {
          final Algebraic SEVENS = new Algebraic("777777777777777");
          final Algebraic SEVENS2 = SEVENS.mul(SEVENS);
          final Algebraic a = SEVENS2.root(2);
-         assertTrue(a.compareTo(a) == 0);
+         a.approximation(1);
          assertTrue(rootIsExact(SEVENS2.approximation(), 2, a.approximation()));
       }
    }
@@ -253,15 +253,16 @@ public final class AlgebraicTest extends YaxanaTest
    public void testRoot()
    {
 
-      try
-      {
-         assertTrue(Algebraic.TWO.root(0) == Algebraic.ONE);
-         fail();
-      }
-      catch (final DivisionByZeroException e)
-      {
-      }
-      assertTrue(Algebraic.TWO.root(1) == Algebraic.TWO);
+      assertThrows(DivisionByZeroException.class, () -> Algebraic.TWO.root(0));
+      assertTrue(TWO.root(1) == TWO);
+      assertTrue(TWO.root(-1).equals(Algebraic.ONE.div(TWO.root(1))));
+   }
+
+   @Test
+   public void testTerminal()
+   {
+
+      assertThrows(IllegalArgumentException.class, () -> new Algebraic("1+2").terminal());
    }
 
    @Test
@@ -298,7 +299,6 @@ public final class AlgebraicTest extends YaxanaTest
       format("precision: %d\n", a.precision());
       format("\n");
       assertTrue(a.signum() == 0);
-      assertTrue(a.compareTo(a) == 0);
    }
 
    @Test
@@ -317,7 +317,7 @@ public final class AlgebraicTest extends YaxanaTest
       assertTrue(a.toString().equals("\\2+\\3-\\(2+3+\\(2*3)*2)"));
       format("s0: %s\n", s0);
       format("s1: %s\n", s1);
-      assertTrue(a.compareTo(a) == 0);
+      assertTrue(Robust.valueOf(a).compareTo(Robust.valueOf(a)) == 0);
       format("a:  %s\n", a);
       format("precision: %d\n", a.precision());
       format("\n");
@@ -364,68 +364,6 @@ public final class AlgebraicTest extends YaxanaTest
    }
 
    @Test
-   public void testMaxConjugate()
-   {
-
-      final int exponent = 64;
-      final BigFloat base = BigFloat.TWO;
-      final String format = "root(%s^%s-1, %s)-%s";
-      final String string = String.format(format, base, exponent, exponent, base);
-      {
-         final Algebraic value = new Algebraic(string);
-         final Algebraic maxConjugate = value.maxConjugate();
-         final String expected = "root(2^64+1, 64)+2";
-         final String actual = maxConjugate.toString();
-         assertEquals(expected, actual);
-      }
-      {
-         final Algebraic value = new Algebraic("1/(" + string + ")");
-         final Algebraic maxConjugate = value.maxConjugate();
-         final String expected = "1/(root(2^64+1, 64)+2)";
-         final String actual = maxConjugate.toString();
-         assertEquals(expected, actual);
-      }
-      {
-         final Algebraic value = new Algebraic("|-5|*\\7");
-         final Algebraic maxConjugate = value.maxConjugate();
-         final String expected = "5*\\7";
-         final String actual = maxConjugate.toString();
-         assertEquals(expected, actual);
-      }
-   }
-
-   @Test
-   public void testMinConjugate()
-   {
-
-      final int exponent = 64;
-      final BigFloat base = BigFloat.TWO;
-      final String format = "root(%s^%s-1, %s)-%s";
-      final String string = String.format(format, base, exponent, exponent, base);
-      {
-         final Algebraic value = new Algebraic(string);
-         final Algebraic minConjugate = value.minConjugate();
-         final String expected = "|root(|2^64-1|, 64)-2|";
-         final String actual = minConjugate.toString();
-         assertEquals(expected, actual);
-      }
-      {
-         final Algebraic value = new Algebraic("1/(" + string + ")");
-         final Algebraic minConjugate = value.minConjugate();
-         final String expected = "1/|root(|2^64-1|, 64)-2|";
-         final String actual = minConjugate.toString();
-         assertEquals(expected, actual);
-      }
-      {
-         final Algebraic value = new Algebraic("|-5|*\\7");
-         final Algebraic minConjugate = value.minConjugate();
-         final String expected = "5*\\7";
-         final String actual = minConjugate.toString();
-         assertEquals(expected, actual);
-      }
-   }
-
-   @Test
    public void testToIntegerSingleDiv()
    {
 
@@ -445,15 +383,15 @@ public final class AlgebraicTest extends YaxanaTest
          final Algebraic thiz = new Algebraic("17/\\7");
          final Algebraic that = thiz.toIntegerSingleDiv();
          assertEquals(Type.DIV, that.type());
-         assertEquals("17*\\(7*1)", that.left().toString());
-         assertEquals("1*7", that.right().toString());
+         assertEquals("17*\\7", that.left().toString());
+         assertEquals("7", that.right().toString());
       }
       {
          final Algebraic thiz = new Algebraic("17/root(7, 3)");
          final Algebraic that = thiz.toIntegerSingleDiv();
          assertEquals(Type.DIV, that.type());
-         assertEquals("17*root(7^2*1, 3)", that.left().toString());
-         assertEquals("1*7", that.right().toString());
+         assertEquals("17*root(7^2, 3)", that.left().toString());
+         assertEquals("7", that.right().toString());
       }
    }
 

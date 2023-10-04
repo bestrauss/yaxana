@@ -6,13 +6,13 @@ import static java.lang.Math.nextDown;
 import static java.lang.Math.nextUp;
 
 import java.io.Serializable;
+import java.util.function.Consumer;
 
 import br.eng.strauss.yaxana.big.BigFloat;
 import br.eng.strauss.yaxana.epu.EPUStats;
 import br.eng.strauss.yaxana.exc.DivisionByZeroException;
 import br.eng.strauss.yaxana.exc.IllegalExponentException;
 import br.eng.strauss.yaxana.exc.NotRepresentableAsADoubleException;
-import br.eng.strauss.yaxana.exc.UnreachedException;
 import br.eng.strauss.yaxana.io.Parser;
 import br.eng.strauss.yaxana.pdc.SafeDoubleOps;
 
@@ -150,25 +150,24 @@ public final class Robust extends ConciseNumber implements Expression<Robust>
    public static Robust valueOf(final SyntaxTree<?> st)
    {
 
-      switch (st.type())
+      return switch (st.type())
       {
          // @formatter:off
-         case TERMINAL -> { return valueOf(st.doubleValue()); }
-         case NEG      -> { return valueOf(st.left()).neg(); }
-         case ABS      -> { return valueOf(st.left()).abs(); }
-         case POW      -> { return valueOf(st.left()).pow(st.index()); }
-         case ROOT     -> { return valueOf(st.left()).root(st.index()); }
-         case ADD      -> { return valueOf(st.left()).add(valueOf(st.right())); }
-         case SUB      -> { return valueOf(st.left()).sub(valueOf(st.right())); }
-         case MUL      -> { return valueOf(st.left()).mul(valueOf(st.right())); }
-         case DIV      -> { return valueOf(st.left()).div(valueOf(st.right())); }
+         case TERMINAL -> valueOf(st.doubleValue());
+         case NEG      -> valueOf(st.left()).neg();
+         case ABS      -> valueOf(st.left()).abs();
+         case POW      -> valueOf(st.left()).pow(st.index());
+         case ROOT     -> valueOf(st.left()).root(st.index());
+         case ADD      -> valueOf(st.left()).add(valueOf(st.right()));
+         case SUB      -> valueOf(st.left()).sub(valueOf(st.right()));
+         case MUL      -> valueOf(st.left()).mul(valueOf(st.right()));
+         case DIV      -> valueOf(st.left()).div(valueOf(st.right()));
          // @formatter:on
-      }
-      throw new UnreachedException();
+      };
    }
 
    @Override
-   public int signum()
+   public int signum(final Consumer<Integer> sufficientPrecision)
    {
 
       return this.value > 0d ? 1 : this.value < 0d ? -1 : 0;
@@ -220,6 +219,10 @@ public final class Robust extends ConciseNumber implements Expression<Robust>
       if (that.value == 0d)
       {
          return this;
+      }
+      if (simplification && this.value == that.value && this.equals(that))
+      {
+         return ZERO;
       }
       final double subLo = this.lo - that.hi;
       final double subHi = this.hi - that.lo;
@@ -563,7 +566,8 @@ public final class Robust extends ConciseNumber implements Expression<Robust>
       {
          if (lo <= 0d && hi >= 0d && lo != hi)
          {
-            signum = EPUStats.getInstance().signum(this.noOfNodes(), () -> toAlgebraic().signum());
+            signum = EPUStats.getInstance().signum(this.noOfNodes(),
+                                                   arg -> toAlgebraic().signum(arg));
          }
          else
          {

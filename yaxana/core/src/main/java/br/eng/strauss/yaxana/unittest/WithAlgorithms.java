@@ -1,8 +1,7 @@
 package br.eng.strauss.yaxana.unittest;
 
 import static br.eng.strauss.yaxana.Algorithm.BFMSS2;
-import static br.eng.strauss.yaxana.Algorithm.MOSC;
-import static br.eng.strauss.yaxana.Algorithm.ZVAA;
+import static br.eng.strauss.yaxana.Algorithm.YAXANA;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -23,5 +22,5 @@ public @interface WithAlgorithms {
    /**
     * @return the algorithms to be used.
     */
-   Algorithm[] value() default { BFMSS2, ZVAA, MOSC };
+   Algorithm[] value() default { BFMSS2, YAXANA };
 }

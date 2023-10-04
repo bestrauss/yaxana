@@ -59,13 +59,20 @@ public abstract sealed class ConciseNumber extends Number permits Robust
       return this.operands.length;
    }
 
+   /**
+    * Returns whether the {@code other} is the same expression, consisting of the same operands and
+    * operations, having the same abstract syntax tree as {@code this}.
+    * <p>
+    * To compare numeric values, use {@link Robust#isEqualTo(Robust)},
+    * {@link Robust#isGreaterThan(Robust)}, etc.
+    */
    @Override
-   public final boolean equals(final Object other)
+   public final boolean equals(final Object object)
    {
 
-      if (other != this)
+      if (object != this)
       {
-         if (other instanceof final ConciseNumber that)
+         if (object instanceof final ConciseNumber that)
          {
             if (this.hashCode == that.hashCode && Arrays.equals(this.operations, that.operations)
                   && Arrays.equals(this.operands, that.operands))

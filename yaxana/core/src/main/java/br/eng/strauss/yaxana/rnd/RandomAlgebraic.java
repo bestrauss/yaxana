@@ -1,7 +1,5 @@
 package br.eng.strauss.yaxana.rnd;
 
-import static br.eng.strauss.yaxana.epu.Algebraic.ZERO;
-
 import br.eng.strauss.yaxana.epu.Algebraic;
 
 /**
@@ -10,12 +8,20 @@ import br.eng.strauss.yaxana.epu.Algebraic;
  * @author Burkhard Strauss
  * @since July 2017
  */
-public final class RandomAlgebraic extends RandomExpression<Algebraic>
+public final class RandomAlgebraic
 {
 
    public RandomAlgebraic(final int maxBinaryDigits, final int maxScale, final int maxDepth)
    {
 
-      super(ZERO, maxBinaryDigits, maxScale, maxDepth);
+      this.randomRobust = new RandomRobust(maxBinaryDigits, maxScale, maxDepth);
    }
+
+   public Algebraic next()
+   {
+
+      return (Algebraic) this.randomRobust.next().toSyntaxTree();
+   }
+
+   private final RandomRobust randomRobust;
 }

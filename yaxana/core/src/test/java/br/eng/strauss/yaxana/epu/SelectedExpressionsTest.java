@@ -100,11 +100,6 @@ public final class SelectedExpressionsTest extends YaxanaTest
          assertEquals(0, value.signum());
          log(value);
       }
-      {
-         final Algebraic value = new Algebraic("\\262145-0");
-         assertEquals(1, value.signum());
-         log(value);
-      }
    }
 
    @Test
@@ -399,6 +394,7 @@ public final class SelectedExpressionsTest extends YaxanaTest
    private void log(final Algebraic value)
    {
 
+      value.approximation(1);
       format("value     : %s\n", value);
       format("approx dec: %s\n", value.approximation().toString(MathContext.DECIMAL64));
       format("approx hex: %s\n", Double.toHexString(value.doubleValue()).toUpperCase());

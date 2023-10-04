@@ -1,5 +1,7 @@
 package br.eng.strauss.yaxana.epu;
 
+import static br.eng.strauss.yaxana.epu.Algebraic.ONE;
+
 import br.eng.strauss.yaxana.pdc.PDCTools;
 
 /**
@@ -12,21 +14,21 @@ final class ZvaaEPU extends RootBoundEPU
 {
 
    @Override
-   protected final int computeSignum()
+   protected final int computeSignum(final Algebraic value)
    {
 
-      final Algebraic originalOperand = this.operand;
-      try
-      {
-         final Algebraic val = this.operand;
-         this.operand = val.left().sub(val.right()).div(val.left().abs().add(val.right().abs()));
-         final int signum = super.computeSignum();
-         return signum == 0 ? PDCTools.setExactZero(originalOperand)
-               : PDCTools.ensureFiniteApproximation(originalOperand);
+      if (value.isDivisionFree())
+      { // ZVAA
+         final Algebraic testValue = value.div(value.left().abs().add(value.right().abs()));
+         final int signum = super.computeSignum(testValue);
+         return signum == 0 ? PDCTools.setExactZero(value) : signum;
       }
-      finally
-      {
-         this.operand = originalOperand;
+      else
+      { // should be provable, we're testing T = 1 - (E_1/E_0)^2
+         final Algebraic testValue = ONE.sub(value.right().div(value.left()).pow(2));
+         return super.computeSignum(testValue) == 0 //
+               ? PDCTools.setExactZero(value)
+               : PDCTools.ensureFiniteApproximation(value);
       }
    }
 }

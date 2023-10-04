@@ -97,7 +97,7 @@ public final class PDCTools
             : (long) precision << 1;
       if (newPrecision > PrecisionOverflowException.MAX_PRECISION)
       {
-         throw new PrecisionOverflowException(a.toString());
+         throw new PrecisionOverflowException(newPrecision + " expr: " + a.toString() + "");
       }
       return (int) newPrecision;
    }

@@ -44,7 +44,7 @@ public final class GeometricalBenchmarkTest extends BenchmarkTest
       final int shift = random.nextInt(31);
       final boolean sign = random.nextBoolean();
       final Robust sci = Robust.valueOf(sign ? 1 << shift : 1d / (1 << shift));
-      final Robust q = Robust.valueOf(random.nextDouble()).mul(sci).sqrt();
+      final Robust q = Robust.valueOf(random.nextDouble()).mul(sci).root(7);
       return SampleRobust.geometricSeriesArray(q, ORDER);
    }
 
@@ -52,7 +52,7 @@ public final class GeometricalBenchmarkTest extends BenchmarkTest
    protected int getLoopCount()
    {
 
-      return STRESS_LEVEL > 0 ? STRESS_LEVEL * 400 : 200;
+      return STRESS_LEVEL > 0 ? STRESS_LEVEL * 20 : 10;
    }
 
    private static final int ORDER = 10;

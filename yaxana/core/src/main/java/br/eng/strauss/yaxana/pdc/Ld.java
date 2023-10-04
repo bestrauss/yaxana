@@ -23,4 +23,8 @@ final class Ld
 
       return n != 0 ? 32 - Integer.numberOfLeadingZeros(Math.abs(n) - 1) : 0;
    }
+
+   private Ld()
+   {
+   }
 }

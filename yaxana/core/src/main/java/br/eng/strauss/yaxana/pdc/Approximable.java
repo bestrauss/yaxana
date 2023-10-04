@@ -2,6 +2,7 @@ package br.eng.strauss.yaxana.pdc;
 
 import static br.eng.strauss.yaxana.pdc.ApproximationType.FRACTIONAL_DIGITS;
 
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import br.eng.strauss.yaxana.Type;
@@ -53,13 +54,30 @@ public abstract sealed interface Approximable<A extends Approximable<A>> /**/ pe
    public abstract int signum();
 
    /**
+    * Returns {@code -1, 0, 1} in case the exact value of this expression is negative, zero or
+    * positive.
+    * <p>
+    * Determines the exact sign in finite time even though both values may be irrational and their
+    * decimal representation may have an infinite number of digits.
+    *
+    * @param sufficientPrecision
+    *           Optional. For profiling purposes.
+    * @return {@code -1, 0, 1} in case the exact value of this expression is negative, zero or
+    *         positive.
+    */
+   public abstract int signum(final Consumer<Integer> sufficientPrecision);
+
+   /**
     * Sets the approximation/precision of this expression such that the signum can be read from the
     * approximation.
     * 
     * @param epu
     *           The exact processing unit to be used.
+    * @param sufficientPrecision
+    *           See {@link EPU#signum(Algebraic, Consumer)}
     */
-   public default void ensureSignum(final Supplier<EPU> epu)
+   public default void ensureSignum(final Supplier<EPU> epu,
+         final Consumer<Integer> sufficientPrecision)
    {
 
       final BigFloat approximation = approximation();
@@ -67,7 +85,7 @@ public abstract sealed interface Approximable<A extends Approximable<A>> /**/ pe
       if (approximation == null || approximation.signum() != 0
             && approximation.abs().compareTo(BigFloat.twoTo(-precision)) <= 0)
       {
-         epu.get().signum((Algebraic) this);
+         epu.get().signum((Algebraic) this, sufficientPrecision);
       }
    }
 
@@ -112,8 +130,11 @@ public abstract sealed interface Approximable<A extends Approximable<A>> /**/ pe
     * higher precision.
     * 
     * @param precision
-    *           The requested minimum number of exact binary digits, i.e. the minimum number of
-    *           binary digits that are digits of the true, exact value of expression.
+    *           The precision. The absolute value of the difference of the returned approximation
+    *           and the true value will be less than or equal to {@code 2^-precision}. Please note
+    *           that this doesn't mean that any one of the returned digits is a true digit of the
+    *           true value. Consider e.g. the case where a true value {@code 0x1.0000...} is
+    *           approximated by {@code 0x0.FFFF}.
     * @return the approximation of this {@link Approximable}.
     */
    public default BigFloat approximation(final int precision)

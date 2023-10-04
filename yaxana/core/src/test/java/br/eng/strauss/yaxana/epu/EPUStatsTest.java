@@ -24,7 +24,7 @@ public final class EPUStatsTest extends YaxanaTest
       });
       assertThrows(UnsupportedOperationException.class, () -> {
          final Algebraic a = new Algebraic(2D).sqrt();
-         EPUStats.getInstance().signum(17, () -> a.signum());
+         EPUStats.getInstance().signum(17, consumer -> a.signum(consumer));
       });
    }
 }

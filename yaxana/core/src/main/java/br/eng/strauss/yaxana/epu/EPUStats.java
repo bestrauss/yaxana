@@ -4,7 +4,8 @@ import static java.lang.Math.max;
 import static java.lang.String.format;
 
 import java.time.Duration;
-import java.util.function.Supplier;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Accumulation of EPU statistical data.
@@ -25,19 +26,22 @@ public final class EPUStats
    {
 
       this.noOfSignComputations = 0;
+      this.noOfPrecisions = 0;
+      this.sumPrecision = 0;
       this.sumOfTimeNs = 0;
       this.maxNoOfNodes = 0;
       this.sumNoOfNodes = 0;
       this.noOfExceptions = 0;
    }
 
-   public int signum(final int noOfNodes, final Supplier<Integer> signum)
+   public int signum(final int noOfNodes, final Function<Consumer<Integer>, Integer> signum)
    {
 
       final long startNanoTime = System.nanoTime();
       try
       {
-         return signum.get();
+         this.sufficientPrecision = -1;
+         return signum.apply(sp -> this.sufficientPrecision = sp);
       }
       catch (final RuntimeException | Error e)
       {
@@ -50,6 +54,11 @@ public final class EPUStats
          this.sumNoOfNodes += noOfNodes;
          this.sumOfTimeNs += System.nanoTime() - startNanoTime;
          this.noOfSignComputations++;
+         if (this.sufficientPrecision >= 0)
+         {
+            this.sumPrecision += this.sufficientPrecision;
+            this.noOfPrecisions++;
+         }
       }
    }
 
@@ -59,6 +68,9 @@ public final class EPUStats
 
       final int avgNoOfNodes = noOfSignComputations > 0
             ? (int) ((double) sumNoOfNodes / noOfSignComputations + 0.5)
+            : 0;
+      final int avgPrecision = noOfPrecisions > 0
+            ? (int) ((double) sumPrecision / noOfPrecisions + 0.5)
             : 0;
       final String totalTime;
       if (sumOfTimeNs < 10_000_000L)
@@ -79,9 +91,9 @@ public final class EPUStats
          totalTime = duration.toString().substring(2).replaceAll("(\\d[HMS])(?!$)", "$1 ")
                .toLowerCase();
       }
-      final String format = "total time: %6s, total signs computed: %5d, avg/max nodes: %3d/%3d, exceptions: %3d";
-      return format(format, totalTime, noOfSignComputations, avgNoOfNodes, maxNoOfNodes,
-                    noOfExceptions);
+      final String format = "avg prec: %6d, total time: %6s, total signs computed: %5d, avg/max nodes: %3d/%3d, exceptions: %3d";
+      return format(format, avgPrecision, totalTime, noOfSignComputations, avgNoOfNodes,
+                    maxNoOfNodes, noOfExceptions);
    }
 
    private EPUStats()
@@ -94,6 +106,10 @@ public final class EPUStats
 
    private long noOfSignComputations;
 
+   private long noOfPrecisions;
+
+   private long sumPrecision;
+
    private long sumOfTimeNs;
 
    private long maxNoOfNodes;
@@ -101,4 +117,6 @@ public final class EPUStats
    private long sumNoOfNodes;
 
    private long noOfExceptions;
+
+   private int sufficientPrecision;
 }

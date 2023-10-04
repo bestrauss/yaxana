@@ -125,8 +125,8 @@ public final class RobustSimplificationTest extends YaxanaTest
    public void testExample2()
    {
 
-      final String input = "root(2^64-1, 64)-2";
-      final String simplified = "root(1P+64-1, 64)-2";
+      final String input = "root(2^32-1, 32)-2";
+      final String simplified = "root(4294967295, 32)-2";
       try
       {
          Robusts.setSimplification(false);

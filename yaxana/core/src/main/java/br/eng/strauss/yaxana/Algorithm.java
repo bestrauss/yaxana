@@ -17,7 +17,9 @@ public enum Algorithm {
    /** Strauß, Burkhard: Zum Vorzeichentest Algebraischer Ausdrücke. */
    ZVAA,
    /** Strauß, Burkhard: More on Sign Computation of Algebraic Expressions. */
-   MOSC;
+   MOSC,
+   /** --- experimental ---. */
+   YAXANA;
 
    /**
     * Sets the algorithm to be used for {@link Robust} computation.

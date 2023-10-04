@@ -25,29 +25,48 @@ abstract class RootBoundEPU extends AbstractEPU
    }
 
    @Override
-   protected int computeSignum()
+   protected final int computeSignum()
    {
 
-      final Algebraic value = this.operand;
+      return computeSignum(this.operand);
+   }
+
+   protected int computeSignum(final Algebraic value)
+   {
+
       int precision = PDCTools.increment(value, 0);
       BigFloat approx = value.approximation(precision);
       for (int sufficientPrecision = -1;;)
       {
          precision = value.precision();
-         if (precision == Integer.MAX_VALUE || approx.abs().compareTo(twoTo(-precision)) >= 0)
+         if (precision == Integer.MAX_VALUE)
          {
+            return approx.signum();
+         }
+         if (approx.abs().compareTo(twoTo(-precision)) >= 0)
+         {
+            if (this.sufficientPrecision != null)
+            {
+               this.sufficientPrecision.accept(precision);
+               this.sufficientPrecision = null;
+            }
             return approx.signum();
          }
          if (sufficientPrecision < 0)
          {
             sufficientPrecision = sufficientPrecision(value);
+            if (this.sufficientPrecision != null)
+            {
+               this.sufficientPrecision.accept(sufficientPrecision);
+               this.sufficientPrecision = null;
+            }
             if (sufficientPrecision == 0)
             {
                return PDCTools.setExactZero(value);
             }
             if (sufficientPrecision == Integer.MAX_VALUE)
             {
-               return value.signum();
+               return approx.signum();
             }
          }
          if (precision >= sufficientPrecision)
@@ -76,7 +95,7 @@ abstract class RootBoundEPU extends AbstractEPU
       return sufficientPrecision(this.operand);
    }
 
-   public int sufficientPrecision(final Algebraic value)
+   protected int sufficientPrecision(final Algebraic value)
    {
 
       ensureRootBoundParameters(value);
@@ -91,7 +110,7 @@ abstract class RootBoundEPU extends AbstractEPU
       }
    }
 
-   public final void ensureRootBoundParameters(final Algebraic a)
+   private final void ensureRootBoundParameters(final Algebraic a)
    {
 
       if (a.u == null)
@@ -195,22 +214,11 @@ abstract class RootBoundEPU extends AbstractEPU
       }
    }
 
-   protected final BigFloat lowerRootBound(final Algebraic a)
+   protected BigFloat lowerRootBound(final Algebraic a)
    {
 
-      try
-      {
-         if (a.u.signum() == 0 || a.l.signum() == 0)
-         {
-            return BigFloat.ZERO;
-         }
-         final BigFloat nom = BigFloat.twoTo(a.vp - a.vn);
-         return nom.div(a.u.pow(exponent(a)).mul(a.l), DN);
-      }
-      catch (final ArithmeticException e)
-      {
-         throw new UnreachedException(e);
-      }
+      final BigFloat nom = BigFloat.twoTo(a.vp - a.vn);
+      return nom.div(a.u.pow(exponent(a)).mul(a.l), DN);
    }
 
    protected int exponent(final Algebraic a)

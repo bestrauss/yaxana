@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Formatter;
 import java.util.function.Supplier;
 
 import org.junit.jupiter.api.Test;
@@ -48,7 +49,7 @@ public final class CacheTest extends YaxanaTest
          }
       }
       Robusts.setMaximumCacheSize(size);
-      assertEquals(1924, cache.noOfEntries());
+      assertEquals(1857, cache.noOfEntries());
       for (int k = 0; k < array.length; k++)
       {
          cache.put(array[k]);
@@ -60,6 +61,10 @@ public final class CacheTest extends YaxanaTest
       for (int k = array.length / 2; k < array.length; k++)
       {
          assertTrue(array[k] == cache.get(array[k]));
+      }
+      try (Formatter f = new Formatter())
+      {
+         cache.print(" ", f);
       }
    }
 

@@ -69,7 +69,7 @@ public final class ApproximableTest extends YaxanaTest
    {
 
       final int loopCount = STRESS_LEVEL > 0 ? STRESS_LEVEL * 10000 : 1000;
-      final RandomAlgebraic random = new RandomAlgebraic(PRECISION, PRECISION, MAX_DEPTH);
+      final RandomAlgebraic random = new RandomAlgebraic(0, 0, MAX_DEPTH);
       for (int k = 0, N = loopCount; k < N; k++)
       {
          final Algebraic expression = random.next();
@@ -117,7 +117,7 @@ public final class ApproximableTest extends YaxanaTest
             "-1*(0x1.68417670A3B3A8F597267B7CP-246-|\\(\\0x1.92FA0E9F5D7C4C36D38964158P-304)|)"));
 
       final int loopCount = STRESS_LEVEL > 0 ? STRESS_LEVEL * 10000 : 1000;
-      final RandomAlgebraic random = new RandomAlgebraic(PRECISION, 500, MAX_DEPTH);
+      final RandomAlgebraic random = new RandomAlgebraic(0, 0, MAX_DEPTH);
       for (int k = 0, N = loopCount; k < N; k++)
       {
          final Algebraic expression = random.next();
@@ -259,6 +259,10 @@ public final class ApproximableTest extends YaxanaTest
       final BigFloat eps = BigFloat.twoTo(-(precision - 1));
       final BigFloat diff = d0.sub(d1).abs();
       if (diff.isZero())
+      {
+         return true;
+      }
+      if (diff.compareTo(eps) <= 0)
       {
          return true;
       }

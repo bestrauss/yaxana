@@ -609,7 +609,7 @@ public final class Algebraic
    public static final Algebraic HALF = new Algebraic(0.5);
 
    /** The {@link Algorithm} being used for sign computation. */
-   private static Algorithm algorithm = Algorithm.MOSC;
+   private static Algorithm algorithm = Algorithm.YAXANA;
 
    /** The type of expression represented by this {@link Algebraic}. */
    private final Type type;

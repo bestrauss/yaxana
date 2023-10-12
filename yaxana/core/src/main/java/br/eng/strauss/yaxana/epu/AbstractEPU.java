@@ -29,6 +29,10 @@ public abstract class AbstractEPU implements EPU
       this.sufficientPrecision = sufficientPrecision;
       if (this.operand != operand)
       {
+         if (operand.type() == Type.ADD)
+         {
+            return signum(operand.left().sub(operand.right().neg()), sufficientPrecision);
+         }
          if (operand.type() != Type.SUB)
          {
             throw new UnsupportedOperationException("only subtraction supported");

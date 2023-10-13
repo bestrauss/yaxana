@@ -371,4 +371,13 @@ public final class RobustTest extends YaxanaTest
       assertEquals(3, value.noOfOperands());
       assertEquals(2, value.noOfOperations());
    }
+
+   @Test
+   public void testExample()
+   {
+
+      final Robust robust = Robust.valueOf("(1/\\2*-1)^2");
+      assertTrue(robust.lowerBound() < robust.doubleValue());
+      assertTrue(robust.doubleValue() < robust.upperBound());
+   }
 }

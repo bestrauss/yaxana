@@ -357,10 +357,8 @@ public final class Robust extends ConciseNumber implements Expression<Robust>
          throw new IllegalExponentException(n);
       }
       final boolean negative = this.value < 0d;
-      final boolean odd = (n & 1) != 0;
-      final boolean twist = odd && negative;
-      final double powLo = twist ? Math.pow(this.hi, n) : Math.pow(this.lo, n);
-      final double powHi = twist ? Math.pow(this.lo, n) : Math.pow(this.hi, n);
+      final double powLo = negative ? Math.pow(this.hi, n) : Math.pow(this.lo, n);
+      final double powHi = negative ? Math.pow(this.lo, n) : Math.pow(this.hi, n);
       if (simplify(powLo, powHi, null))
       {
          final Double value = SafeDoubleOps.powOrNull(this.value, n);
@@ -369,6 +367,8 @@ public final class Robust extends ConciseNumber implements Expression<Robust>
             return valueOf(powLo);
          }
       }
+      final boolean odd = (n & 1) != 0;
+      final boolean twist = odd && negative;
       final double lo = twist || powLo > 0d ? nextDown(powLo) : powLo;
       final double hi = !twist || powHi < 0d ? nextUp(powHi) : powHi;
       final double v = Math.pow(this.value, n);

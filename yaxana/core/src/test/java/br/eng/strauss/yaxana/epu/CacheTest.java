@@ -49,7 +49,7 @@ public final class CacheTest extends YaxanaTest
          }
       }
       Robusts.setMaximumCacheSize(size);
-      assertEquals(1857, cache.noOfEntries());
+      assertEquals(2081, cache.noOfEntries());
       for (int k = 0; k < array.length; k++)
       {
          cache.put(array[k]);

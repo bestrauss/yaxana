@@ -31,18 +31,25 @@ public abstract class AbstractEPU implements EPU
       {
          if (operand.type() == Type.ADD)
          {
-            return signum(operand.left().sub(operand.right().neg()), sufficientPrecision);
+            this.operand = operand.left().sub(operand.right().neg());
          }
-         if (operand.type() != Type.SUB)
+         else if (operand.type() != Type.SUB)
          {
             throw new UnsupportedOperationException("only subtraction supported");
          }
-         this.operand = operand;
+         else
+         {
+            this.operand = operand;
+         }
          this.signum = null;
       }
       if (this.signum == null)
       {
          this.signum = this.computeSignum();
+      }
+      if (operand != this.operand)
+      {
+         operand.setApproximation(this.operand.approximation(), this.operand.precision());
       }
       return this.signum;
    }

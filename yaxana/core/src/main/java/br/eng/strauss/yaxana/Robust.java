@@ -13,6 +13,7 @@ import br.eng.strauss.yaxana.epu.EPUStats;
 import br.eng.strauss.yaxana.exc.DivisionByZeroException;
 import br.eng.strauss.yaxana.exc.IllegalExponentException;
 import br.eng.strauss.yaxana.exc.NotRepresentableAsADoubleException;
+import br.eng.strauss.yaxana.exc.UnreachedException;
 import br.eng.strauss.yaxana.io.Parser;
 import br.eng.strauss.yaxana.pdc.SafeDoubleOps;
 
@@ -293,8 +294,9 @@ public final class Robust extends ConciseNumber implements Expression<Robust>
       }
       final double sortedLo = divLo < divHi ? divLo : divHi;
       final double sortedHi = divLo > divHi ? divLo : divHi;
-      final double lo = nextDown(sortedLo);
-      final double hi = nextUp(sortedHi);
+      // 2x down, 2x up, see DivisionIntervalBugFixTest
+      final double lo = nextDown(nextDown(sortedLo));
+      final double hi = nextUp(nextUp(sortedHi));
       final double v = this.value / that.value;
       final double va = v != 0d ? v : twist ? nextDown(0d) : nextUp(0d);
       return newBinary(Type.DIV, that, va, lo, hi, false);
@@ -328,7 +330,7 @@ public final class Robust extends ConciseNumber implements Expression<Robust>
       }
       final double lo = -this.hi;
       final double hi = -this.lo;
-      final double va = Math.abs(this.value);
+      final double va = -this.value;
       return newUnary(Type.ABS, (short) 0, va, lo, hi);
    }
 
@@ -556,6 +558,12 @@ public final class Robust extends ConciseNumber implements Expression<Robust>
       return ONE;
    }
 
+   public BigFloat toBigFloat(final int precision)
+   {
+
+      return toAlgebraic().approximation(precision);
+   }
+
    protected Robust(final short[] operations, final double[] operands, final int hashCode,
          final double value, final double lo, final double hi, final boolean mayBeZero)
    {
@@ -596,6 +604,42 @@ public final class Robust extends ConciseNumber implements Expression<Robust>
          this.lo = min(lo, value);
          this.hi = max(value, hi);
       }
+      if (assertSaneIntervals)
+      {
+         assertSaneInterval();
+      }
+   }
+
+   private void assertSaneInterval()
+   {
+
+      if (Math.signum(this.lo) != Math.signum(this.value))
+      {
+         throw new UnreachedException("signa of value and lower bound differ");
+      }
+      if (Math.signum(this.hi) != Math.signum(this.value))
+      {
+         throw new UnreachedException("signa of value and upper bound differ");
+      }
+      if (this.lo > this.value || this.value > this.hi)
+      {
+         throw new UnreachedException("value is not between lower and upper bound");
+      }
+      if (this.lo < this.value || this.value < this.lo)
+      {
+
+         final BigFloat lo = new BigFloat(this.lo);
+         final BigFloat hi = new BigFloat(this.hi);
+         final BigFloat va = this.toBigFloat(60);
+         if (lo.compareTo(va) > 0)
+         {
+            throw new UnreachedException("invalid lower bound");
+         }
+         if (va.compareTo(hi) > 0)
+         {
+            throw new UnreachedException("invalid upper bound");
+         }
+      }
    }
 
    protected Robust simplified()
@@ -612,6 +656,9 @@ public final class Robust extends ConciseNumber implements Expression<Robust>
    }
 
    private static final long serialVersionUID = BigFloat.serialVersionUID;
+
+   /** Whether verification of intervals is done. */
+   protected static boolean assertSaneIntervals = false;
 
    /** Whether simplification is done. */
    protected static boolean simplification = true;

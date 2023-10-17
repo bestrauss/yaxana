@@ -100,6 +100,24 @@ public abstract sealed class ConciseNumber extends Number permits Robust
       return robust;
    }
 
+   protected static Robust valueOf(final double value, final boolean staticInit)
+   {
+
+      final int hashCode = 31 * (31 + TERMINAL_OPERATIONS_HASHCODE) + Double.hashCode(value);
+      final Robust robust = valueOf(TERMINAL_OPERATIONS, new double[] { value }, hashCode, value,
+                                    value, value, value == 0d, !staticInit);
+      if (staticInit)
+      {
+         Cache.getInstance().clear();
+      }
+      else
+      {
+
+      }
+      return robust;
+
+   }
+
    protected static Robust valueOf(final short[] operations, final double[] operands,
          final int hashCode, final double value, final double lo, final double hi,
          final boolean mayBeZero, final boolean simplify)

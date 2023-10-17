@@ -12,6 +12,7 @@ import br.eng.strauss.yaxana.big.BigFloat;
 import br.eng.strauss.yaxana.epu.EPUStats;
 import br.eng.strauss.yaxana.exc.DivisionByZeroException;
 import br.eng.strauss.yaxana.exc.IllegalExponentException;
+import br.eng.strauss.yaxana.exc.NegativeRadicandException;
 import br.eng.strauss.yaxana.exc.NotRepresentableAsADoubleException;
 import br.eng.strauss.yaxana.exc.UnreachedException;
 import br.eng.strauss.yaxana.io.Parser;
@@ -136,9 +137,7 @@ public final class Robust extends ConciseNumber implements Expression<Robust>
    public static Robust valueOf(final double value)
    {
 
-      final int hashCode = 31 * (31 + TERMINAL_OPERATIONS_HASHCODE) + Double.hashCode(value);
-      return valueOf(TERMINAL_OPERATIONS, new double[] { value }, hashCode, value, value, value,
-                     value == 0d, false);
+      return valueOf(value, false);
    }
 
    /**
@@ -221,6 +220,10 @@ public final class Robust extends ConciseNumber implements Expression<Robust>
       {
          return this;
       }
+      if (this == that)
+      {
+         return ZERO;
+      }
       if (simplification && this.value == that.value && this.equals(that))
       {
          return ZERO;
@@ -248,6 +251,22 @@ public final class Robust extends ConciseNumber implements Expression<Robust>
       if (this.value == 0d || that.value == 0d)
       {
          return ZERO;
+      }
+      if (this == ONE)
+      {
+         return that;
+      }
+      if (this == MINUS_ONE)
+      {
+         return that.neg();
+      }
+      if (that == ONE)
+      {
+         return this;
+      }
+      if (that == MINUS_ONE)
+      {
+         return this.neg();
       }
       final boolean twist = this.lo >= 0 != that.lo >= 0;
       final double mulLo = this.lo * (twist ? that.hi : that.lo);
@@ -281,27 +300,13 @@ public final class Robust extends ConciseNumber implements Expression<Robust>
       {
          return ZERO;
       }
-      if (false)
+      if (that == ONE)
       {
-         final boolean thisNeg = this.value < 0;
-         final boolean thatNeg = that.value < 0;
-         final double this_lo = thisNeg ? -this.lo : this.lo;
-         final double this_va = thisNeg ? -this.value : this.value;
-         final double this_hi = thisNeg ? -this.hi : this.hi;
-         final double that_lo = thatNeg ? -that.lo : that.lo;
-         final double that_va = thatNeg ? -that.value : that.value;
-         final double that_hi = thatNeg ? -that.hi : that.hi;
-         final boolean twist = this.lo >= 0 != that.lo >= 0;
-         final double divLo = this.lo / (twist ? that.hi : that.lo);
-         final double divHi = this.hi / (twist ? that.lo : that.hi);
-         if (simplify(divLo, divHi, that))
-         {
-            final Double value = SafeDoubleOps.divOrNull(this.value, that.value);
-            if (value != null)
-            {
-               return valueOf(divLo);
-            }
-         }
+         return this;
+      }
+      if (that == MINUS_ONE)
+      {
+         return this.neg();
       }
       final boolean twist = this.lo >= 0 == that.lo >= 0;
       final double divLo = this.lo / (twist ? that.hi : that.lo);
@@ -330,6 +335,10 @@ public final class Robust extends ConciseNumber implements Expression<Robust>
       if (this.value == 0d)
       {
          return ZERO;
+      }
+      if (this.lo == this.hi)
+      {
+         return valueOf(-this.value);
       }
       final double lo = -this.hi;
       final double hi = -this.lo;
@@ -379,6 +388,15 @@ public final class Robust extends ConciseNumber implements Expression<Robust>
       {
          throw new IllegalExponentException(n);
       }
+      if (this == ONE)
+      {
+         return ONE;
+      }
+      final boolean odd = (n & 1) != 0;
+      if (this == MINUS_ONE)
+      {
+         return odd ? MINUS_ONE : ONE;
+      }
       final boolean negative = this.value < 0d;
       final double powLo = negative ? Math.pow(this.hi, n) : Math.pow(this.lo, n);
       final double powHi = negative ? Math.pow(this.lo, n) : Math.pow(this.hi, n);
@@ -390,7 +408,6 @@ public final class Robust extends ConciseNumber implements Expression<Robust>
             return valueOf(powLo);
          }
       }
-      final boolean odd = (n & 1) != 0;
       final boolean twist = odd && negative;
       final double lo = twist || powLo > 0d ? nextDown(powLo) : powLo;
       final double hi = !twist || powHi < 0d ? nextUp(powHi) : powHi;
@@ -411,6 +428,11 @@ public final class Robust extends ConciseNumber implements Expression<Robust>
       {
          return ZERO;
       }
+      final boolean odd = (n & 1) != 0;
+      if (this.value < 0d && !odd)
+      {
+         throw new NegativeRadicandException();
+      }
       if (n < 0)
       {
          return ONE.div(root(-n));
@@ -423,7 +445,15 @@ public final class Robust extends ConciseNumber implements Expression<Robust>
       {
          throw new IllegalExponentException(n);
       }
-      final boolean twist = (n & 1) != 0 && this.value < 0d;
+      if (this == ONE)
+      {
+         return ONE;
+      }
+      if (this == MINUS_ONE)
+      {
+         return MINUS_ONE;
+      }
+      final boolean twist = odd && this.value < 0d;
       final double rootLo = twist ? root(this.hi, n) : root(this.lo, n);
       final double rootHi = twist ? root(this.lo, n) : root(this.hi, n);
       if (simplify(rootLo, rootHi, null))
@@ -666,7 +696,14 @@ public final class Robust extends ConciseNumber implements Expression<Robust>
    protected Robust simplified()
    {
 
-      return simplification && this.lo == this.hi ? valueOf(this.value) : this;
+      if (simplification && this.lo == this.hi)
+      { // @formatter:off
+         return this.value ==  0d ? ZERO
+              : this.value ==  1d ? ONE
+              : this.value == -1d ? MINUS_ONE
+              :                     this;
+      } // @formatter:on
+      return this;
    }
 
    private boolean simplify(final double lo, final double hi, final Robust that)
@@ -694,8 +731,11 @@ public final class Robust extends ConciseNumber implements Expression<Robust>
    private final double value;
 
    /** The number zero. */
-   public static final Robust ZERO = staticValueOf(0d);
+   public static final Robust ZERO = valueOf(0d, true);
 
    /** The number one. */
-   public static final Robust ONE = staticValueOf(1d);
+   public static final Robust ONE = valueOf(1d, true);
+
+   /** The number -one. */
+   public static final Robust MINUS_ONE = valueOf(-1d, true);
 }

@@ -62,12 +62,13 @@ public final class StringifierTest extends YaxanaTest
    {
 
       final String input = "-1*(1/\\3)*1";
-      final String desired = "-1*1/\\3*1";
       {
+         final String desired = "-1*1/\\3*1";
          final Algebraic value = new Algebraic(input);
          assertEquals(desired, value.toString());
       }
       {
+         final String desired = "-(1/\\3)";
          final Robust value = Robust.valueOf(input);
          assertEquals(desired, value.toString());
       }

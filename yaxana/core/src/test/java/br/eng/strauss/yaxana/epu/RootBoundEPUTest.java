@@ -56,11 +56,11 @@ public final class RootBoundEPUTest extends YaxanaTest
 
       testExponent("\\1", 2);
       testExponent("1", 1);
-      testExponent("\\2-\\2", 2);
+      testExponent("\\2-\\2", 1);
       testExponent("\\2-\\3", 4);
       testExponent("\\2-(\\3+\\2)", 4);
-      testExponent("(\\3+\\2)-(\\3+\\2)", 4);
-      testExponent("\\(\\3+\\2)-\\(\\3+\\2)", 8);
+      testExponent("(\\3+\\2)-(\\5+\\2)", 8);
+      testExponent("\\(\\3+\\2)-\\(\\5+\\2)", 32);
    }
 
    private void testExponent(final String expression, final int exponent)

@@ -281,7 +281,29 @@ public final class Robust extends ConciseNumber implements Expression<Robust>
       {
          return ZERO;
       }
-      final boolean twist = this.lo >= 0 != that.lo >= 0;
+      if (false)
+      {
+         final boolean thisNeg = this.value < 0;
+         final boolean thatNeg = that.value < 0;
+         final double this_lo = thisNeg ? -this.lo : this.lo;
+         final double this_va = thisNeg ? -this.value : this.value;
+         final double this_hi = thisNeg ? -this.hi : this.hi;
+         final double that_lo = thatNeg ? -that.lo : that.lo;
+         final double that_va = thatNeg ? -that.value : that.value;
+         final double that_hi = thatNeg ? -that.hi : that.hi;
+         final boolean twist = this.lo >= 0 != that.lo >= 0;
+         final double divLo = this.lo / (twist ? that.hi : that.lo);
+         final double divHi = this.hi / (twist ? that.lo : that.hi);
+         if (simplify(divLo, divHi, that))
+         {
+            final Double value = SafeDoubleOps.divOrNull(this.value, that.value);
+            if (value != null)
+            {
+               return valueOf(divLo);
+            }
+         }
+      }
+      final boolean twist = this.lo >= 0 == that.lo >= 0;
       final double divLo = this.lo / (twist ? that.hi : that.lo);
       final double divHi = this.hi / (twist ? that.lo : that.hi);
       if (simplify(divLo, divHi, that))
@@ -294,11 +316,10 @@ public final class Robust extends ConciseNumber implements Expression<Robust>
       }
       final double sortedLo = divLo < divHi ? divLo : divHi;
       final double sortedHi = divLo > divHi ? divLo : divHi;
-      // 2x down, 2x up, see DivisionIntervalBugFixTest
-      final double lo = nextDown(nextDown(sortedLo));
-      final double hi = nextUp(nextUp(sortedHi));
+      final double lo = twist ? Math.max(0, nextDown(sortedLo)) : nextDown(sortedLo);
+      final double hi = twist ? nextUp(sortedHi) : Math.min(0, nextUp(sortedHi));
       final double v = this.value / that.value;
-      final double va = v != 0d ? v : twist ? nextDown(0d) : nextUp(0d);
+      final double va = v != 0d ? v : twist ? nextUp(0d) : nextDown(0d);
       return newBinary(Type.DIV, that, va, lo, hi, false);
    }
 

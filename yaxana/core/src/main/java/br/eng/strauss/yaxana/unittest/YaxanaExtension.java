@@ -136,7 +136,7 @@ public final class YaxanaExtension implements AfterAllCallback, BeforeAllCallbac
       {
          final float ms = 0.001f * (System.currentTimeMillis() - time);
          epuName = String.format(" [%s]", Algebraic.getAlgorithm());
-         YaxanaTest.format("method %s failed in: %.3fs%s\n", name, ms, epuName);
+         YaxanaTest.format("method %s FAILED in: %.3fs%s\n", name, ms, epuName);
          throw t;
       }
    }

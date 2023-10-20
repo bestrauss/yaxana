@@ -22,12 +22,12 @@ import br.eng.strauss.yaxana.exc.ExpressionFormatException;
  * The expression syntax parsed is described on the project documentation pages.
  * </p>
  * 
- * @param <S>
+ * @param <P>
  *           The type of object to be produced.
  * @author Burkhard Strauss
  * @since July 2017
  */
-public class Parser<S extends Parsable<S>>
+public class Parser<P extends Parsable<P>>
 {
 
    /** Regular expression to match identifiers. */
@@ -50,7 +50,7 @@ public class Parser<S extends Parsable<S>>
    private final Pattern terminalPattern;
 
    /** The sample value. */
-   private final S sample;
+   private final P sample;
 
    /** The input string. */
    private final String string;
@@ -82,7 +82,7 @@ public class Parser<S extends Parsable<S>>
     * @param string
     *           the input string.
     */
-   public Parser(final S sample, final String string)
+   public Parser(final P sample, final String string)
    {
 
       this.sample = sample;
@@ -103,12 +103,12 @@ public class Parser<S extends Parsable<S>>
     * @throws ExpressionFormatException
     *            In case of an illegal expression in the input.
     */
-   public S expression() throws ExpressionFormatException
+   public P expression() throws ExpressionFormatException
    {
 
       try
       {
-         final S t = binaryAddSub();
+         final P t = binaryAddSub();
          if (look() != '$')
          {
             throw new ExpressionFormatException(msgFor("end of input expected"));
@@ -127,10 +127,10 @@ public class Parser<S extends Parsable<S>>
     * 
     * @return the value.
     */
-   private S binaryAddSub()
+   private P binaryAddSub()
    {
 
-      S a = binaryMulDiv();
+      P a = binaryMulDiv();
       while (true)
       {
          switch (look())
@@ -155,10 +155,10 @@ public class Parser<S extends Parsable<S>>
     * 
     * @return the value.
     */
-   private S binaryMulDiv()
+   private P binaryMulDiv()
    {
 
-      S a = binaryPow();
+      P a = binaryPow();
       while (true)
       {
          switch (look())
@@ -182,10 +182,10 @@ public class Parser<S extends Parsable<S>>
     * 
     * @return the value.
     */
-   private S binaryPow()
+   private P binaryPow()
    {
 
-      final S a = unary();
+      final P a = unary();
       switch (look())
       {
          case '^' :
@@ -207,7 +207,7 @@ public class Parser<S extends Parsable<S>>
     * 
     * @return the value.
     */
-   private S unary()
+   private P unary()
    {
 
       switch (look())
@@ -228,7 +228,7 @@ public class Parser<S extends Parsable<S>>
     * 
     * @return the value.
     */
-   private S primary()
+   private P primary()
    {
 
       final char c = look();
@@ -242,14 +242,14 @@ public class Parser<S extends Parsable<S>>
          case '(' :
          {
             next();
-            final S a = binaryAddSub();
+            final P a = binaryAddSub();
             eat(')');
             return a;
          }
          case '|' :
          {
             next();
-            final S a = binaryAddSub();
+            final P a = binaryAddSub();
             eat('|');
             return a.abs();
          }
@@ -257,7 +257,7 @@ public class Parser<S extends Parsable<S>>
          {
             next();
             eat('(');
-            final S x = binaryAddSub();
+            final P x = binaryAddSub();
             eat(',');
             final int n = index();
             eat(')');
@@ -267,7 +267,7 @@ public class Parser<S extends Parsable<S>>
          {
             next();
             eat('(');
-            final S a = binaryAddSub();
+            final P a = binaryAddSub();
             eat(')');
             return a.root(2);
          }
@@ -281,7 +281,7 @@ public class Parser<S extends Parsable<S>>
     * 
     * @return the value.
     */
-   private S terminal()
+   private P terminal()
    {
 
       final char c = look();
@@ -292,7 +292,7 @@ public class Parser<S extends Parsable<S>>
 
             try
             {
-               final S a = sample.newTerminal(number);
+               final P a = sample.newTerminal(number);
                next();
                return a;
             }

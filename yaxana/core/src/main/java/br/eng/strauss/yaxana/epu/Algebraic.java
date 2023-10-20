@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import br.eng.strauss.yaxana.Algorithm;
-import br.eng.strauss.yaxana.Expression;
+import br.eng.strauss.yaxana.OperableParsableComfyComparable;
 import br.eng.strauss.yaxana.SyntaxTree;
 import br.eng.strauss.yaxana.Type;
 import br.eng.strauss.yaxana.big.BigFloat;
@@ -34,7 +34,7 @@ import br.eng.strauss.yaxana.pdc.Approximable;
  * @since July 2017
  */
 public final class Algebraic
-      implements Expression<Algebraic>, SyntaxTree<Algebraic>, Approximable<Algebraic>
+      implements OperableParsableComfyComparable<Algebraic>, SyntaxTree<Algebraic>, Approximable<Algebraic>
 {
 
    /**

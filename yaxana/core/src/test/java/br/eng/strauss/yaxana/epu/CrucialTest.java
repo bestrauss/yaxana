@@ -23,7 +23,7 @@ public final class CrucialTest extends YaxanaTest
 
       final int exp = 64;
       {
-         final String expression = String.format("root(2^%s+1P-100, %s)-2", exp, exp);
+         final String expression = String.format("root(2^%s+1P-100, %s)*1P-100-2*1P-100", exp, exp);
          final Algebraic algebraic = new Algebraic(expression);
          final int[] precision = new int[] { -1 };
          final int signum = algebraic.signum(prec -> precision[0] = prec);

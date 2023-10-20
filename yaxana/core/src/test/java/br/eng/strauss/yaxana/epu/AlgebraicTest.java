@@ -402,10 +402,6 @@ public final class AlgebraicTest extends YaxanaTest
       final Algebraic that = thiz.toIntegerSingleDiv();
       final double thisD = thiz.approximation(52).doubleValue();
       final double thatD = that.approximation(52).doubleValue();
-      if (!(Math.abs(thisD - thatD) < 1E-10))
-      {
-         String.format("");
-      }
       assertTrue(Math.abs(thisD - thatD) < 1E-10);
    }
 }

@@ -77,7 +77,7 @@ import br.eng.strauss.yaxana.pdc.SafeDoubleOps;
  * @see <a href=
  *      "https://raw.githubusercontent.com/bestrauss/yaxana/main/docs/Zum-Vorzeichentest-Algebraischer-Ausdruecke.pdf">Zum-Vorzeichentest-Algebraischer-Ausdrücke</a>.
  */
-public final class Robust extends ConciseNumber implements Expression<Robust>
+public final class Robust extends ConciseNumber implements OperableParsableComfyComparable<Robust>
 {
 
    /**
@@ -508,6 +508,9 @@ public final class Robust extends ConciseNumber implements Expression<Robust>
 
    /**
     * Returns a {@link SyntaxTree} whose structure corresponds to {@code this}.
+    * <p>
+    * Generally, the {@link SyntaxTree} isn't a tree, since sub-expressions are reused resulting a
+    * directed acyclic graph.
     * 
     * @return a {@link SyntaxTree} whose structure corresponds to {@code this}.
     */
@@ -517,7 +520,11 @@ public final class Robust extends ConciseNumber implements Expression<Robust>
       return toAlgebraic();
    }
 
-   @Override
+   /**
+    * Returns the type of this expression.
+    * 
+    * @return the type of this expression.
+    */
    public Type type()
    {
 

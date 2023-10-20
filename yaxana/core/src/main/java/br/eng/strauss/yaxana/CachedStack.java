@@ -4,9 +4,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
+import br.eng.strauss.yaxana.epu.Algebraic;
+
 /**
+ * This data structure is used to ensure reuse of sub-expressions when converting a {@link Robust}
+ * into an {@link Algebraic}.
+ * 
  * @author Burkhard Strauﬂ
  * @since 2023-09
+ * @see Robust#toAlgebraic()
  */
 final class CachedStack<T>
 {

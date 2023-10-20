@@ -3,7 +3,7 @@ package br.eng.strauss.yaxana.epu;
 import br.eng.strauss.yaxana.pdc.PDCTools;
 
 /**
- * EPU implementation as proposed in "More on Sign Computation of Algebraic Expressions".
+ * Experimental EPU.
  * 
  * @author Burkhard Strauss
  * @since 07-2022

@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 import br.eng.strauss.yaxana.Algorithm;
+import br.eng.strauss.yaxana.big.BigFloat;
 import br.eng.strauss.yaxana.unittest.WithAlgorithms;
 import br.eng.strauss.yaxana.unittest.YaxanaTest;
 
@@ -54,15 +55,15 @@ public final class YaxanaEPUTest extends YaxanaTest
    public void testFlatLength()
    {
 
-      assertEquals(0, flatLength(ZERO));
-      assertEquals(1, flatLength(ONE));
-      assertEquals(1, flatLength(new Algebraic(-1d)));
-      assertEquals(13, flatLength(new Algebraic(0x1000)));
-      assertEquals(13, flatLength(new Algebraic(0x1FFF)));
-      assertEquals(1, flatLength(new Algebraic(0x1P-1)));
-      assertEquals(2, flatLength(new Algebraic(0x1P-2)));
-      assertEquals(10, flatLength(new Algebraic(0x1P-10)));
-      assertEquals(10, flatLength(new Algebraic(0x3P-10)));
-      assertEquals(10, flatLength(new Algebraic(0xFFP-10)));
+      assertEquals(0, flatLength(ZERO.approximation()));
+      assertEquals(1, flatLength(ONE.approximation()));
+      assertEquals(1, flatLength(new BigFloat(-1d)));
+      assertEquals(13, flatLength(new BigFloat(0x1000)));
+      assertEquals(13, flatLength(new BigFloat(0x1FFF)));
+      assertEquals(1, flatLength(new BigFloat(0x1P-1)));
+      assertEquals(2, flatLength(new BigFloat(0x1P-2)));
+      assertEquals(10, flatLength(new BigFloat(0x1P-10)));
+      assertEquals(10, flatLength(new BigFloat(0x3P-10)));
+      assertEquals(10, flatLength(new BigFloat(0xFFP-10)));
    }
 }

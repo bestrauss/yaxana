@@ -50,6 +50,11 @@ abstract class RootBoundEPU extends AbstractEPU
                this.sufficientPrecision.accept(precision);
                this.sufficientPrecision = null;
             }
+            if (sufficientPrecision >= 0 && approx.abs().compareTo(twoTo(-sufficientPrecision)) < 0)
+            {
+               throw new IllegalStateException(getClass().getSimpleName()
+                     + " furnished a non sufficient precision of " + sufficientPrecision);
+            }
             return approx.signum();
          }
          if (sufficientPrecision < 0)
@@ -197,7 +202,7 @@ abstract class RootBoundEPU extends AbstractEPU
                   a.vn = vs / n;
                   f = twoTo(vs - n * a.vn);
                   a.u = left.u;
-                  a.l = f.mul(left.u.pow(n - 1, UP), UP).mul(left.l, UP).root(n, UP);
+                  a.l = f.mul(left.u.pow(n - 1, DN), DN).mul(left.l, DN).root(n, DN);
                }
                break;
             }

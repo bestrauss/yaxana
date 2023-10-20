@@ -10,7 +10,7 @@ import br.eng.strauss.yaxana.epu.Algebraic;
 import br.eng.strauss.yaxana.epu.Cache;
 
 /**
- * Immutable expression with {@code double} terminals concisely stored in reverse polish notation.
+ * Immutable expression with {@code double} operands concisely stored in reverse polish notation.
  * 
  * @author Burkhard Strauﬂ
  * @since 2023-09
@@ -60,8 +60,8 @@ public abstract sealed class ConciseNumber extends Number permits Robust
    }
 
    /**
-    * Returns whether the {@code other} is the same expression, consisting of the same operands and
-    * operations, having the same abstract syntax tree as {@code this}.
+    * Returns whether the given {@code object} is an equal expression, consisting of the same
+    * operands and operations, having the same abstract syntax tree as {@code this}.
     * <p>
     * To compare numeric values, use {@link Robust#isEqualTo(Robust)},
     * {@link Robust#isGreaterThan(Robust)}, etc.
@@ -90,14 +90,6 @@ public abstract sealed class ConciseNumber extends Number permits Robust
    {
 
       return this.hashCode;
-   }
-
-   protected static Robust staticValueOf(final double value)
-   {
-
-      final Robust robust = Robust.valueOf(value);
-      Cache.getInstance().clear();
-      return robust;
    }
 
    protected static Robust valueOf(final double value, final boolean staticInit)

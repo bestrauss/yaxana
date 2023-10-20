@@ -4,6 +4,9 @@ import br.eng.strauss.yaxana.epu.Algebraic;
 
 /**
  * Abstract syntax tree.
+ * <p>
+ * Behind the tree vision, there may hide a direct acyclic graph, i.e. equal sub-expressions may be
+ * identical.
  * 
  * @param <S>
  *           The implementing type.

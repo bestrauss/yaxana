@@ -6,7 +6,7 @@ package br.eng.strauss.yaxana.pdc;
  * @author Burkhard Strauﬂ
  * @since July 2017
  */
-final class Ld
+public final class Ld
 {
 
    /**

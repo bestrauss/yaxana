@@ -2,6 +2,7 @@ package br.eng.strauss.yaxana.epu;
 
 import static java.lang.Math.max;
 
+import br.eng.strauss.yaxana.Type;
 import br.eng.strauss.yaxana.big.BigFloat;
 
 /**
@@ -14,7 +15,7 @@ import br.eng.strauss.yaxana.big.BigFloat;
  * @author Burkhard Strauss
  * @since 06-2022
  */
-public final class YaxanaEPU extends RootBoundEPU
+final class YaxanaEPU extends RootBoundEPU
 {
 
    @Override
@@ -28,31 +29,44 @@ public final class YaxanaEPU extends RootBoundEPU
       if (rite != null) { sufficientPrecision(rite); }
       switch (value.type())
       {
-         case TERMINAL -> value.vp = flatLength(value);
+         case TERMINAL -> value.vp = flatLength(value.approximation());
          case ADD, SUB -> value.vp = max(left.vp, rite.vp);
-         case MUL, DIV -> value.vp = max(flatLength(value), max(left.vp, rite.vp));
+         case MUL, DIV -> value.vp = left.vp + rite.vp;
          case NEG, ABS -> value.vp = left.vp;
-         case POW      -> value.vp = max(flatLength(value), left.vp);
+         case POW      -> value.vp = left.vp;
          case ROOT     -> value.vp = 1 + (left.vp - 1 >> 1);
       }
       switch (value.type())
       {
-         case TERMINAL           -> value.vn = 0;
-         case ADD, SUB, MUL, DIV -> value.vn = max(left.vn, rite.vn);
-         case NEG, ABS, POW      -> value.vn = left.vn;
-         case ROOT               -> value.vn = left.vn + left.vp;
+         case TERMINAL      -> value.vn = 0;
+         case ADD, SUB      -> value.vn = max(left.vn, rite.vn) + (mayVanish(value) ? 2 * max(left.vp, rite.vp) : 0);
+         case MUL, DIV      -> value.vn = max(left.vn, rite.vn);
+         case NEG, ABS, POW -> value.vn = left.vn;
+         case ROOT          -> value.vn = left.vn + left.vp + value.index();
       }
       return value.vp + value.vn;
       // @formatter:on
    }
 
+   private static boolean mayVanish(final Algebraic value)
+   {
+
+      if (value.type() == Type.ADD)
+      {
+         return value.left().approximation().signum() != value.right().approximation().signum();
+      }
+      else
+      {
+         return value.left().approximation().signum() == value.right().approximation().signum();
+      }
+   }
+
    /**
-    * Returns the "flat length" of the absolute value of the approximation of a given
-    * {@link Algebraic} value.
+    * Returns the "flat length" of a given {@link BigFloat} value.
     * <p>
     * The "flat length" is the number of significant bits of the binary representation of the
-    * absolute value of the approximation of a given {@link Algebraic} value, plus the number of
-    * zero-bits between the significant bits and the binary point if applicable. Examples:
+    * absolute value of a given {@link BigFloat} value, plus the number of zero-bits between the
+    * block of significant bits and the binary point if applicable. Examples:
     * 
     * <pre>
     *  001xxxxxxx10000.00000
@@ -60,22 +74,21 @@ public final class YaxanaEPU extends RootBoundEPU
     *  001xxxxxxx1.000000000
     *    ^^^^^^^^^           scale >= 0 => bitlength + scale
     *  001xxxxxxxxx.xxxxx100
-    *    ^^^^^^^^^^^^^^^^^   scale < 0 => max(bitlength, -scale)
+    *    ^^^^^^^^^^ ^^^^^^   scale < 0 => max(bitlength, -scale)
     *  0000.0001xxxxxxxxx100
     *       ^^^^^^^^^^^^^^   scale < 0 => max(bitlength, -scale)
     * </pre>
     * 
     * @param value
-    *           An {@link Algebraic} value.
+    *           A {@link BigFloat} value.
     * @return the "flat length" of the given {@code value}.
     */
-   static int flatLength(final Algebraic value)
+   static int flatLength(final BigFloat value)
    {
 
-      final BigFloat abs = value.approximation().abs();
+      final BigFloat abs = value.abs();
       final int bl = abs.unscaledValue().bitLength();
       final int sc = abs.scale();
-      // return sc >= 0 ? bl + sc : value.type() == TERMINAL ? max(bl, -sc) : -sc;
       return sc >= 0 ? bl + sc : max(bl, -sc);
    }
 }

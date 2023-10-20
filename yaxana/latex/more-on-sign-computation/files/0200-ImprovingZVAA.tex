@@ -4,298 +4,78 @@
 \pagebreak
 \section{The precision of an expression}
 
-Let $E=E_0-E_1$ be an expression 
-and $N$ be an unknown number of binary places of two approximations
-of the values $\xi_{E_0}=\val E_0$ and $\xi_{E_1}=\val E_1$, 
-that is sufficient to read the signum $\sgn\xi_E$
-from the exact difference of the two approximations.
-We consider four distinct cases:
+Let $E$ be an expression consisting of zero or more operators
+$\in\{+, -, \times, \div, \sqrt[n]{\phantom{x}}\}$ and one or 
+more operands $\in\Q$. Then any expression $E$ can be constructed 
+in the following way. Starting with $E_0=c, c\in\Z$ 
+we build $E_1$ from $E_0$, or generally $E_n$ from $E_{n-1}$ by
+exchanging one suitably chosen operand $c$ by a new instance 
+of one of the subexpressions
+$c+d$, $c-d$, $c\times d$, $c\div d$, or $\sqrt c$. 
+Using a suitably chosen series of operands $c$ to be replaced,
+suitably chosen operators and new operands $d$, 
+any expression $E$ can be constructed in this way.
+
+Let $f$ be a function $f(E)$ that, given an expression $E$,
+returns a precision of an approximation $\hat\xi$
+of the exact value $\xi=\val E$, 
+that is sufficient to ensure $\sgn\hat\xi=\sgn\xi$.
+If $f(E)$ works for $E=E_0$, 
+and given that $f(E_n)$ works
+we can imply that $f(E_{n+1})$ works,
+then by induction $f(E)$ works for any expression $E$.
+
+We define the {\em point-length} of a constant $c\in\Q$ 
+looking at the binary fixed point representation 
+of the value.
+We look for the smallest coherent block of bits 
+that includes all non-vanishing bits as well as the
+binary point. The {\em point-length} then is the
+number of bits contained in the block (the binary point
+not counting as a bit).
+
+Proof of the above mentioned implications.
 \begin{enumerate}
-\item The abstract syntax trees (AST) of $E_0$ and $E_1$ are identical. 
-	  Structure, operators, and operands are the same.
-\item The ASTs of $E_0$ and $E_1$ have the same
-	  structure and operators, but the operands are not all the same.
-\item The ASTs of $E_0$ and $E_1$ have a different
-	  structure and operators, but depending on the choice of operands
-	  the values of both expressions may be identical.
-\item The ASTs of $E_0$ and $E_1$ have a different
-	  structure and operators, and whatever the choice of operands
-	  the values of both expressions always differ.
+\item Initial step $E_0=c$.
+      $f(E)$ returns the total length of $c$ as precision
+	  which suffices to ensure $\sgn\hat\xi=\sgn\xi$.
+\item Replacing $c$ by $c\rightarrow d$.
+      If $f(E)$ works for arbitrary values $c$
+	  then $f(E)$ works for arbitrary values $d$, too.
+\item Replacing $c$ by $c\rightarrow c\pm d$.
+      We divide this step into two.
+	  First we replace $c\rightarrow e$ choosing $e$ such that $e = c\pm d$.
+	  Then we replace $e$ by $c\pm d$.
+	  The first step has been proven correct above in 2.).
+	  The second steps leaves $\val E_n$ unchanged $\val E_{n+1}=\val E_n$,
+	  while $f(E)$ returns the same precision for $e$ and for $c\pm d$.
+	  This is, because $f(e) = f(c\pm d) = max(f(c), f(d))$.
+\item Replacing $c$ by $c\rightarrow c\times d$.
+      We divide this step into two.
+	  First we replace $c\rightarrow e$ choosing $e$ such that $e = c \times d$.
+	  Then we replace $e$ by $c\times d$.
+	  The first step has been proven correct above in 2.).
+	  The second steps leaves $\val E_n$ unchanged $\val E_{n+1}=\val E_n$,
+	  while $f(E)$ returns the same precision for $e$ and for $c\times d$.
+	  This is, because $f(e) = f(c\times d) = f(c) + f(d)$.
+\item Replacing $c$ by $c\rightarrow c\div d$.
+      {\bf TODO} $\ldots$
+\item Replacing $c$ by $c\rightarrow \sqrt c$.
+      {\bf TODO} $\ldots$
 \end{enumerate}
-We can handle the cases as follows:
-\begin{enumerate}
-\item This is tested in advance, if detected, the signum is $\sgn\xi_E=0$.
-\item We determine two numbers of binary places for $E_0$ and $E_1$
-      as described below, and choose $N$ as the maximum of them.
-\item TODO
-\item TODO
-\end{enumerate}
 
 
-\section{The second case}
+What precision does an approximation $\hat\xi$ of $\xi=\val E$ need to have to ensure that we can read from $\hat\xi$ whether $\xi\in\Q$?
 
-We're looking for a sufficient precision for an expression $E$ 
-that makes sure that our approximation of the value of $E$
-is different from all changed expressions $E'$, which have
-the same structure and operands as $E$ but whose operands
-bitpattern may differ within the given significant bits.
+We don't admit any rational number. We allow {\em binary rationals} only,
+that is, quotients of integer nominators and power of two denominators.
+We represent them as $m\times 2^k, m, k\in\Z$.
 
+If don't admit any rational root, but only square-roots, or $2^k$-roots,
+then we can easily remove all non-real polynomial roots from the definition
+of the structural polynomial.
+Then $E=\sqrt[256]{2^{256}+1}-2$ 
+has 2 roots only whose product is $-\xi(4+\xi)\in\Q$
+and whose sum is $\in\Z$.
 
-\section{The third case}
-
-A given precision $N$ which suffices for the second case,
-suffices for the third case, too.
-
-
-
-
-\pagebreak
-\section{Using ZVAA}
-
-Let $E=E_0-E_1$ be a divisionfree expression with integer operands.
-Let $P_E$ be the structural polynomial of $E$
-\begin{equation}
-  P_E = \sum_{k=0}^{N} c_k z^k = \prod_{k=1}^N (z - z_k)
-  ,\qquad
-  z\in\C, c_k\in\Z, z_k\in\A
-\end{equation}
-Then $|c_0|\in\N$, consequently $|c_0|\ge 1$, and we have
-\begin{equation}
-  \prod_{k=1}^N |z_k| = |c_0| \ge 1.
-\end{equation}
-Let $E'$ be 
-\begin{equation}
-  E' = \frac{E_0-E_1}{|E_0|+|E_1|}
-  ,\qquad
-  u\in\Q, u\ge\max_k|z_k|.
-\end{equation}
-Then
-\begin{equation}
-  P_E=P_{E_0-E_1}=P_{|E_0|+|E_1|}
-\end{equation}
-and the roots $z'_{E,k}$ of $P_{E'}$ 
-either lie on the unit circle $|z'_{E,k}|=1$ of the gaussian $z$-plane,
-or pairwise products $|z'_{E,k}z'_{E,j}|=1$ do.
-Consequently, given an upper bound $u_{E'}\ge\max_k|z'_{E,k}|$,
-the reciprocal value is a lower bound
-\begin{equation}
-  \frac{1}{u_{E'}}\le\min_k|z'_{E,k}|.
-\end{equation}
-The problem is, how to calculate $u_{E'}$.
-We'd need an upper bound for the roots of the nominator, which is easy,
-and a lower bound for the for the roots of the denominator, 
-which is harder.
-
-Given the {\em triangle inequality}, we have $|\val E'|<1$.
-
-
-
-\pagebreak
-\section{Improving ZVAA}
-
-The ZVAA method uses the test-expression
-\begin{equation}
-  E' = \frac{E_0 - E_1}{|E_0| + |E_1|}
-\end{equation}
-to compute the sign of the value of the expression
-\begin{equation}
-  E = E_0 - E_1
-  ,\qquad
-  \val E_0\ne 0, \val E_1\ne 0.
-\end{equation}
-The signs of the values of the expressions
-$E$ and $E'$ are obviously equal.
-As has been shown in \cite{ZVAA}
-The ZVAA method provides a root separation bound
-for expressions of type $E'$, 
-which dominates the bounds of other methods.
-But given expressions of the type $E$,
-the ZVAA algorithm treats expressions of the type $E'$
-with a few more operations.
-The ZVAA algorithm computes a bound for $E'$
-and then computes approximations for $E$.
-
-Let 
-\begin{equation}
-  d = \val(|E_0| + |E_1|).
-\end{equation}
-then a zero separation bound 
-for the value $\xi_E'=\val E'$ where
-\begin{equation}
-  E' = \frac{E_0 - E_1}{|E_0| + |E_1|}
-\end{equation}
-also is a zero separation bound 
-for the value $\xi_E''=\val E''$ where
-\begin{equation}
-  E'' = \frac{E_0 - E_1}{d}.
-\end{equation}
-Now let $1 \le d \le 2^{M_+}$,
-then 
-\begin{equation}
-  E''' = \frac{E_0 - E_1}{2^{M_+}}.
-\end{equation}
-and
-\begin{equation}
-  \val E''' \le \val E''
-\end{equation}
-$\sep E'''$ can be used for $E''$.
-
-
-
-\section{BFMSS}
-
-Let $E_N$ and $E_D$ be division free expressions,
-and
-\begin{equation}
-  \frac{1}{u_{E_N}^{D-1}} \le |\xi_{E_N}| \le u_{E_N}
-  \quad\land\quad
-  \frac{1}{u_{E_D}^{D-1}} \le |\xi_{E_D}| \le u_{E_D}
-\end{equation}
-then
-\begin{equation}
-  \frac{1}{u_{E_D}} \le \frac{1}{|\xi_{E_D}|} \le u_{E_D}^{D-1},
-\end{equation}
-and finally
-\begin{equation}
-  \frac{1}{u_{E_D}u_{E_N}^{D-1}} \le \frac{|\xi_{E_N}|}{|\xi_{E_D}|} \le u_{E_N}u_{E_D}^{D-1}.
-\end{equation}
-Now, in contrast, let $E_N$ and $E_D$ be division free expressions,
-and
-\begin{equation}
-  \frac{1}{u_{E_N}^{D-1}} \le |\xi_{E_N}| \le u_{E_N}
-  \quad\land\quad
-  \floor{|\xi_{E_D}|} \le |\xi_{E_D}| \le \ceil{|\xi_{E_D}|}
-\end{equation}
-then
-\begin{equation}
-  \frac{1}{\ceil{|\xi_{E_D}|}} \le \frac{1}{|\xi_{E_D}|} \le \frac{1}{\floor{|\xi_{E_D}|}},
-\end{equation}
-and finally
-\begin{equation}
-  \frac{1}{\ceil{|\xi_{E_D}|}u_{E_N}^{D-1}} \le \frac{|\xi_{E_N}|}{|\xi_{E_D}|} \le \frac{u_{E_N}}{\floor{|\xi_{E_D}|}}.
-\end{equation}
-
-
-\section{ZVAA}
-
-Mein Problem besteht irgendwie darin, 
-daß ZVAA nur für divisonsfreie Ausdrücke gilt.
-Dort ist das Produkt der Beträge der Nullstellen nicht $\in\N$
-sondern $\in\Q$.
-Das Produkt der Beträge der Nullstellen ist für 
-wohlgeratene Ausdrücke aber immer $1$, 
-egal ob divisonsfrei oder nicht.
-
-BMFSS berechnet eine obere Nullstellenschranke für den Nenner,
-und verwendet dann den Kehrwert davon mit Exponent versehen
-als untere Nullstellenschranke für den Nenner.
-Beim Nenner besteht aber nun kein Risiko, 
-daß er verschwinden könnte. 
-Wir können seinen Wert bis auf 52 Stellen genau ausrechnen,
-und dann ohne Aufwand obere und untere Schranke angeben.
-
-Unser Ausdruck kann nicht gleichzeitig divisionsfrei und
-wohlgeraten sein.
-
-Let 
-\begin{equation}
-  E = E_0 - E_1
-\end{equation}
-be an expression.
-Then
-\begin{equation}
-  E' = \frac{E_0 - E_1}{|E_0| + |E_1|}
-\end{equation}
-is well worked.
-Nominator and denominator expressions 
-have one and the same structural polynomial.
-A lower root bound for $|E_0| + |E_1|$ is
-a lower root bound for $E_0 - E_1$.
-\begin{equation}
-  E' = \frac{E_0}{|E_0| + |E_1|}-\frac{E_1}{|E_0| + |E_1|}
-\end{equation}
-\begin{equation}
-  E'' = 1-\frac{\frac{E_1}{|E_0| + |E_1|}}{\frac{E_0}{|E_0| + |E_1|}}
-      = 1-\frac{E_1}{E_0}
-\end{equation}
-
-
-
-Let 
-\begin{equation}
-  E = E_0 - E_1 = \frac{A_0}{B_0}-\frac{A_1}{B_1}
-\end{equation}
-be an expression, 
-where the $A$s and $B$s are division free expressions.
-Then 
-\begin{equation}
-  A_0B_1 - A_1B_0
-\end{equation}
-is a test expression for $E$.
-Let furthermore
-\begin{equation}
-  E' = \frac{A_0B_1 - A_1B_0}{|A_0B_1| + |A_1B_0|},
-\end{equation}
-then $E'$ is a well worked test expression for $E$.
-
-
-Für einen allgemeinen, i.a. nicht divisionsfreien Ausdruck $E$
-ist das Produkt der Nullstellen rational. Für unseren Testausdruck
-ist das Produkt der Nullstellen aber immer $1$ und daher natürlich.
-Wir können also einfach eine obere Nullstellenschranke berechnen.
-
-Let
-\begin{equation}
-  E = E_0 - E_1.
-\end{equation}
-Let
-\begin{equation}
-  E' = 1 - \frac{E_1}{E_0}.
-\end{equation}
-Then $\sgn E = \sgn E'$.
-\begin{equation}
-  E'' = \frac{1 - \frac{E_1}{E_0}}{1 + \left|\frac{E_1}{E_0}\right|}.
-\end{equation}
-Then $\sgn E = \sgn E''$.
-
-
-
-
-
-
-\section{Stash}
-
-
-\noindent Let $E$ be a division free expression $E=E_0-E_1$,
-then
-\begin{equation}
-  \frac{1}{u_{E_N}^{D-1}} \le |\xi_{E_N}| \le u_{E_N}
-  \quad\land\quad
-  \frac{1}{u_{E_D}^{D-1}} \le |\xi_{E_D}| \le u_{E_D}
-\end{equation}
-
-
-
-
-
-\noindent Let $E'$ be a well worked test expression for the 
-division free expression $E$
-and $u_{E'}$ an upper root bound\footnote{
-upper bound of the absolute values of the roots of the minimal polygonial of}
-of $E'$, then
-\begin{equation}
-  \frac{1}{u_{E'}} \le |\xi_{E'}| \le u_{E'}
-\end{equation}
-
-
-\begin{equation}
-  E' = \frac{E_0-E_1}{|E_0|+|E_1|}
-\end{equation}
-\begin{equation}
-  \val E' =   \frac{\val(E_0-E_1)}{\val(|E_0|+|E_1|)}
-          \ge \frac{\val(E_0-E_1)}{u_{|E_0|+|E_1|}}
-          =   \frac{\val(E_0-E_1)}{u_{E_0-E_1}}
-\end{equation}
-\begin{equation}
-  \val(E_0-E_1) \le \val(E') u_{E_0-E_1}
-\end{equation}
+Das Produkt der konjugierten Paare ist immer reell.

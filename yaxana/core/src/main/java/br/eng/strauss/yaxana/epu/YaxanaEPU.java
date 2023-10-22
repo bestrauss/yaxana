@@ -39,7 +39,7 @@ final class YaxanaEPU extends RootBoundEPU
       switch (value.type())
       {
          case TERMINAL      -> value.vn = 0;
-         case ADD, SUB      -> value.vn = max(left.vn, rite.vn) + (mayVanish(value) ? 2 * max(left.vp, rite.vp) : 0);
+         case ADD, SUB      -> value.vn = max(left.vn, rite.vn) + (mayVanish(value) ? max(left.vp, rite.vp) : 0);
          case MUL, DIV      -> value.vn = max(left.vn, rite.vn);
          case NEG, ABS, POW -> value.vn = left.vn;
          case ROOT          -> value.vn = left.vn + left.vp + value.index();

@@ -1,7 +1,5 @@
 package br.eng.strauss.yaxana;
 
-import java.util.function.Consumer;
-
 /**
  * Interface declaring and documenting the supported Comparisons.
  * 
@@ -28,20 +26,7 @@ public abstract sealed interface ComfyComparable<C extends ComfyComparable<C>> e
     * 
     * @return {@code -1, 0, 1} depending on the sign of this number.
     */
-   public default int signum()
-   {
-
-      return signum(null);
-   }
-
-   /**
-    * Returns {@code -1, 0, 1} depending on the sign of this number.
-    * 
-    * @param sufficientPrecision
-    *           Optional. For profiling purposes.
-    * @return {@code -1, 0, 1} depending on the sign of this number.
-    */
-   public abstract int signum(Consumer<Integer> sufficientPrecision);
+   public abstract int signum();
 
    /**
     * Returns {@code true} if this number is zero.

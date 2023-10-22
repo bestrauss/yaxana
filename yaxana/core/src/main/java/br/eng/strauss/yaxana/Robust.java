@@ -6,7 +6,6 @@ import static java.lang.Math.nextDown;
 import static java.lang.Math.nextUp;
 
 import java.io.Serializable;
-import java.util.function.Consumer;
 
 import br.eng.strauss.yaxana.big.BigFloat;
 import br.eng.strauss.yaxana.epu.EPUStats;
@@ -167,7 +166,7 @@ public final class Robust extends ConciseNumber implements OperableParsableComfy
    }
 
    @Override
-   public int signum(final Consumer<Integer> sufficientPrecision)
+   public int signum()
    {
 
       return this.value > 0d ? 1 : this.value < 0d ? -1 : 0;

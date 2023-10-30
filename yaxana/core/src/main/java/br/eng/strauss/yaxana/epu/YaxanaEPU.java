@@ -51,14 +51,9 @@ final class YaxanaEPU extends RootBoundEPU
    private static boolean mayVanish(final Algebraic value)
    {
 
-      if (value.type() == Type.ADD)
-      {
-         return value.left().approximation().signum() != value.right().approximation().signum();
-      }
-      else
-      {
-         return value.left().approximation().signum() == value.right().approximation().signum();
-      }
+      final BigFloat la = value.left().approximation();
+      final BigFloat ra = value.right().approximation();
+      return value.type() == Type.ADD ? la.signum() != ra.signum() : la.signum() == ra.signum();
    }
 
    /**

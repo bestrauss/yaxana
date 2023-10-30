@@ -39,7 +39,7 @@ public final class DecreasingDifferencesTest extends YaxanaTest
          int N = 24;
          final Algebraic c = new Algebraic(0xFFFFFF).sqrt().sub(new Algebraic(0xFFFFFE).sqrt());
          Algebraic a = c;
-         for (int k = 0; k < 15; k++, N += 24)
+         for (int k = 0; k < 16; k++, N += 24)
          {
             final AtomicInteger prec = new AtomicInteger();
             final Algebraic b = addBigNumber

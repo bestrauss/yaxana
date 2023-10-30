@@ -14,17 +14,17 @@ public abstract interface SignComputationListener
    /**
     * 
     * 
-    * @param value
+    * @param expression
     * @param estimatedPlaces
     * @param actualPlaces
     */
-   public abstract void signComputed(Robust value, int estimatedPlaces, int actualPlaces);
+   public abstract void signComputed(Robust expression, int estimatedPlaces, int actualPlaces);
 
    public static class Default implements SignComputationListener
    {
 
       @Override
-      public void signComputed(final Robust value, final int estimatedPlaces,
+      public void signComputed(final Robust expression, final int estimatedPlaces,
             final int actualPlaces)
       {
          // TODO Auto-generated method stub
